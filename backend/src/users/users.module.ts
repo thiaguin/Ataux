@@ -9,7 +9,7 @@ const metadata: ModuleMetadata = {
   imports: [TypeOrmModule.forFeature([User])],
   providers: [UsersService],
   controllers: [UsersController],
-  exports: [],
+  exports: [UsersService],
 };
 
 @Module(metadata)
