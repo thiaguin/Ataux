@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CreateUserClassDTO } from 'src/usersClasses/dto/create-user-class.dto';
+import { UserClass } from 'src/usersClasses/usersClasses.entity';
+import { UserClassRepository } from 'src/usersClasses/usersClasses.repository';
 import { Repository, getCustomRepository } from 'typeorm';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { User } from './users.entity';
@@ -14,6 +17,11 @@ export class UsersService {
     this.repository = getCustomRepository(UserRepository);
   }
 
+  async findOne(email: string): Promise<User> {
+    const user = await this.repository.findOne({ email });
+    return user;
+  }
+
   async findAndCountAll(): Promise<{ users: User[]; count: number }> {
     const [users, count] = await this.repository.findAndCount();
     return { users, count };
@@ -23,5 +31,12 @@ export class UsersService {
     const user = await this.repository.create(body);
     await this.repository.save(user);
     return user;
+  }
+
+  async associateUserToClass(body: CreateUserClassDTO): Promise<UserClass> {
+    const userClassRepository = getCustomRepository(UserClassRepository);
+    const userClass = await userClassRepository.create(body);
+    await userClassRepository.save(userClass);
+    return userClass;
   }
 }
