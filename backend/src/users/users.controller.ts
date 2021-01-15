@@ -18,13 +18,18 @@ export class UsersController {
     return this.userService.findAndCountAll();
   }
 
-  @Post('/')
-  create(@Body() body: CreateUserDTO): Promise<User> {
-    return this.userService.create(body);
+  @Post('/google')
+  createByGoogle(@Body() body: { token: string }): Promise<User> {
+    return this.userService.createByGoogle(body);
   }
 
   @Post('/associate')
   associate(@Body() body: CreateUserClassDTO): Promise<UserClass> {
     return this.userService.associateUserToClass(body);
+  }
+
+  @Post('/')
+  create(@Body() body: CreateUserDTO): Promise<User> {
+    return this.userService.create(body);
   }
 }
