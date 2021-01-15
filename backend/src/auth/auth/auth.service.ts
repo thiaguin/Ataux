@@ -3,7 +3,6 @@ import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { AuthResultDTO } from './dto/auth-result.dto';
-import { OAuth2Client } from 'google-auth-library';
 import { User } from 'src/users/users.entity';
 import { UserMethod } from 'src/enums/userMethod.enum';
 
@@ -11,13 +10,9 @@ import { UserMethod } from 'src/enums/userMethod.enum';
 export class AuthService {
   private userService: UsersService;
   private jwtService: JwtService;
-  private googleClient: OAuth2Client;
-  private googleClientId: string;
 
   constructor(userService: UsersService) {
     this.userService = userService;
-    this.googleClientId = process.env.GOOGLE_CLIENT_ID;
-    this.googleClient = new OAuth2Client(this.googleClientId);
     this.jwtService = new JwtService({
       secret: process.env.SECRET,
       signOptions: { expiresIn: '24h' },
@@ -43,7 +38,7 @@ export class AuthService {
   }
 
   async googleLogin(body: any): Promise<AuthResultDTO> {
-    const googleUser = await this.getUserGoogle(body.token);
+    const googleUser = await this.userService.getUserGoogle(body.token);
 
     if (googleUser) {
       const { email, sub } = googleUser;
@@ -55,15 +50,5 @@ export class AuthService {
     }
 
     throw new HttpException('NotFound', 404);
-  }
-
-  async getUserGoogle(token: string) {
-    const ticket = await this.googleClient.verifyIdToken({
-      idToken: token,
-      audience: this.googleClientId,
-    });
-
-    const payload = ticket.getPayload();
-    return payload;
   }
 }

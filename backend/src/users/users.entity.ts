@@ -44,7 +44,9 @@ export class User {
 
   @BeforeInsert()
   cryptPassword() {
-    const salt = bcrypt.genSaltSync(+process.env.SIZE);
-    this.password = bcrypt.hashSync(this.password, salt);
+    if (this.password) {
+      const salt = bcrypt.genSaltSync(+process.env.SIZE);
+      this.password = bcrypt.hashSync(this.password, salt);
+    }
   }
 }
