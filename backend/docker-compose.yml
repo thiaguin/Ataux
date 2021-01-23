@@ -5,7 +5,7 @@ services:
     image: dpage/pgadmin4
     container_name: pgadmin4
     ports:
-      - '15432:80'
+      - '25432:80'
     environment:
       - PGADMIN_DEFAULT_EMAIL=ataux@mail.com
       - PGADMIN_DEFAULT_PASSWORD=pwd2020

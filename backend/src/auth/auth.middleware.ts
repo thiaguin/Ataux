@@ -32,6 +32,26 @@ export class AuthorizeMiddleware implements NestMiddleware {
 }
 
 @Injectable()
+export class AuthorizeColaboratorMiddleware implements NestMiddleware {
+  use(req: Request, res: Response, next: () => void): void {
+    const user = <PayloadUserDTO>req.user;
+    const classId = req.body?.classId || req.query?.classId;
+
+    const [userClass] = user.userClasses.filter((uc) => uc.classId == classId);
+
+    const isAdmin = userClass?.role === UserRole.ADMIN;
+    const isColaborator = userClass?.role === UserRole.COLABORATOR;
+
+    console.log(classId, userClass, user);
+    if (!isAdmin && !isColaborator) {
+      throw new HttpException('Forbidden', 403);
+    }
+
+    next();
+  }
+}
+
+@Injectable()
 export class GetUserMiddleware implements NestMiddleware {
   async use(req: Request, res: Response, next: () => void): Promise<void> {
     const userService = new UsersService();
