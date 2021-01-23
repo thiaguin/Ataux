@@ -6,7 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { ClassesModule } from './classes/classes.module';
 import { ModuleMetadata } from '@nestjs/common/interfaces';
-import { AuthModule } from './auth/auth/auth.module';
+import { AuthModule } from './auth/auth.module';
 
 const metadata: ModuleMetadata = {
   imports: [

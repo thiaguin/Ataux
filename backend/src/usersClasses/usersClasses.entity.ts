@@ -8,6 +8,12 @@ export class UserClass {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  classId: number;
+
+  @Column()
+  userId: number;
+
   @Column({ type: 'enum', enum: UserRole })
   role: UserRole;
 
