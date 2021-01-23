@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Post, Req } from '@nestjs/common';
 import { Class } from './classes.entity';
 import { ClassesService } from './classes.service';
 import { CreateClassDTO } from './dto/create-class.dto';
+import { RegisterUserDTO } from './dto/register-user.dto';
 
 @Controller('classes')
 export class ClassesController {
@@ -17,7 +18,13 @@ export class ClassesController {
   }
 
   @Post('/')
-  create(@Body() body: CreateClassDTO): Promise<Class> {
-    return this.classService.create(body);
+  create(@Body() body: CreateClassDTO, @Req() req): Promise<Class> {
+    return this.classService.create(body, req.user);
+  }
+
+  @Post('/register')
+  @HttpCode(204)
+  register(@Body() body: RegisterUserDTO, @Req() req): Promise<void> {
+    return this.classService.register(body, req.user);
   }
 }

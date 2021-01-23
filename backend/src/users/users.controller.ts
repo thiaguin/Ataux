@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { CreateUserClassDTO } from 'src/usersClasses/dto/create-user-class.dto';
 import { UserClass } from 'src/usersClasses/usersClasses.entity';
 import { CreateUserDTO } from './dto/create-user.dto';
