@@ -9,8 +9,6 @@ import { CreateUserDTO } from './dto/create-user.dto';
 import { User } from './users.entity';
 import { UserRepository } from './users.repository';
 import { OAuth2Client } from 'google-auth-library';
-import { PayloadUserDTO } from './dto/payload-user.dto';
-import { ClassRepository } from 'src/classes/classes.repository';
 
 @Injectable()
 export class UsersService {

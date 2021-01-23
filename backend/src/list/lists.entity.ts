@@ -1,31 +1,30 @@
+import { Class } from 'src/classes/classes.entity';
 import { UserClass } from 'src/usersClasses/usersClasses.entity';
-import { List } from 'src/list/lists.entity';
-
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany,
+  ManyToOne,
 } from 'typeorm';
 
 @Entity()
-export class Class {
+export class List {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  classId: number;
+
   @Column({ unique: true })
-  name: string;
+  title: string;
 
-  @Column({ nullable: true })
-  code: string;
+  @Column({ nullable: true, type: 'timestamp with time zone' })
+  expirationTime: string;
 
-  @OneToMany(() => List, (list) => list.class) // note: we will create author property in the Photo class below
-  lists: List[];
-
-  @OneToMany(() => UserClass, (userClass) => userClass.class)
-  userClass: UserClass[];
+  @ManyToOne(() => Class, (entity) => entity.lists)
+  class: Class;
 
   @CreateDateColumn({ type: 'timestamp with time zone' })
   createdAt: string;
