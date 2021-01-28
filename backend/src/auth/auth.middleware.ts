@@ -42,7 +42,6 @@ export class AuthorizeColaboratorMiddleware implements NestMiddleware {
     const isAdmin = userClass?.role === UserRole.ADMIN;
     const isColaborator = userClass?.role === UserRole.COLABORATOR;
 
-    console.log(classId, userClass, user);
     if (!isAdmin && !isColaborator) {
       throw new HttpException('Forbidden', 403);
     }

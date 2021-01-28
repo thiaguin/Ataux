@@ -38,6 +38,19 @@ export class ClassesService {
     return { classes, count };
   }
 
+  async findById(id: number): Promise<Class> {
+    const entity = await this.repository.findOne({
+      where: { id: id },
+      relations: ['lists'],
+    });
+
+    if (!entity) {
+      throw new HttpException('NotFound', 404);
+    }
+
+    return entity;
+  }
+
   async create(body: CreateClassDTO, user: PayloadUserDTO): Promise<Class> {
     return await getManager().transaction(async (transactionManager) => {
       const entity = transactionManager.create(Class, {

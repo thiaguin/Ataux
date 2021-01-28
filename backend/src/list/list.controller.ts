@@ -9,6 +9,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { CreateListDTO } from './dto/create-list.dto';
+import { FindAllListDTO } from './dto/findAll-list.dto';
 import { UpdateListDTO } from './dto/update-list.dto';
 import { List } from './lists.entity';
 import { ListService } from './lists.service';
@@ -22,7 +23,7 @@ export class ListController {
   }
 
   @Get('/')
-  findAll(@Query() query): Promise<{ lists: List[]; count: number }> {
+  findAll(@Query() query): Promise<FindAllListDTO> {
     return this.listService.findAll(query);
   }
 
