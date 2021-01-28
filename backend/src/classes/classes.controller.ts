@@ -1,4 +1,12 @@
-import { Body, Controller, Get, HttpCode, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  Req,
+} from '@nestjs/common';
 import { Class } from './classes.entity';
 import { ClassesService } from './classes.service';
 import { CreateClassDTO } from './dto/create-class.dto';
@@ -15,6 +23,11 @@ export class ClassesController {
   @Get('/')
   findAll(): Promise<{ classes: Class[]; count: number }> {
     return this.classService.findAndCountAll();
+  }
+
+  @Get('/:id')
+  findById(@Param() params: { id: number }): Promise<Class> {
+    return this.classService.findById(params.id);
   }
 
   @Post('/')

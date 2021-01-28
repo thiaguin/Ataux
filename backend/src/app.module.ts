@@ -8,6 +8,7 @@ import { ClassesModule } from './classes/classes.module';
 import { ModuleMetadata } from '@nestjs/common/interfaces';
 import { AuthModule } from './auth/auth.module';
 import { ListModule } from './list/lists.module';
+import { QuestionsModule } from './questions/questions.module';
 
 const metadata: ModuleMetadata = {
   imports: [
@@ -17,6 +18,7 @@ const metadata: ModuleMetadata = {
     UsersModule,
     ClassesModule,
     ListModule,
+    QuestionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

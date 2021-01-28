@@ -1,5 +1,5 @@
 import { Class } from 'src/classes/classes.entity';
-import { UserClass } from 'src/usersClasses/usersClasses.entity';
+import { Question } from 'src/questions/questions.entity';
 import {
   Entity,
   Column,
@@ -7,6 +7,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
 
 @Entity()
@@ -25,6 +26,9 @@ export class List {
 
   @ManyToOne(() => Class, (entity) => entity.lists)
   class: Class;
+
+  @OneToMany(() => Question, (question) => question.list)
+  questions: Question[];
 
   @CreateDateColumn({ type: 'timestamp with time zone' })
   createdAt: string;

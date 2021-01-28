@@ -71,6 +71,7 @@ export class AuthService {
       if (bcrypt.compareSync(body.password, user.password)) {
         return this.getToken(user);
       }
+      throw new HttpException('InvalidPassword', 400);
     }
 
     throw new HttpException('NotFound', 404);

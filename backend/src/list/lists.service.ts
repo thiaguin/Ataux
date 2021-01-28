@@ -2,6 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { getCustomRepository, Repository } from 'typeorm';
 import { CreateListDTO } from './dto/create-list.dto';
+import { FindAllListDTO } from './dto/findAll-list.dto';
 import { QueryListDTO } from './dto/query-list.dto';
 import { UpdateListDTO } from './dto/update-list.dto';
 import { List } from './lists.entity';
@@ -22,16 +23,17 @@ export class ListService {
     return newList;
   }
 
-  async findAll(
-    query: QueryListDTO,
-  ): Promise<{ lists: List[]; count: number }> {
+  async findAll(query: QueryListDTO): Promise<FindAllListDTO> {
     const where = { ...query };
     const [lists, count] = await this.repository.findAndCount({ where });
-    return { lists, count };
+    return { data: lists, count };
   }
 
   async findById(id: number): Promise<List> {
-    const list = await this.repository.findOne({ where: { id: id } });
+    const list = await this.repository.findOne({
+      where: { id: id },
+      relations: ['questions'],
+    });
 
     if (!list) {
       throw new HttpException('NotFound', 404);
