@@ -6,10 +6,10 @@ import { User } from './users.entity';
 import { UsersController } from './users.controller';
 
 const metadata: ModuleMetadata = {
-  imports: [TypeOrmModule.forFeature([User])],
-  providers: [UsersService],
-  controllers: [UsersController],
-  exports: [UsersService],
+    imports: [TypeOrmModule.forFeature([User])],
+    providers: [UsersService],
+    controllers: [UsersController],
+    exports: [UsersService],
 };
 
 @Module(metadata)

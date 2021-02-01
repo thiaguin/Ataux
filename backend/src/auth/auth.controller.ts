@@ -6,21 +6,21 @@ import { AuthLoginDTO } from './dto/auth-login.dto';
 
 @Controller('auth')
 export class AuthController {
-  private authService: AuthService;
-  private userService: UsersService;
+    private authService: AuthService;
+    private userService: UsersService;
 
-  constructor() {
-    this.userService = new UsersService();
-    this.authService = new AuthService(this.userService);
-  }
+    constructor() {
+        this.userService = new UsersService();
+        this.authService = new AuthService(this.userService);
+    }
 
-  @Post('/')
-  login(@Body() body: AuthLoginDTO): Promise<AuthResultDTO> {
-    return this.authService.login(body);
-  }
+    @Post('/')
+    login(@Body() body: AuthLoginDTO): Promise<AuthResultDTO> {
+        return this.authService.login(body);
+    }
 
-  @Post('/google')
-  googleLogin(@Body() body: { token: string }): Promise<AuthResultDTO> {
-    return this.authService.googleLogin(body);
-  }
+    @Post('/google')
+    googleLogin(@Body() body: { token: string }): Promise<AuthResultDTO> {
+        return this.authService.googleLogin(body);
+    }
 }

@@ -1,6 +1,6 @@
 import { Question } from '../questions.entity';
 
 export class FindAllQuestionDTO {
-  data: Question[];
-  count: number;
+    data: Question[];
+    count: number;
 }

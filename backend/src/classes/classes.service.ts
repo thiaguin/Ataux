@@ -12,86 +12,86 @@ import { UserClassRepository } from 'src/usersClasses/usersClasses.repository';
 
 @Injectable()
 export class ClassesService {
-  @InjectRepository(Class)
-  private repository: Repository<Class>;
+    @InjectRepository(Class)
+    private repository: Repository<Class>;
 
-  constructor() {
-    this.repository = getCustomRepository(ClassRepository);
-  }
-
-  generateCode(): string {
-    const result = [];
-    const length = Math.floor(Math.random() * 10) + 6;
-    const digits = '0123456789';
-    const letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const chars = digits + letters;
-
-    for (let i = length; i > 0; --i) {
-      result.push(chars[Math.floor(Math.random() * chars.length)]);
+    constructor() {
+        this.repository = getCustomRepository(ClassRepository);
     }
 
-    return result.join('');
-  }
+    generateCode(): string {
+        const result = [];
+        const length = Math.floor(Math.random() * 10) + 6;
+        const digits = '0123456789';
+        const letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const chars = digits + letters;
 
-  async findAndCountAll(): Promise<{ classes: Class[]; count: number }> {
-    const [classes, count] = await this.repository.findAndCount();
-    return { classes, count };
-  }
+        for (let i = length; i > 0; --i) {
+            result.push(chars[Math.floor(Math.random() * chars.length)]);
+        }
 
-  async findById(id: number): Promise<Class> {
-    const entity = await this.repository.findOne({
-      where: { id: id },
-      relations: ['lists'],
-    });
-
-    if (!entity) {
-      throw new HttpException('NotFound', 404);
+        return result.join('');
     }
 
-    return entity;
-  }
-
-  async create(body: CreateClassDTO, user: PayloadUserDTO): Promise<Class> {
-    return await getManager().transaction(async (transactionManager) => {
-      const entity = transactionManager.create(Class, {
-        ...body,
-        code: this.generateCode(),
-      });
-
-      await transactionManager.save(entity);
-
-      const userClass = transactionManager.create(UserClass, {
-        userId: user.id,
-        classId: entity.id,
-        role: UserRole.ADMIN,
-      });
-
-      await transactionManager.save(userClass);
-
-      return entity;
-    });
-  }
-
-  async register(body: RegisterUserDTO, user: PayloadUserDTO): Promise<void> {
-    const userClassRepository = getCustomRepository(UserClassRepository);
-    const entity = await this.repository.findOne({
-      where: { id: body.classId },
-    });
-
-    if (!entity) {
-      throw new HttpException('NotFound', 404);
+    async findAndCountAll(): Promise<{ classes: Class[]; count: number }> {
+        const [classes, count] = await this.repository.findAndCount();
+        return { classes, count };
     }
 
-    if (entity.code === body.code) {
-      const userClass = userClassRepository.create({
-        userId: user.id,
-        classId: entity.id,
-        role: UserRole.MEMBER,
-      });
+    async findById(id: number): Promise<Class> {
+        const entity = await this.repository.findOne({
+            where: { id: id },
+            relations: ['lists'],
+        });
 
-      await userClassRepository.save(userClass);
+        if (!entity) {
+            throw new HttpException('NotFound', 404);
+        }
+
+        return entity;
     }
 
-    throw new HttpException('CodeInvalidToEntity', 400);
-  }
+    async create(body: CreateClassDTO, user: PayloadUserDTO): Promise<Class> {
+        return await getManager().transaction(async (transactionManager) => {
+            const entity = transactionManager.create(Class, {
+                ...body,
+                code: this.generateCode(),
+            });
+
+            await transactionManager.save(entity);
+
+            const userClass = transactionManager.create(UserClass, {
+                userId: user.id,
+                classId: entity.id,
+                role: UserRole.ADMIN,
+            });
+
+            await transactionManager.save(userClass);
+
+            return entity;
+        });
+    }
+
+    async register(body: RegisterUserDTO, user: PayloadUserDTO): Promise<void> {
+        const userClassRepository = getCustomRepository(UserClassRepository);
+        const entity = await this.repository.findOne({
+            where: { id: body.classId },
+        });
+
+        if (!entity) {
+            throw new HttpException('NotFound', 404);
+        }
+
+        if (entity.code === body.code) {
+            const userClass = userClassRepository.create({
+                userId: user.id,
+                classId: entity.id,
+                role: UserRole.MEMBER,
+            });
+
+            await userClassRepository.save(userClass);
+        }
+
+        throw new HttpException('CodeInvalidToEntity', 400);
+    }
 }

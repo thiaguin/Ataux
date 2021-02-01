@@ -10,56 +10,56 @@ import { FindAllQuestionDTO } from './dto/findAll-questions.dto';
 
 @Injectable()
 export class QuestionsService {
-  @InjectRepository(Question)
-  private repository: Repository<Question>;
+    @InjectRepository(Question)
+    private repository: Repository<Question>;
 
-  constructor() {
-    this.repository = getCustomRepository(QuestionRepository);
-  }
-
-  async findAndCountAll(query: QueryQuestionDTO): Promise<FindAllQuestionDTO> {
-    const [questions, count] = await this.repository.findAndCount({
-      where: { ...query },
-    });
-
-    return { data: questions, count };
-  }
-
-  async findById(id: number): Promise<Question> {
-    const question = await this.repository.findOne({ where: { id } });
-
-    if (question) {
-      return question;
+    constructor() {
+        this.repository = getCustomRepository(QuestionRepository);
     }
 
-    throw new HttpException('NotFound', 404);
-  }
+    async findAndCountAll(query: QueryQuestionDTO): Promise<FindAllQuestionDTO> {
+        const [questions, count] = await this.repository.findAndCount({
+            where: { ...query },
+        });
 
-  async create(body: CreateQuestionDTO): Promise<Question> {
-    const newQuestion = this.repository.create(body);
-    await this.repository.save(newQuestion);
-    return newQuestion;
-  }
-
-  async update(id: number, body: UpdateQuestionDTO): Promise<void> {
-    const question = await this.repository.findOne({
-      where: { id },
-    });
-
-    if (!question) {
-      throw new HttpException('NotFound', 404);
+        return { data: questions, count };
     }
 
-    await this.repository.update({ id }, body);
-  }
+    async findById(id: number): Promise<Question> {
+        const question = await this.repository.findOne({ where: { id } });
 
-  async remove(id: number): Promise<void> {
-    const question = await this.repository.findOne({ where: { id } });
+        if (question) {
+            return question;
+        }
 
-    if (!question) {
-      throw new HttpException('NotFound', 404);
+        throw new HttpException('NotFound', 404);
     }
 
-    this.repository.delete(id);
-  }
+    async create(body: CreateQuestionDTO): Promise<Question> {
+        const newQuestion = this.repository.create(body);
+        await this.repository.save(newQuestion);
+        return newQuestion;
+    }
+
+    async update(id: number, body: UpdateQuestionDTO): Promise<void> {
+        const question = await this.repository.findOne({
+            where: { id },
+        });
+
+        if (!question) {
+            throw new HttpException('NotFound', 404);
+        }
+
+        await this.repository.update({ id }, body);
+    }
+
+    async remove(id: number): Promise<void> {
+        const question = await this.repository.findOne({ where: { id } });
+
+        if (!question) {
+            throw new HttpException('NotFound', 404);
+        }
+
+        this.repository.delete(id);
+    }
 }

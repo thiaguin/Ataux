@@ -4,10 +4,10 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 
 const metadata: ModuleMetadata = {
-  imports: [UsersModule],
-  providers: [AuthService],
-  controllers: [AuthController],
-  exports: [],
+    imports: [UsersModule],
+    providers: [AuthService],
+    controllers: [AuthController],
+    exports: [],
 };
 
 @Module(metadata)

@@ -18,6 +18,7 @@ services:
     image: 'postgres'
     container_name: ataux-postgres
     environment:
+      - POSTGRES_DB=ataux-db
       - POSTGRES_USER=ataux-username
       - POSTGRES_PASSWORD=pwd2020
     ports:

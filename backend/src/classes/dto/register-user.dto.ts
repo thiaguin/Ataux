@@ -1,4 +1,4 @@
 export class RegisterUserDTO {
-  classId: string;
-  code: string;
+    classId: string;
+    code: string;
 }

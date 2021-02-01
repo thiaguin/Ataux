@@ -1,4 +1,4 @@
 export class CreateClassDTO {
-  name: string;
-  code: string;
+    name: string;
+    code: string;
 }
