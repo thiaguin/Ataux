@@ -5,21 +5,21 @@ import { UserRole } from 'src/enums/userRole.enum';
 
 @Entity()
 export class UserClass {
-  @PrimaryGeneratedColumn()
-  id: number;
+    @PrimaryGeneratedColumn()
+    id: number;
 
-  @Column()
-  classId: number;
+    @Column()
+    classId: number;
 
-  @Column()
-  userId: number;
+    @Column()
+    userId: number;
 
-  @Column({ type: 'enum', enum: UserRole })
-  role: UserRole;
+    @Column({ type: 'enum', enum: UserRole })
+    role: UserRole;
 
-  @ManyToOne(() => Class, (entity) => entity.userClass)
-  class: Class;
+    @ManyToOne(() => Class, (entity) => entity.userClass)
+    class: Class;
 
-  @ManyToOne(() => User, (entity) => entity.userClass)
-  user: User;
+    @ManyToOne(() => User, (entity) => entity.userClass)
+    user: User;
 }

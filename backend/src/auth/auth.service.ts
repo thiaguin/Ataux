@@ -10,85 +10,85 @@ import { PayloadUserDTO } from 'src/users/dto/payload-user.dto';
 
 @Injectable()
 export class AuthService {
-  private userService: UsersService;
-  private jwtService: JwtService;
+    private userService: UsersService;
+    private jwtService: JwtService;
 
-  constructor(userService: UsersService) {
-    this.userService = userService;
-    this.jwtService = new JwtService({
-      secret: process.env.SECRET,
-      signOptions: { expiresIn: '24h' },
-    });
-  }
-
-  getToken(user: User): { token: string } {
-    const { id, email, name } = user;
-    const token = this.jwtService.sign({ id, email, name });
-    return { token };
-  }
-
-  async getUser(headers: IncomingHttpHeaders): Promise<PayloadUserDTO> {
-    const token = headers.authorization;
-
-    if (token) {
-      const { email } = this.jwtService.verify(token);
-      const user = await this.userService.findOne(email);
-
-      if (user)
-        return {
-          email,
-          id: user.id,
-          name: user.name,
-          userClasses: user.userClass,
-        };
-    }
-  }
-
-  async authorize(headers: IncomingHttpHeaders): Promise<PayloadUserDTO> {
-    const token = headers.authorization;
-
-    if (token) {
-      const { email } = this.jwtService.verify(token);
-      const user = await this.userService.findOne(email);
-
-      if (!user) throw new HttpException('Forbidden', 403);
-
-      return {
-        email,
-        id: user.id,
-        name: user.name,
-        userClasses: user.userClass,
-      };
+    constructor(userService: UsersService) {
+        this.userService = userService;
+        this.jwtService = new JwtService({
+            secret: process.env.SECRET,
+            signOptions: { expiresIn: '24h' },
+        });
     }
 
-    throw new HttpException('Unauthorized', 401);
-  }
-
-  async login(body: any): Promise<AuthResultDTO> {
-    const user = await this.userService.findOneWithPassword(body.email);
-
-    if (user?.password) {
-      if (bcrypt.compareSync(body.password, user.password)) {
-        return this.getToken(user);
-      }
-      throw new HttpException('InvalidPassword', 400);
+    getToken(user: User): { token: string } {
+        const { id, email, name } = user;
+        const token = this.jwtService.sign({ id, email, name });
+        return { token };
     }
 
-    throw new HttpException('NotFound', 404);
-  }
+    async getUser(headers: IncomingHttpHeaders): Promise<PayloadUserDTO> {
+        const token = headers.authorization;
 
-  async googleLogin(body: any): Promise<AuthResultDTO> {
-    const googleUser = await this.userService.getUserGoogle(body.token);
+        if (token) {
+            const { email } = this.jwtService.verify(token);
+            const user = await this.userService.findOne(email);
 
-    if (googleUser) {
-      const { email, sub } = googleUser;
-      const user = await this.userService.findOne(email);
-
-      if (user?.googleId === sub && user?.method === UserMethod.GOOGLE) {
-        return this.getToken(user);
-      }
+            if (user)
+                return {
+                    email,
+                    id: user.id,
+                    name: user.name,
+                    userClasses: user.userClass,
+                };
+        }
     }
 
-    throw new HttpException('NotFound', 404);
-  }
+    async authorize(headers: IncomingHttpHeaders): Promise<PayloadUserDTO> {
+        const token = headers.authorization;
+
+        if (token) {
+            const { email } = this.jwtService.verify(token);
+            const user = await this.userService.findOne(email);
+
+            if (!user) throw new HttpException('Forbidden', 403);
+
+            return {
+                email,
+                id: user.id,
+                name: user.name,
+                userClasses: user.userClass,
+            };
+        }
+
+        throw new HttpException('Unauthorized', 401);
+    }
+
+    async login(body: any): Promise<AuthResultDTO> {
+        const user = await this.userService.findOneWithPassword(body.email);
+
+        if (user?.password) {
+            if (bcrypt.compareSync(body.password, user.password)) {
+                return this.getToken(user);
+            }
+            throw new HttpException('InvalidPassword', 400);
+        }
+
+        throw new HttpException('NotFound', 404);
+    }
+
+    async googleLogin(body: any): Promise<AuthResultDTO> {
+        const googleUser = await this.userService.getUserGoogle(body.token);
+
+        if (googleUser) {
+            const { email, sub } = googleUser;
+            const user = await this.userService.findOne(email);
+
+            if (user?.googleId === sub && user?.method === UserMethod.GOOGLE) {
+                return this.getToken(user);
+            }
+        }
+
+        throw new HttpException('NotFound', 404);
+    }
 }

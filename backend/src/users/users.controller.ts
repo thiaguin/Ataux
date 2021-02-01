@@ -7,29 +7,29 @@ import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
-  private userService: UsersService;
+    private userService: UsersService;
 
-  constructor() {
-    this.userService = new UsersService();
-  }
+    constructor() {
+        this.userService = new UsersService();
+    }
 
-  @Get('/')
-  findAll(): Promise<{ users: User[]; count: number }> {
-    return this.userService.findAndCountAll();
-  }
+    @Get('/')
+    findAll(): Promise<{ users: User[]; count: number }> {
+        return this.userService.findAndCountAll();
+    }
 
-  @Post('/google')
-  createByGoogle(@Body() body: { token: string }): Promise<User> {
-    return this.userService.createByGoogle(body);
-  }
+    @Post('/google')
+    createByGoogle(@Body() body: { token: string }): Promise<User> {
+        return this.userService.createByGoogle(body);
+    }
 
-  @Post('/associate')
-  associate(@Body() body: CreateUserClassDTO): Promise<UserClass> {
-    return this.userService.associateUserToClass(body);
-  }
+    @Post('/associate')
+    associate(@Body() body: CreateUserClassDTO): Promise<UserClass> {
+        return this.userService.associateUserToClass(body);
+    }
 
-  @Post('/')
-  create(@Body() body: CreateUserDTO): Promise<User> {
-    return this.userService.create(body);
-  }
+    @Post('/')
+    create(@Body() body: CreateUserDTO): Promise<User> {
+        return this.userService.create(body);
+    }
 }

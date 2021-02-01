@@ -1,4 +1,4 @@
 export class UpdateListDTO {
-  title?: string;
-  expirationTime?: string;
+    title?: string;
+    expirationTime?: string;
 }

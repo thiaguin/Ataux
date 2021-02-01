@@ -1,4 +1,4 @@
 export enum UserMethod {
-  GOOGLE = 'GOOGLE',
-  LOCAL = 'LOCAL',
+    GOOGLE = 'GOOGLE',
+    LOCAL = 'LOCAL',
 }

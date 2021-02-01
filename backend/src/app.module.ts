@@ -9,19 +9,21 @@ import { ModuleMetadata } from '@nestjs/common/interfaces';
 import { AuthModule } from './auth/auth.module';
 import { ListModule } from './list/lists.module';
 import { QuestionsModule } from './questions/questions.module';
+import { TagsModule } from './tags/tags.module';
 
 const metadata: ModuleMetadata = {
-  imports: [
-    ConfigModule.forRoot(),
-    TypeOrmModule.forRoot(),
-    AuthModule,
-    UsersModule,
-    ClassesModule,
-    ListModule,
-    QuestionsModule,
-  ],
-  controllers: [AppController],
-  providers: [AppService],
+    imports: [
+        ConfigModule.forRoot(),
+        TypeOrmModule.forRoot(),
+        AuthModule,
+        UsersModule,
+        ClassesModule,
+        ListModule,
+        QuestionsModule,
+        TagsModule,
+    ],
+    controllers: [AppController],
+    providers: [AppService],
 };
 @Module(metadata)
 export class AppModule {}
