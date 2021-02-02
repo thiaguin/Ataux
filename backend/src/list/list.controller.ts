@@ -1,4 +1,5 @@
 import { Body, Controller, Get, HttpCode, Param, Post, Put, Query } from '@nestjs/common';
+import { AddQuestionListDTO } from './dto/addQuestion-list.dto';
 import { CreateListDTO } from './dto/create-list.dto';
 import { FindAllListDTO } from './dto/findAll-list.dto';
 import { UpdateListDTO } from './dto/update-list.dto';
@@ -26,6 +27,11 @@ export class ListController {
     @Post('/')
     create(@Body() body: CreateListDTO): Promise<List> {
         return this.listService.create(body);
+    }
+
+    @Post('/:id/questions')
+    addQuestions(@Param() params: { id: number }, @Body() body: AddQuestionListDTO): Promise<void> {
+        return this.listService.addQuestions(params.id, body.questionIds);
     }
 
     @Put('/:id')

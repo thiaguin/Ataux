@@ -5,4 +5,5 @@ export class CreateQuestionDTO {
     url: string;
     listId: number;
     level: QuestionLevel;
+    tags: number[];
 }

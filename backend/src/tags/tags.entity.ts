@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { QuestionTag } from 'src/questionTags/questionTags.entity';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 
 @Entity()
 export class Tag {
@@ -13,4 +14,7 @@ export class Tag {
 
     @UpdateDateColumn({ type: 'timestamp with time zone' })
     updatedAt: string;
+
+    @OneToMany(() => QuestionTag, (questionTags) => questionTags.tag)
+    questions: QuestionTag[];
 }

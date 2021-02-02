@@ -1,12 +1,13 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getCustomRepository, Repository } from 'typeorm';
+import { getCustomRepository, getManager, Repository } from 'typeorm';
 import { Question } from './questions.entity';
 import { QuestionRepository } from './questions.repository';
 import { CreateQuestionDTO } from './dto/create-question.dto';
 import { UpdateQuestionDTO } from './dto/update-question.dto';
 import { QueryQuestionDTO } from './dto/query-question.dto';
 import { FindAllQuestionDTO } from './dto/findAll-questions.dto';
+import { QuestionTag } from 'src/questionTags/questionTags.entity';
 
 @Injectable()
 export class QuestionsService {
@@ -36,9 +37,23 @@ export class QuestionsService {
     }
 
     async create(body: CreateQuestionDTO): Promise<Question> {
-        const newQuestion = this.repository.create(body);
-        await this.repository.save(newQuestion);
-        return newQuestion;
+        return await getManager().transaction(async (transactionManager) => {
+            const { tags, ...questionBody } = body;
+            const entity = transactionManager.create(Question, questionBody);
+
+            await transactionManager.save(entity);
+
+            const questionTags = tags.map((tag) =>
+                transactionManager.create(QuestionTag, {
+                    questionId: entity.id,
+                    tagId: tag,
+                }),
+            );
+
+            await transactionManager.save(questionTags);
+
+            return entity;
+        });
     }
 
     async update(id: number, body: UpdateQuestionDTO): Promise<void> {
