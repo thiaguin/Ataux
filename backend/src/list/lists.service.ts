@@ -1,6 +1,8 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getCustomRepository, Repository } from 'typeorm';
+import { ListQuestion } from 'src/listQuestion/listQuestion.entity';
+import { QuestionTag } from 'src/questionTags/questionTags.entity';
+import { getCustomRepository, getRepository, Repository } from 'typeorm';
 import { CreateListDTO } from './dto/create-list.dto';
 import { FindAllListDTO } from './dto/findAll-list.dto';
 import { QueryListDTO } from './dto/query-list.dto';
@@ -21,6 +23,20 @@ export class ListService {
         const newList = this.repository.create(body);
         await this.repository.save(newList);
         return newList;
+    }
+
+    async addQuestions(id: number, questionIds: number[]): Promise<void> {
+        const list = await this.findById(id);
+        const listQuestionRepository = getRepository(ListQuestion);
+
+        const listQuestions = questionIds.map((questionId) =>
+            listQuestionRepository.create({
+                questionId,
+                listId: list.id,
+            }),
+        );
+
+        await listQuestionRepository.save(listQuestions);
     }
 
     async findAll(query: QueryListDTO): Promise<FindAllListDTO> {
