@@ -24,7 +24,7 @@ export class QuestionsController {
     }
 
     @Post('/')
-    create(@Body() body: CreateQuestionDTO): Promise<Question> {
+    create(@Body() body: CreateQuestionDTO) {
         return this.questionService.create(body);
     }
 

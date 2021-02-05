@@ -1,5 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { title } from 'process';
 import { getCustomRepository, Repository } from 'typeorm';
 import { CreateTagDTO } from './dto/create-tag.dto';
 import { FindAllTagDTO } from './dto/findAll-tag.dto';
@@ -22,6 +23,15 @@ export class TagsService {
         return { data: tags, count };
     }
 
+    async findMany(titles: string[]): Promise<Tag[]> {
+        const where = titles.map((title) => ({ name: title }));
+        const tags = await this.repository.find({
+            where: where,
+        });
+
+        return tags;
+    }
+
     async findById(id: number): Promise<Tag> {
         const tag = await this.repository.findOne({ where: { id } });
 
@@ -36,6 +46,17 @@ export class TagsService {
         const newTag = this.repository.create(body);
         await this.repository.save(newTag);
         return newTag;
+    }
+
+    async createMany(tags: string[]): Promise<Tag[]> {
+        const tagsToCreate = [];
+
+        for (const tag of tags) {
+            const newTag = this.repository.create({ name: tag });
+            tagsToCreate.push(newTag);
+        }
+
+        return tagsToCreate;
     }
 
     async update(id: number, body: UpdateTagDTO): Promise<void> {

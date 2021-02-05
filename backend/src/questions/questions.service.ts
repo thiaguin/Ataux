@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { Body, HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { getCustomRepository, getManager, Repository } from 'typeorm';
 import { Question } from './questions.entity';
@@ -8,14 +8,55 @@ import { UpdateQuestionDTO } from './dto/update-question.dto';
 import { QueryQuestionDTO } from './dto/query-question.dto';
 import { FindAllQuestionDTO } from './dto/findAll-questions.dto';
 import { QuestionTag } from 'src/questionTags/questionTags.entity';
+import { CodeforcesService } from 'src/codeforces/codeforces.service';
+import { QuestionLevel } from 'src/enums/questionLevel.enum';
+import { TagsService } from 'src/tags/tags.service';
+import { Tag } from 'src/tags/tags.entity';
 
 @Injectable()
 export class QuestionsService {
     @InjectRepository(Question)
     private repository: Repository<Question>;
+    private codeforcesService: CodeforcesService;
+    private tagService: TagsService;
 
     constructor() {
         this.repository = getCustomRepository(QuestionRepository);
+        this.codeforcesService = new CodeforcesService();
+        this.tagService = new TagsService();
+    }
+
+    getInfoByURL(url: string): { contestId: string; problemId: string } {
+        const SEPARATOR = 'codeforces.com/';
+        const CONTEST = 'contest';
+        const PROBLEM = 'problem';
+        const PROBLEMSET = 'problemset';
+
+        const [, body] = url.split(SEPARATOR);
+        const bodyArray = body ? body.split('/') : [];
+
+        if (bodyArray.length === 4) {
+            const [el1, el2, el3, el4] = bodyArray;
+
+            const pattern1 = el1 === CONTEST && el3 === PROBLEM;
+            const pattern2 = el1 === PROBLEMSET && el2 === PROBLEM;
+
+            if (pattern1 || pattern2) {
+                return pattern1 ? { contestId: el2, problemId: el4 } : { contestId: el3, problemId: el4 };
+            }
+        }
+
+        throw new HttpException('BadRequest', 400);
+    }
+
+    getMissedTags(createdTags: Tag[], allTags: string[]): string[] {
+        const createds = {};
+
+        for (const createdTag of createdTags) {
+            createds[createdTag.name] = true;
+        }
+
+        return allTags.filter((tag) => !createds[tag]);
     }
 
     async findAndCountAll(query: QueryQuestionDTO): Promise<FindAllQuestionDTO> {
@@ -36,22 +77,40 @@ export class QuestionsService {
         throw new HttpException('NotFound', 404);
     }
 
-    async create(body: CreateQuestionDTO): Promise<Question> {
+    async create(body: CreateQuestionDTO) {
+        const { url } = body;
+
+        const { contestId, problemId } = this.getInfoByURL(url);
+        const contest = await this.codeforcesService.getContest(contestId);
+        const problem = this.codeforcesService.getProblem(contest, problemId);
+
         return await getManager().transaction(async (transactionManager) => {
-            const { tags, ...questionBody } = body;
-            const entity = transactionManager.create(Question, questionBody);
+            const entity = transactionManager.create(Question, {
+                url: url,
+                contestId: contestId,
+                problemId: problemId,
+                // TODO: Calculate level
+                level: QuestionLevel.MEDIUM,
+                title: problem.name,
+            });
 
             await transactionManager.save(entity);
 
-            const questionTags = tags.map((tag) =>
-                transactionManager.create(QuestionTag, {
-                    questionId: entity.id,
-                    tagId: tag,
-                }),
-            );
+            const tags = await this.tagService.findMany(problem?.tags);
+            const missedTags = this.getMissedTags(tags, problem.tags);
+
+            if (missedTags.length > 0) {
+                const newTags = await this.tagService.createMany(missedTags);
+                await transactionManager.save(Tag, newTags);
+                tags.push(...newTags);
+            }
+
+            const questionTags = tags.map((tag) => {
+                const questionTag = { questionId: entity.id, tagId: tag.id };
+                return transactionManager.create(QuestionTag, questionTag);
+            });
 
             await transactionManager.save(questionTags);
-
             return entity;
         });
     }
