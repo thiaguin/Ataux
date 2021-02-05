@@ -8,7 +8,7 @@ const metadata: ModuleMetadata = {
     imports: [TypeOrmModule.forFeature([Tag])],
     providers: [TagsService],
     controllers: [TagsController],
-    exports: [],
+    exports: [TagsService],
 };
 
 @Module(metadata)

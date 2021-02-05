@@ -1,16 +1,21 @@
-import { Class } from 'src/classes/classes.entity';
 import { QuestionLevel } from 'src/enums/questionLevel.enum';
-import { List } from 'src/list/lists.entity';
 import { ListQuestion } from 'src/listQuestion/listQuestion.entity';
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, Unique } from 'typeorm';
 import { QuestionTag } from '../questionTags/questionTags.entity';
 @Entity()
+@Unique('QUESTION_UQ_NAMES', ['title', 'contestId', 'problemId'])
 export class Question {
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column()
     title: string;
+
+    @Column()
+    contestId: string;
+
+    @Column()
+    problemId: string;
 
     @Column({ type: 'text' })
     url: string;
