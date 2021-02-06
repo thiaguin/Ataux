@@ -12,6 +12,7 @@ import { CodeforcesService } from 'src/codeforces/codeforces.service';
 import { QuestionLevel } from 'src/enums/questionLevel.enum';
 import { TagsService } from 'src/tags/tags.service';
 import { Tag } from 'src/tags/tags.entity';
+import { NewQuestionDTO } from './dto/new-question.dto';
 
 @Injectable()
 export class QuestionsService {
@@ -98,7 +99,7 @@ export class QuestionsService {
         throw new HttpException('NotFound', 404);
     }
 
-    async validateNewQuestion(url: string) {
+    async generateNewQuestion(url: string): Promise<NewQuestionDTO> {
         const { contestId, problemId } = this.getInfoByURL(url);
         const contest = await this.codeforcesService.getContest(contestId);
         const problem = this.codeforcesService.getProblem(contest, problemId);
@@ -122,7 +123,7 @@ export class QuestionsService {
 
     async create(body: CreateQuestionDTO) {
         return await getManager().transaction(async (transactionManager) => {
-            const { tags, ...newQuestion } = await this.validateNewQuestion(body?.url);
+            const { tags, ...newQuestion } = await this.generateNewQuestion(body?.url);
             const entity = transactionManager.create(Question, newQuestion);
 
             await transactionManager.save(entity);

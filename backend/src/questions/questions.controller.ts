@@ -19,7 +19,7 @@ export class QuestionsController {
         return this.questionService.findAndCountAll(query);
     }
 
-    @Get('/')
+    @Get('/url')
     findByURL(@Query() query: { url: string }): Promise<Question> {
         return this.questionService.findByURL(query.url);
     }
