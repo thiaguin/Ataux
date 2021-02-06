@@ -67,8 +67,18 @@ export class QuestionsService {
         return { data: questions, count };
     }
 
+    async findOne(query: QueryQuestionDTO): Promise<Question> {
+        const question = await this.repository.findOne({
+            where: query,
+        });
+
+        if (question) {
+            return question;
+        }
+    }
+
     async findById(id: number): Promise<Question> {
-        const question = await this.repository.findOne({ where: { id } });
+        const question = await this.findOne({ id });
 
         if (question) {
             return question;
@@ -77,35 +87,56 @@ export class QuestionsService {
         throw new HttpException('NotFound', 404);
     }
 
-    async create(body: CreateQuestionDTO) {
-        const { url } = body;
+    async findByURL(url: string): Promise<Question> {
+        const { contestId, problemId } = this.getInfoByURL(url);
+        const question = await this.findOne({ contestId, problemId });
 
+        if (question) {
+            return question;
+        }
+
+        throw new HttpException('NotFound', 404);
+    }
+
+    async validateNewQuestion(url: string) {
         const { contestId, problemId } = this.getInfoByURL(url);
         const contest = await this.codeforcesService.getContest(contestId);
         const problem = this.codeforcesService.getProblem(contest, problemId);
 
+        const question = await this.findOne({ contestId, problemId });
+
+        if (question) {
+            throw new HttpException('NotUnique', 409);
+        }
+
+        return {
+            url: url,
+            contestId: contestId,
+            problemId: problemId,
+            // TODO: Calculate level
+            level: QuestionLevel.MEDIUM,
+            title: problem.name,
+            tags: problem.tags,
+        };
+    }
+
+    async create(body: CreateQuestionDTO) {
         return await getManager().transaction(async (transactionManager) => {
-            const entity = transactionManager.create(Question, {
-                url: url,
-                contestId: contestId,
-                problemId: problemId,
-                // TODO: Calculate level
-                level: QuestionLevel.MEDIUM,
-                title: problem.name,
-            });
+            const { tags, ...newQuestion } = await this.validateNewQuestion(body?.url);
+            const entity = transactionManager.create(Question, newQuestion);
 
             await transactionManager.save(entity);
 
-            const tags = await this.tagService.findMany(problem?.tags);
-            const missedTags = this.getMissedTags(tags, problem.tags);
+            const currentTags = await this.tagService.findMany(tags);
+            const missedTags = this.getMissedTags(currentTags, tags);
 
             if (missedTags.length > 0) {
                 const newTags = await this.tagService.createMany(missedTags);
                 await transactionManager.save(Tag, newTags);
-                tags.push(...newTags);
+                currentTags.push(...newTags);
             }
 
-            const questionTags = tags.map((tag) => {
+            const questionTags = currentTags.map((tag) => {
                 const questionTag = { questionId: entity.id, tagId: tag.id };
                 return transactionManager.create(QuestionTag, questionTag);
             });
