@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query } from '@nestjs/common';
 import { CreateQuestionDTO } from './dto/create-question.dto';
 import { FindAllQuestionDTO } from './dto/findAll-questions.dto';
+import { QueryQuestionDTO } from './dto/query-question.dto';
 import { UpdateQuestionDTO } from './dto/update-question.dto';
 import { Question } from './questions.entity';
 import { QuestionsService } from './questions.service';
@@ -14,8 +15,13 @@ export class QuestionsController {
     }
 
     @Get('/')
-    findAll(@Query() query): Promise<FindAllQuestionDTO> {
+    findAll(@Query() query: QueryQuestionDTO): Promise<FindAllQuestionDTO> {
         return this.questionService.findAndCountAll(query);
+    }
+
+    @Get('/')
+    findByURL(@Query() query: { url: string }): Promise<Question> {
+        return this.questionService.findByURL(query.url);
     }
 
     @Get('/:id')
