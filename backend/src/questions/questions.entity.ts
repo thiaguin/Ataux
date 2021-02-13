@@ -1,5 +1,6 @@
 import { QuestionLevel } from 'src/enums/questionLevel.enum';
 import { ListQuestion } from 'src/listQuestion/listQuestion.entity';
+import { Submission } from 'src/submissions/submissions.entity';
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, Unique } from 'typeorm';
 import { QuestionTag } from '../questionTags/questionTags.entity';
 @Entity()
@@ -34,4 +35,7 @@ export class Question {
 
     @OneToMany(() => ListQuestion, (listQuestions) => listQuestions.question)
     lists: ListQuestion[];
+
+    @OneToMany(() => Submission, (submission) => submission.question)
+    submissions: Submission[];
 }

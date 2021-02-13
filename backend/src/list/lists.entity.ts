@@ -1,5 +1,6 @@
 import { Class } from 'src/classes/classes.entity';
 import { ListQuestion } from 'src/listQuestion/listQuestion.entity';
+import { Submission } from 'src/submissions/submissions.entity';
 import {
     Entity,
     Column,
@@ -29,6 +30,9 @@ export class List {
 
     @OneToMany(() => ListQuestion, (listQuestions) => listQuestions.list)
     questions: ListQuestion[];
+
+    @OneToMany(() => Submission, (submission) => submission.list)
+    submissions: Submission[];
 
     @CreateDateColumn({ type: 'timestamp with time zone' })
     createdAt: string;

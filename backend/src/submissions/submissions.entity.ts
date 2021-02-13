@@ -1,14 +1,7 @@
-import { Class } from 'src/classes/classes.entity';
+import { List } from 'src/list/lists.entity';
 import { ListQuestion } from 'src/listQuestion/listQuestion.entity';
-import {
-    Entity,
-    Column,
-    PrimaryGeneratedColumn,
-    CreateDateColumn,
-    UpdateDateColumn,
-    ManyToOne,
-    OneToMany,
-} from 'typeorm';
+import { Question } from 'src/questions/questions.entity';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
 
 @Entity()
 export class Submission {
@@ -18,14 +11,35 @@ export class Submission {
     @Column()
     listQuestionId: number;
 
+    @Column()
+    listId: number;
+
+    @Column()
+    questionId: number;
+
     @Column({ unique: true })
     status: string;
 
-    @Column({ nullable: true, type: 'timestamp with time zone' })
-    expirationTime: string;
+    @Column()
+    language: string;
 
-    @ManyToOne(() => Class, (entity) => entity.lists)
+    @Column()
+    time: string;
+
+    @Column({ type: 'text' })
+    code: string;
+
+    @Column()
+    memory: string;
+
+    @ManyToOne(() => ListQuestion, (entity) => entity.submissions)
     listQuestion: ListQuestion;
+
+    @ManyToOne(() => List, (entity) => entity.submissions)
+    list: List;
+
+    @ManyToOne(() => Question, (entity) => entity.submissions)
+    question: Question;
 
     @CreateDateColumn({ type: 'timestamp with time zone' })
     createdAt: string;
