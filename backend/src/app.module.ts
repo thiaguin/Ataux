@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { ListModule } from './list/lists.module';
 import { QuestionsModule } from './questions/questions.module';
 import { TagsModule } from './tags/tags.module';
+import { SubmissionsModule } from './submissions/submissions.module';
 
 const metadata: ModuleMetadata = {
     imports: [
@@ -21,6 +22,7 @@ const metadata: ModuleMetadata = {
         ListModule,
         QuestionsModule,
         TagsModule,
+        SubmissionsModule,
     ],
     controllers: [AppController],
     providers: [AppService],
