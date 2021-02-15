@@ -13,18 +13,23 @@ import { QuestionLevel } from 'src/enums/questionLevel.enum';
 import { TagsService } from 'src/tags/tags.service';
 import { Tag } from 'src/tags/tags.entity';
 import { NewQuestionDTO } from './dto/new-question.dto';
+import { SubmissionsService } from 'src/submissions/submissions.service';
+import { SubmissionAssociationDTO } from 'src/submissions/submission-associations.dto';
+import { CheckSubmissionQuestionDTO } from './dto/checkSubmission-question.dto';
 
 @Injectable()
 export class QuestionsService {
     @InjectRepository(Question)
     private repository: Repository<Question>;
     private codeforcesService: CodeforcesService;
+    private submissionService: SubmissionsService;
     private tagService: TagsService;
 
     constructor() {
         this.repository = getCustomRepository(QuestionRepository);
         this.codeforcesService = new CodeforcesService();
         this.tagService = new TagsService();
+        this.submissionService = new SubmissionsService();
     }
 
     getInfoByURL(url: string): { contestId: string; problemId: string } {
@@ -167,5 +172,16 @@ export class QuestionsService {
         }
 
         this.repository.delete(id);
+    }
+
+    async checkSubmissions(id: number, data: CheckSubmissionQuestionDTO): Promise<void> {
+        const question = await this.findById(id);
+        const { handle, submissions, ...associations } = data;
+        const subsCodeforces = submissions || (await this.codeforcesService.getSubmissions(handle, question.contestId));
+        const subsToCreate = subsCodeforces.filter((submission) => submission.problem.index === question.problemId);
+
+        for (const submission of subsToCreate) {
+            await this.submissionService.create(submission, associations);
+        }
     }
 }

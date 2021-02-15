@@ -1,12 +1,14 @@
 import { MiddlewareConsumer, Module, ModuleMetadata, RequestMethod } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthenticateMiddleware, AuthorizeColaboratorMiddleware } from 'src/auth/auth.middleware';
+import { CodeforcesService } from 'src/codeforces/codeforces.service';
+import { QuestionsModule } from 'src/questions/questions.module';
 import { ListController } from './list.controller';
 import { List } from './lists.entity';
 import { ListService } from './lists.service';
 
 const metadata: ModuleMetadata = {
-    imports: [TypeOrmModule.forFeature([List])],
+    imports: [TypeOrmModule.forFeature([List]), QuestionsModule, CodeforcesService],
     providers: [ListService],
     controllers: [ListController],
     exports: [],
@@ -22,6 +24,7 @@ export class ListModule {
                 { path: 'lists', method: RequestMethod.POST },
                 { path: 'lists/:id', method: RequestMethod.GET },
                 { path: 'lists/:id', method: RequestMethod.PUT },
+                { path: 'lists/:id/questions/submissions', method: RequestMethod.POST },
             );
         consumer
             .apply(AuthorizeColaboratorMiddleware)

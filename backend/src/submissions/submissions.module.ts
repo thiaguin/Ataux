@@ -8,7 +8,7 @@ const metadata: ModuleMetadata = {
     imports: [TypeOrmModule.forFeature([Submission])],
     providers: [SubmissionsService],
     controllers: [SubmissionsController],
-    exports: [],
+    exports: [SubmissionsService],
 };
 
 @Module(metadata)
