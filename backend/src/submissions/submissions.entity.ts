@@ -15,9 +15,12 @@ export class Submission {
     listId: number;
 
     @Column()
+    subId: number;
+
+    @Column()
     questionId: number;
 
-    @Column({ unique: true })
+    @Column()
     status: string;
 
     @Column()
@@ -31,6 +34,9 @@ export class Submission {
 
     @Column()
     memory: string;
+
+    @Column()
+    userId: number;
 
     @ManyToOne(() => ListQuestion, (entity) => entity.submissions)
     listQuestion: ListQuestion;

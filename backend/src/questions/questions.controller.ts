@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query } from '@nestjs/common';
+import { CheckSubmissionQuestionDTO } from './dto/checkSubmission-question.dto';
 import { CreateQuestionDTO } from './dto/create-question.dto';
 import { FindAllQuestionDTO } from './dto/findAll-questions.dto';
 import { QueryQuestionDTO } from './dto/query-question.dto';
@@ -27,6 +28,11 @@ export class QuestionsController {
     @Get('/:id')
     findById(@Param() params: { id: number }): Promise<Question> {
         return this.questionService.findById(params.id);
+    }
+
+    @Post('/:id/submissions')
+    checkSubmissions(@Param() params: { id: number }, @Body() body: CheckSubmissionQuestionDTO) {
+        return this.questionService.checkSubmissions(params.id, body);
     }
 
     @Post('/')

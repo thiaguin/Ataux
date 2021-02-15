@@ -11,6 +11,6 @@ export class SubmissionsController {
 
     @Get('/')
     findAll() {
-        return this.submissionService.getSourceCode(1178, 100487295);
+        return this.submissionService.getSourceCode('1178', '100487295');
     }
 }
