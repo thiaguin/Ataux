@@ -25,19 +25,21 @@ export class SubmissionsService {
         return submissions;
     }
 
-    async create(submission: CodeforcesSubmissionDTO, associations: SubmissionAssociationDTO): Promise<Submission> {
+    async create(submission: CodeforcesSubmissionDTO, data: SubmissionAssociationDTO): Promise<Submission> {
+        const createdTime = new Date(+`${submission.creationTimeSeconds}000`);
+        const limitTime = new Date(data.limitTime);
         const exist = await this.repository.findOne({
-            where: { subId: +submission.id, listId: associations.listId, questionId: associations.questionId },
+            where: { subId: +submission.id, listId: data.listId, questionId: data.questionId },
         });
 
-        if (!exist) {
+        if (!exist && createdTime <= limitTime) {
             const sourceCode = await this.getSourceCode(submission.contestId, submission.id);
             const newSubmission = this.repository.create({
-                listQuestionId: associations.listQuestionId,
-                userId: associations.userId,
-                listId: associations.listId,
+                listQuestionId: data.listQuestionId,
+                userId: data.userId,
+                listId: data.listId,
                 subId: +submission.id,
-                questionId: associations.questionId,
+                questionId: data.questionId,
                 status: submission.verdict,
                 language: submission.programmingLanguage,
                 time: submission.timeConsumedMillis,
@@ -45,7 +47,7 @@ export class SubmissionsService {
                 memory: submission.memoryConsumedBytes,
             });
             await this.repository.save(newSubmission);
-            return new Submission();
+            return newSubmission;
         }
     }
 

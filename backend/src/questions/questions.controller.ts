@@ -30,11 +30,6 @@ export class QuestionsController {
         return this.questionService.findById(params.id);
     }
 
-    @Post('/:id/submissions')
-    checkSubmissions(@Param() params: { id: number }, @Body() body: CheckSubmissionQuestionDTO) {
-        return this.questionService.checkSubmissions(params.id, body);
-    }
-
     @Post('/')
     create(@Body() body: CreateQuestionDTO) {
         return this.questionService.create(body);
