@@ -12,17 +12,21 @@ import { List } from './lists.entity';
 import { ListRepository } from './lists.repository';
 import { PayloadUserDTO } from '../users/dto/payload-user.dto';
 import { CodeforcesService } from 'src/codeforces/codeforces.service';
+import { SubmissionsService } from 'src/submissions/submissions.service';
+import { CheckSubmissionListDTO } from './dto/checkSubmission-list.dto';
 
 @Injectable()
 export class ListService {
     @InjectRepository(List)
     private repository: Repository<List>;
+    private submissionService: SubmissionsService;
     private questionService: QuestionsService;
     private codeforcesService: CodeforcesService;
 
     constructor() {
-        this.questionService = new QuestionsService();
+        this.submissionService = new SubmissionsService();
         this.codeforcesService = new CodeforcesService();
+        this.questionService = new QuestionsService();
         this.repository = getCustomRepository(ListRepository);
     }
 
@@ -77,30 +81,33 @@ export class ListService {
         await this.repository.update({ id: params.id }, body);
     }
 
-    async checkSubmissions(id: number, user: PayloadUserDTO) {
+    async checkSubmissions(id: number, user: PayloadUserDTO, body: CheckSubmissionListDTO) {
+        const currUser = body.user || user;
         const list = await this.findById(id);
         const contests = {};
         const submissions = {};
+        const listQuestions = list.questions.filter((value) => body.questions.includes(value.questionId));
 
-        for (const value of list.questions) {
+        for (const value of listQuestions) {
             contests[value.question.contestId] = true;
         }
 
         for (const contest in contests) {
-            submissions[contest] = await this.codeforcesService.getSubmissions(user.handle, contest);
+            submissions[contest] = await this.codeforcesService.getSubmissions(currUser.handle, contest);
         }
 
-        for (const value of list.questions) {
+        for (const value of listQuestions) {
             const data = {
-                handle: user.handle,
+                userId: currUser.id,
                 listQuestionId: value.id,
                 listId: value.listId,
                 questionId: value.questionId,
-                submissions: submissions[value.question.contestId],
-                userId: user.id,
+                limitTime: list.expirationTime,
             };
 
-            await this.questionService.checkSubmissions(value.questionId, data);
+            for (const submission of submissions[value.question.contestId]) {
+                await this.submissionService.create(submission, data);
+            }
         }
     }
 }

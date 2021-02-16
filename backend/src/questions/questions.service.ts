@@ -173,15 +173,4 @@ export class QuestionsService {
 
         this.repository.delete(id);
     }
-
-    async checkSubmissions(id: number, data: CheckSubmissionQuestionDTO): Promise<void> {
-        const question = await this.findById(id);
-        const { handle, submissions, ...associations } = data;
-        const subsCodeforces = submissions || (await this.codeforcesService.getSubmissions(handle, question.contestId));
-        const subsToCreate = subsCodeforces.filter((submission) => submission.problem.index === question.problemId);
-
-        for (const submission of subsToCreate) {
-            await this.submissionService.create(submission, associations);
-        }
-    }
 }

@@ -1,5 +1,6 @@
 import { Body, Controller, Get, HttpCode, Param, Post, Put, Query, Req } from '@nestjs/common';
 import { AddQuestionListDTO } from './dto/addQuestion-list.dto';
+import { CheckSubmissionListDTO } from './dto/checkSubmission-list.dto';
 import { CreateListDTO } from './dto/create-list.dto';
 import { FindAllListDTO } from './dto/findAll-list.dto';
 import { UpdateListDTO } from './dto/update-list.dto';
@@ -30,8 +31,8 @@ export class ListController {
     }
 
     @Post('/:id/questions/submissions')
-    checkSubmissions(@Param() params: { id: number }, @Req() req): Promise<void> {
-        return this.listService.checkSubmissions(params.id, req.user);
+    checkSubmissions(@Param() params: { id: number }, @Req() req, @Body() body: CheckSubmissionListDTO): Promise<void> {
+        return this.listService.checkSubmissions(params.id, req.user, body.questions);
     }
 
     @Post('/:id/questions')

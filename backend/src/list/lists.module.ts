@@ -3,12 +3,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthenticateMiddleware, AuthorizeColaboratorMiddleware } from 'src/auth/auth.middleware';
 import { CodeforcesService } from 'src/codeforces/codeforces.service';
 import { QuestionsModule } from 'src/questions/questions.module';
+import { SubmissionsController } from 'src/submissions/submissions.controller';
+import { SubmissionsModule } from 'src/submissions/submissions.module';
 import { ListController } from './list.controller';
 import { List } from './lists.entity';
 import { ListService } from './lists.service';
 
 const metadata: ModuleMetadata = {
-    imports: [TypeOrmModule.forFeature([List]), QuestionsModule, CodeforcesService],
+    imports: [TypeOrmModule.forFeature([List]), SubmissionsModule, CodeforcesService],
     providers: [ListService],
     controllers: [ListController],
     exports: [],
