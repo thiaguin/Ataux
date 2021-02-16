@@ -32,7 +32,7 @@ export class ListController {
 
     @Post('/:id/questions/submissions')
     checkSubmissions(@Param() params: { id: number }, @Req() req, @Body() body: CheckSubmissionListDTO): Promise<void> {
-        return this.listService.checkSubmissions(params.id, req.user, body.questions);
+        return this.listService.checkSubmissions(params.id, req.user, body);
     }
 
     @Post('/:id/questions')
