@@ -25,6 +25,11 @@ export class ListController {
         return this.listService.findById(params.id);
     }
 
+    @Get('/:id/resume')
+    getResume(@Param() params: { id: number }, @Query() query) {
+        return this.listService.getResume(params.id, query);
+    }
+
     @Post('/')
     create(@Body() body: CreateListDTO): Promise<List> {
         return this.listService.create(body);

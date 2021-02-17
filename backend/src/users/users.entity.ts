@@ -9,6 +9,9 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { UserClass } from 'src/usersClasses/usersClasses.entity';
+import { SubmissionAssociationDTO } from 'src/submissions/submission-associations.dto';
+import { Submission } from 'src/submissions/submissions.entity';
+import { UserList } from 'src/userList/userList.entity';
 
 @Entity()
 export class User {
@@ -35,6 +38,12 @@ export class User {
 
     @OneToMany(() => UserClass, (userClass) => userClass.user)
     userClass: UserClass[];
+
+    @OneToMany(() => UserList, (userList) => userList.user)
+    lists: UserList[];
+
+    @OneToMany(() => Submission, (submission) => submission.user)
+    submissions: Submission[];
 
     @CreateDateColumn({ type: 'timestamp with time zone' })
     createdAt: string;

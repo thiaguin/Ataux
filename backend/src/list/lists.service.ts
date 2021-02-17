@@ -3,7 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ListQuestion } from 'src/listQuestion/listQuestion.entity';
 import { QuestionsService } from 'src/questions/questions.service';
 import { QuestionTag } from 'src/questionTags/questionTags.entity';
-import { getCustomRepository, getRepository, Repository } from 'typeorm';
+import {
+    createQueryBuilder,
+    getConnection,
+    getCustomRepository,
+    getManager,
+    getRepository,
+    Repository,
+    SelectQueryBuilder,
+} from 'typeorm';
 import { CreateListDTO } from './dto/create-list.dto';
 import { FindAllListDTO } from './dto/findAll-list.dto';
 import { QueryListDTO } from './dto/query-list.dto';
@@ -14,6 +22,11 @@ import { PayloadUserDTO } from '../users/dto/payload-user.dto';
 import { CodeforcesService } from 'src/codeforces/codeforces.service';
 import { SubmissionsService } from 'src/submissions/submissions.service';
 import { CheckSubmissionListDTO } from './dto/checkSubmission-list.dto';
+import { UserList } from 'src/userList/userList.entity';
+import { UserClass } from 'src/usersClasses/usersClasses.entity';
+import { UserQuestionList } from 'src/userQuestionList/userQuestionList.entity';
+import { User } from 'src/users/users.entity';
+import { Question } from 'src/questions/questions.entity';
 
 @Injectable()
 export class ListService {
@@ -30,10 +43,63 @@ export class ListService {
         this.repository = getCustomRepository(ListRepository);
     }
 
+    getUserListRepository(): Repository<UserList> {
+        return getManager().getRepository(UserList);
+    }
+
+    getUserClassRepository(): Repository<UserClass> {
+        return getManager().getRepository(UserClass);
+    }
+
+    getNickFromAttribute(attributeName: string): string {
+        const listColumns = getConnection().getMetadata(List).ownColumns;
+        const userListColumns = getConnection().getMetadata(UserList).ownColumns;
+        const userQuestionListColumns = getConnection().getMetadata(UserQuestionList).ownColumns;
+        const userColumns = getConnection().getMetadata(User).ownColumns;
+        const questionColumns = getConnection().getMetadata(Question).ownColumns;
+
+        const listColumnsName = listColumns.map((column) => column.propertyName);
+        const userListColumnsName = userListColumns.map((column) => column.propertyName);
+        const userQuestionListColumnsName = userQuestionListColumns.map((column) => column.propertyName);
+        const userColumnsName = userColumns.map((column) => column.propertyName);
+        const questionColumnsName = questionColumns.map((column) => column.propertyName);
+
+        if (listColumnsName.includes(attributeName)) return 'l';
+        else if (userListColumnsName.includes(attributeName)) return 'ul';
+        else if (userQuestionListColumnsName.includes(attributeName)) return 'lq';
+        else if (userColumnsName.includes(attributeName)) return 'u';
+        else if (questionColumnsName.includes(attributeName)) return 'q';
+        else return '';
+    }
+
+    getWhereToResume(id, attributes) {
+        let result = `l.id = ${id}`;
+
+        for (const key in attributes) {
+            const nick = this.getNickFromAttribute(key);
+            if (nick) result += ` and ${nick}.${key} = '${attributes[key]}'`;
+        }
+
+        return result;
+    }
+
     async create(body: CreateListDTO): Promise<List> {
         const newList = this.repository.create(body);
         await this.repository.save(newList);
         return newList;
+    }
+
+    async getResume(id: number, query) {
+        const queryBuild = createQueryBuilder(List, 'l');
+        const where = this.getWhereToResume(id, query);
+        const list = await queryBuild
+            .leftJoinAndMapMany('l.users', 'l.users', 'ul')
+            .leftJoinAndMapMany('ul.user', 'ul.user', 'u')
+            .leftJoinAndMapMany('ul.questions', 'ul.questions', 'lq')
+            .leftJoinAndMapMany('lq.question', 'lq.question', 'q')
+            .where(where)
+            .getMany();
+        return list;
     }
 
     async addQuestions(id: number, questionIds: number[]): Promise<void> {
@@ -81,9 +147,38 @@ export class ListService {
         await this.repository.update({ id: params.id }, body);
     }
 
+    async createUserListIfNotExist(list: List, user: PayloadUserDTO): Promise<UserList> {
+        const userClass = await this.getUserClassRepository().findOne({
+            where: { classId: list.classId, userId: user.id },
+        });
+
+        if (userClass) {
+            const userList = await this.getUserListRepository().findOne({
+                where: { listId: list.id, userId: user.id },
+            });
+
+            if (!userList) {
+                const newUserList = this.getUserListRepository().create({
+                    listId: list.id,
+                    userId: user.id,
+                });
+
+                await this.getUserListRepository().save(newUserList);
+
+                return newUserList;
+            }
+
+            return userList;
+        }
+
+        throw new HttpException('BadRequest', 400);
+    }
+
     async checkSubmissions(id: number, user: PayloadUserDTO, body: CheckSubmissionListDTO) {
         const currUser = body.user || user;
         const list = await this.findById(id);
+        const userList = await this.createUserListIfNotExist(list, user);
+
         const contests = {};
         const submissions = {};
         const listQuestions = list.questions.filter((value) => body.questions.includes(value.questionId));
@@ -103,6 +198,7 @@ export class ListService {
                 listId: value.listId,
                 questionId: value.questionId,
                 limitTime: list.expirationTime,
+                userListId: userList.id,
             };
 
             for (const submission of submissions[value.question.contestId]) {

@@ -10,7 +10,8 @@ export class SubmissionsController {
     }
 
     @Get('/')
-    findAll() {
-        return this.submissionService.getSourceCode('1178', '100487295');
+    findAll(@Query() query) {
+        console.log('here');
+        return this.submissionService.getUserSubmission(query);
     }
 }
