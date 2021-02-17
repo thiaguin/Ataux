@@ -42,7 +42,7 @@ export class SubmissionsService {
         });
 
         if (userQuestionList) {
-            const statusIsOk = userQuestionList.status === statusOK || data.submission.verdict === statusNOK;
+            const statusIsOk = userQuestionList.status === statusOK || data.submission.verdict === statusOK;
             const newValue = {
                 ...userQuestionList,
                 status: statusIsOk ? statusOK : statusNOK,
