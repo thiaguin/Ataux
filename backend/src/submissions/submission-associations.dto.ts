@@ -4,4 +4,5 @@ export class SubmissionAssociationDTO {
     questionId: number;
     userId: number;
     limitTime: string;
+    userListId: number;
 }

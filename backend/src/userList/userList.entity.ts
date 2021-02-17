@@ -3,24 +3,26 @@ import { Question } from 'src/questions/questions.entity';
 import { Tag } from 'src/tags/tags.entity';
 import { List } from 'src/list/lists.entity';
 import { Submission } from 'src/submissions/submissions.entity';
+import { User } from 'src/users/users.entity';
+import { UserQuestionList } from 'src/userQuestionList/userQuestionList.entity';
 
 @Entity()
-export class ListQuestion {
+export class UserList {
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column()
-    questionId: number;
+    userId: number;
 
     @Column()
     listId: number;
 
-    @ManyToOne(() => Question, (question) => question.lists)
-    question: Question;
-
-    @ManyToOne(() => List, (list) => list.questions)
+    @ManyToOne(() => List, (list) => list.users)
     list: List;
 
-    @OneToMany(() => Submission, (submission) => submission.listQuestion)
-    submissions: Submission[];
+    @ManyToOne(() => User, (user) => user.lists)
+    user: User;
+
+    @OneToMany(() => UserQuestionList, (userQuestionList) => userQuestionList.userList)
+    questions: UserQuestionList[];
 }

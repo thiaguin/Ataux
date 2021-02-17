@@ -1,6 +1,7 @@
 import { List } from 'src/list/lists.entity';
 import { ListQuestion } from 'src/listQuestion/listQuestion.entity';
 import { Question } from 'src/questions/questions.entity';
+import { User } from 'src/users/users.entity';
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
 
 @Entity()
@@ -46,6 +47,9 @@ export class Submission {
 
     @ManyToOne(() => Question, (entity) => entity.submissions)
     question: Question;
+
+    @ManyToOne(() => User, (entity) => entity.submissions)
+    user: User;
 
     @CreateDateColumn({ type: 'timestamp with time zone' })
     createdAt: string;

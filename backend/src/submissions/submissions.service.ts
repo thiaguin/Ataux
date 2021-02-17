@@ -1,11 +1,16 @@
 import * as cheerio from 'cheerio';
 import { HttpService, Injectable } from '@nestjs/common';
-import { getCustomRepository, Repository } from 'typeorm';
+import { getCustomRepository, getManager, Repository } from 'typeorm';
 import { Submission } from './submissions.entity';
 import { SubmissionRepository } from './submissions.repository';
 import { CodeforcesSubmissionDTO } from 'src/codeforces/dto/codeforces-submission.dto';
 import { SubmissionAssociationDTO } from './submission-associations.dto';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserQuestionList } from 'src/userQuestionList/userQuestionList.entity';
+import { SetUserQuestionListSubmission } from './dto/setUserQuestionList-submission.dto';
+import { User } from 'src/users/users.entity';
+import { QuestionStatus } from 'src/enums/questionStatus.enum';
+import { Question } from 'src/questions/questions.entity';
 
 @Injectable()
 export class SubmissionsService {
@@ -20,19 +25,62 @@ export class SubmissionsService {
         this.BASE_URL = 'http://codeforces.com';
     }
 
+    getUserQuestionListRepository(): Repository<UserQuestionList> {
+        return getManager().getRepository(UserQuestionList);
+    }
+
     async findAll(query): Promise<Submission[]> {
         const submissions = await this.repository.find(query);
         return submissions;
     }
 
+    async setUserQuestionList(data: SetUserQuestionListSubmission): Promise<void> {
+        const statusOK = QuestionStatus.OK;
+        const statusNOK = QuestionStatus.NOK;
+        const userQuestionList = await this.getUserQuestionListRepository().findOne({
+            where: { questionId: data.questionId, userListId: data.userListId },
+        });
+
+        if (userQuestionList) {
+            const statusIsOk = userQuestionList.status === statusOK || data.submission.verdict === statusNOK;
+            const newValue = {
+                ...userQuestionList,
+                status: statusIsOk ? statusOK : statusNOK,
+                count: userQuestionList.count + 1,
+            };
+            await this.getUserQuestionListRepository().save(newValue);
+        } else {
+            const newUserQuestionList = {
+                questionId: data.questionId,
+                userListId: data.userListId,
+                status: data.submission.verdict === statusOK ? statusOK : statusNOK,
+                count: 1,
+            };
+            this.getUserQuestionListRepository().create(newUserQuestionList);
+            await this.getUserQuestionListRepository().save(newUserQuestionList);
+        }
+    }
+
     async create(submission: CodeforcesSubmissionDTO, data: SubmissionAssociationDTO): Promise<Submission> {
         const createdTime = new Date(+`${submission.creationTimeSeconds}000`);
         const limitTime = new Date(data.limitTime);
+
         const exist = await this.repository.findOne({
-            where: { subId: +submission.id, listId: data.listId, questionId: data.questionId },
+            where: {
+                subId: +submission.id,
+                listId: data.listId,
+                questionId: data.questionId,
+            },
         });
 
+        const dataToSetUserQuestionList = {
+            questionId: data.questionId,
+            userListId: data.userListId,
+            submission: submission,
+        };
+
         if (!exist && createdTime <= limitTime) {
+            await this.setUserQuestionList(dataToSetUserQuestionList);
             const sourceCode = await this.getSourceCode(submission.contestId, submission.id);
             const newSubmission = this.repository.create({
                 listQuestionId: data.listQuestionId,
@@ -59,5 +107,10 @@ export class SubmissionsService {
         const sourceCode = $('.program-source')[0].children[0].data;
 
         return sourceCode;
+    }
+
+    async getUserSubmission(query) {
+        const submissions = await this.repository.find({ where: query, relations: ['user'] });
+        return submissions;
     }
 }
