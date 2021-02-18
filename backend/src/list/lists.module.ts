@@ -13,7 +13,7 @@ const metadata: ModuleMetadata = {
     imports: [TypeOrmModule.forFeature([List]), SubmissionsModule, CodeforcesService],
     providers: [ListService],
     controllers: [ListController],
-    exports: [],
+    exports: [ListService],
 };
 
 @Module(metadata)

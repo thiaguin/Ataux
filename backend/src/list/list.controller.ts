@@ -26,7 +26,7 @@ export class ListController {
     }
 
     @Get('/:id/resume')
-    getResume(@Param() params: { id: number }, @Query() query) {
+    getResume(@Param() params: { id: number }, @Query() query): Promise<List[]> {
         return this.listService.getResume(params.id, query);
     }
 

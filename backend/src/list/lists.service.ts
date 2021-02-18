@@ -2,16 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ListQuestion } from 'src/listQuestion/listQuestion.entity';
 import { QuestionsService } from 'src/questions/questions.service';
-import { QuestionTag } from 'src/questionTags/questionTags.entity';
-import {
-    createQueryBuilder,
-    getConnection,
-    getCustomRepository,
-    getManager,
-    getRepository,
-    Repository,
-    SelectQueryBuilder,
-} from 'typeorm';
+import { createQueryBuilder, getConnection, getCustomRepository, getManager, getRepository, Repository } from 'typeorm';
 import { CreateListDTO } from './dto/create-list.dto';
 import { FindAllListDTO } from './dto/findAll-list.dto';
 import { QueryListDTO } from './dto/query-list.dto';
@@ -52,24 +43,22 @@ export class ListService {
     }
 
     getNickFromAttribute(attributeName: string): string {
-        const listColumns = getConnection().getMetadata(List).ownColumns;
-        const userListColumns = getConnection().getMetadata(UserList).ownColumns;
-        const userQuestionListColumns = getConnection().getMetadata(UserQuestionList).ownColumns;
-        const userColumns = getConnection().getMetadata(User).ownColumns;
-        const questionColumns = getConnection().getMetadata(Question).ownColumns;
+        const entities = [
+            { entity: List, nick: 'l' },
+            { entity: UserList, nick: 'ul' },
+            { entity: UserQuestionList, nick: 'lq' },
+            { entity: User, nick: 'u' },
+            { entity: Question, nick: 'q' },
+        ];
 
-        const listColumnsName = listColumns.map((column) => column.propertyName);
-        const userListColumnsName = userListColumns.map((column) => column.propertyName);
-        const userQuestionListColumnsName = userQuestionListColumns.map((column) => column.propertyName);
-        const userColumnsName = userColumns.map((column) => column.propertyName);
-        const questionColumnsName = questionColumns.map((column) => column.propertyName);
+        for (const value of entities) {
+            const entityColumns = getConnection().getMetadata(value.entity).ownColumns;
+            const entityColumnsName = entityColumns.map((column) => column.propertyName);
 
-        if (listColumnsName.includes(attributeName)) return 'l';
-        else if (userListColumnsName.includes(attributeName)) return 'ul';
-        else if (userQuestionListColumnsName.includes(attributeName)) return 'lq';
-        else if (userColumnsName.includes(attributeName)) return 'u';
-        else if (questionColumnsName.includes(attributeName)) return 'q';
-        else return '';
+            if (entityColumnsName.includes(attributeName)) return value.nick;
+        }
+
+        return '';
     }
 
     getWhereToResume(id, attributes) {
@@ -89,7 +78,7 @@ export class ListService {
         return newList;
     }
 
-    async getResume(id: number, query) {
+    async getResume(id: number, query): Promise<List[]> {
         const queryBuild = createQueryBuilder(List, 'l');
         const where = this.getWhereToResume(id, query);
         const list = await queryBuild
