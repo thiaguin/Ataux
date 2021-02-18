@@ -37,7 +37,7 @@ export class User {
     googleId: string;
 
     @OneToMany(() => UserClass, (userClass) => userClass.user)
-    userClass: UserClass[];
+    classes: UserClass[];
 
     @OneToMany(() => UserList, (userList) => userList.user)
     lists: UserList[];

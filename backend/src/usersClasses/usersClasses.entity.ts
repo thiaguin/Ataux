@@ -17,9 +17,9 @@ export class UserClass {
     @Column({ type: 'enum', enum: UserRole })
     role: UserRole;
 
-    @ManyToOne(() => Class, (entity) => entity.userClass)
+    @ManyToOne(() => Class, (entity) => entity.users)
     class: Class;
 
-    @ManyToOne(() => User, (entity) => entity.userClass)
+    @ManyToOne(() => User, (entity) => entity.classes)
     user: User;
 }

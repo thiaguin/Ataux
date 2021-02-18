@@ -18,7 +18,7 @@ export class Class {
     lists: List[];
 
     @OneToMany(() => UserClass, (userClass) => userClass.class)
-    userClass: UserClass[];
+    users: UserClass[];
 
     @CreateDateColumn({ type: 'timestamp with time zone' })
     createdAt: string;

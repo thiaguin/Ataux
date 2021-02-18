@@ -9,14 +9,20 @@ import { CreateClassDTO } from './dto/create-class.dto';
 import { UserRole } from '../enums/userRole.enum';
 import { RegisterUserDTO } from './dto/register-user.dto';
 import { UserClassRepository } from 'src/usersClasses/usersClasses.repository';
+import { ListService } from 'src/list/lists.service';
+import { QuestionStatus } from 'src/enums/questionStatus.enum';
+import { QuestionResumeClass } from './dto/questionResume-class.dto';
+import { UserResumeClass } from './dto/userResume-class.dto';
 
 @Injectable()
 export class ClassesService {
     @InjectRepository(Class)
     private repository: Repository<Class>;
+    private listService: ListService;
 
     constructor() {
         this.repository = getCustomRepository(ClassRepository);
+        this.listService = new ListService();
     }
 
     generateCode(): string {
@@ -33,6 +39,34 @@ export class ClassesService {
         return result.join('');
     }
 
+    async getResume(id: number): Promise<Class> {
+        const entity = await this.findById(id);
+        const listResumes = [];
+
+        for (const list of entity.lists) {
+            const [listResume] = await this.listService.getResume(list.id, {});
+            const usersResume = [];
+
+            for (const user of listResume.users) {
+                const userResume: UserResumeClass = {};
+                const questionsResume = { [QuestionStatus.OK]: 0, [QuestionStatus.NOK]: 0 };
+
+                userResume.user = user.user;
+
+                for (const question of user.questions) {
+                    questionsResume[question.status] += 1;
+                }
+
+                userResume.questions = questionsResume;
+                usersResume.push(userResume);
+            }
+
+            listResumes.push({ ...listResume, users: usersResume });
+        }
+
+        return { ...entity, lists: listResumes };
+    }
+
     async findAndCountAll(): Promise<{ classes: Class[]; count: number }> {
         const [classes, count] = await this.repository.findAndCount();
         return { classes, count };
@@ -41,7 +75,7 @@ export class ClassesService {
     async findById(id: number): Promise<Class> {
         const entity = await this.repository.findOne({
             where: { id: id },
-            relations: ['lists'],
+            relations: ['lists', 'users'],
         });
 
         if (!entity) {
