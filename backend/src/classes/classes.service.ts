@@ -12,7 +12,6 @@ import { UserClassRepository } from 'src/usersClasses/usersClasses.repository';
 import { ListService } from 'src/list/lists.service';
 import { QuestionStatus } from 'src/enums/questionStatus.enum';
 import { UserResumeClass } from './dto/userResume-class.dto';
-import { List } from 'src/list/lists.entity';
 
 @Injectable()
 export class ClassesService {
@@ -53,7 +52,7 @@ export class ClassesService {
                 const questionsResume = {
                     [QuestionStatus.OK]: 0,
                     [QuestionStatus.NOK]: 0,
-                    [QuestionStatus.BLANK]: listResume.questionsCount,
+                    [QuestionStatus.BLANK]: listResume.questions?.length || 0, //listResume.questionsCount,
                 };
 
                 userResume.user = user.user;
@@ -63,7 +62,7 @@ export class ClassesService {
                     questionsResume.BLANK -= 1;
                 }
 
-                userResume.questions = questionsResume;
+                userResume.questions = { resume: questionsResume, grade: user.grade };
                 usersResume.push(userResume);
             }
 
@@ -95,13 +94,17 @@ export class ClassesService {
             for (const userList of list.users) {
                 const [currentUser] = <any>userList.user;
                 const currentQuestions = <any>userList.questions;
-                usersClass[currentUser.id][list.id] = currentQuestions;
+
                 visiteds[currentUser.id] = true;
+                usersClass[currentUser.id][list.id] = {
+                    resume: currentQuestions.resume,
+                    grade: currentQuestions.grade,
+                };
             }
 
             for (const user of classResume.users) {
                 if (!visiteds[user.userId]) {
-                    usersClass[user.user.id][list.id] = { BLANK: list.questionsCount };
+                    usersClass[user.user.id][list.id] = { resume: { BLANK: list.questions?.length || 0 }, grade: '0' };
                 }
             }
         }
@@ -111,7 +114,7 @@ export class ClassesService {
             const row = [currentUser.name, currentUser.handle];
 
             for (const list of classResume.lists) {
-                row.push(usersClass[id][list.id]);
+                row.push(usersClass[key][list.id].grade);
             }
 
             rows.push(row);

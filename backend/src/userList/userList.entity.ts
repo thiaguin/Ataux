@@ -25,4 +25,6 @@ export class UserList {
 
     @OneToMany(() => UserQuestionList, (userQuestionList) => userQuestionList.userList)
     questions: UserQuestionList[];
+
+    grade?: string;
 }
