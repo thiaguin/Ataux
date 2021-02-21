@@ -25,8 +25,13 @@ export class ListController {
         return this.listService.findById(params.id);
     }
 
+    @Get('/:id/csv')
+    getCSV(@Param() params: { id: number }) {
+        return this.listService.getToCSV(params.id);
+    }
+
     @Get('/:id/resume')
-    getResume(@Param() params: { id: number }, @Query() query): Promise<List[]> {
+    getResume(@Param() params: { id: number }, @Query() query): Promise<List> {
         return this.listService.getResume(params.id, query);
     }
 
