@@ -10,9 +10,6 @@ export class Submission {
     id: number;
 
     @Column()
-    listQuestionId: number;
-
-    @Column()
     listId: number;
 
     @Column()
@@ -38,9 +35,6 @@ export class Submission {
 
     @Column()
     userId: number;
-
-    @ManyToOne(() => ListQuestion, (entity) => entity.submissions)
-    listQuestion: ListQuestion;
 
     @ManyToOne(() => List, (entity) => entity.submissions)
     list: List;

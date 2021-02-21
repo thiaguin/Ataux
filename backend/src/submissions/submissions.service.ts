@@ -81,7 +81,6 @@ export class SubmissionsService {
             await this.setUserQuestionList(dataToSetUserQuestionList);
             const sourceCode = await this.getSourceCode(submission.contestId, submission.id);
             const newSubmission = this.repository.create({
-                listQuestionId: data.listQuestionId,
                 userId: data.userId,
                 listId: data.listId,
                 subId: +submission.id,

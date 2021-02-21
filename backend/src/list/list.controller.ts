@@ -42,7 +42,7 @@ export class ListController {
 
     @Post('/:id/questions')
     addQuestions(@Param() params: { id: number }, @Body() body: AddQuestionListDTO): Promise<void> {
-        return this.listService.addQuestions(params.id, body.questionIds);
+        return this.listService.setQuestions(params.id, body.questionIds);
     }
 
     @Put('/:id')

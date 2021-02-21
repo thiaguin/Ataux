@@ -19,6 +19,7 @@ import { User } from 'src/users/users.entity';
 import { Question } from 'src/questions/questions.entity';
 import { QueryService } from 'src/utils/query.service';
 import { EntityToQuery } from 'src/utils/dto/entityQuery.dto';
+import { ListResumeDTO } from './dto/resume-list.dto';
 
 @Injectable()
 export class ListService {
@@ -64,27 +65,33 @@ export class ListService {
         const entitiesRelation = this.getEntitiesRelation();
         const where = `l.id = '${id}' and ${this.queryService.getQuery(entitiesRelation, query)}`;
         const list = await queryBuild
+            .loadRelationCountAndMap('l.questionsCount', 'l.questions')
             .leftJoinAndMapMany('l.users', 'l.users', 'ul')
             .leftJoinAndMapMany('ul.user', 'ul.user', 'u')
             .leftJoinAndMapMany('ul.questions', 'ul.questions', 'lq')
             .leftJoinAndMapMany('lq.question', 'lq.question', 'q')
             .where(where)
             .getMany();
+
         return list;
     }
 
-    async addQuestions(id: number, questionIds: number[]): Promise<void> {
+    async setQuestions(id: number, questionIds: number[]): Promise<void> {
         const list = await this.findById(id);
         const listQuestionRepository = getRepository(ListQuestion);
 
-        const listQuestions = questionIds.map((questionId) =>
-            listQuestionRepository.create({
-                questionId,
-                listId: list.id,
-            }),
-        );
+        return await getManager().transaction(async (transactionManager) => {
+            await transactionManager.delete(ListQuestion, { listId: list.id });
 
-        await listQuestionRepository.save(listQuestions);
+            const listQuestions = questionIds.map((questionId) =>
+                listQuestionRepository.create({
+                    questionId,
+                    listId: list.id,
+                }),
+            );
+
+            await listQuestionRepository.save(listQuestions);
+        });
     }
 
     async findAll(query: QueryListDTO): Promise<FindAllListDTO> {
@@ -165,7 +172,6 @@ export class ListService {
         for (const value of listQuestions) {
             const data = {
                 userId: currUser.id,
-                listQuestionId: value.id,
                 listId: value.listId,
                 questionId: value.questionId,
                 limitTime: list.expirationTime,
