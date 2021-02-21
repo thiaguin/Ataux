@@ -49,11 +49,37 @@ export class ListService {
     getEntitiesRelation(): EntityToQuery[] {
         return [
             { entity: List, nick: 'l' },
+            { entity: ListQuestion, nick: 'lq' },
+            { entity: Question, nick: 'lqq' },
             { entity: UserList, nick: 'ul' },
-            { entity: UserQuestionList, nick: 'lq' },
+            { entity: UserQuestionList, nick: 'uql' },
             { entity: User, nick: 'u' },
             { entity: Question, nick: 'q' },
         ];
+    }
+
+    addUserGrade(list: List): List {
+        const questionsWeight = {};
+        let maxGrade = 0;
+
+        for (const value of list?.questions) {
+            maxGrade += value.weight;
+            questionsWeight[value.questionId] = value.weight;
+        }
+
+        for (const value of list.users) {
+            let userWeight = 0;
+
+            for (const question of value.questions) {
+                if (question.status === QuestionStatus.OK) {
+                    userWeight += questionsWeight[question.questionId];
+                }
+            }
+
+            value.grade = maxGrade > 0 ? ((userWeight * 100) / maxGrade).toFixed(2) : '0';
+        }
+
+        return list;
     }
 
     async create(body: CreateListDTO): Promise<List> {
@@ -63,15 +89,22 @@ export class ListService {
     }
 
     async getToCSV(id: number) {
-        const list = await this.findById(id);
-        const listResume = await this.getResume(list.id, {});
+        const listResume = await this.getResume(id, {});
+        const questionsWeight = {};
+        let totalWeight = 0;
+
+        for (const value of listResume.questions) {
+            questionsWeight[value.questionId] = value.weight;
+            totalWeight += value.weight;
+        }
 
         const columnsName = [
             'Name',
             'Handle',
-            ...list.questions.map((el, index) => {
+            ...listResume.questions.map((el, index) => {
                 return `Question ${index + 1} - (${el.question.title})`;
             }),
+            'Grade',
         ];
 
         const rows = [];
@@ -84,14 +117,14 @@ export class ListService {
                 questionsSubmmited[question.questionId] = `${question.status} - (${question.count})`;
             }
 
-            const userQuestions = list.questions.map((question) => {
+            const userQuestions = listResume.questions.map((question) => {
                 return questionsSubmmited[question.questionId] || `${QuestionStatus.BLANK} - (0)`;
             });
 
-            rows.push([currentUser.name, currentUser.handle, ...userQuestions]);
+            rows.push([currentUser.name, currentUser.handle, ...userQuestions, user.grade]);
         }
 
-        const result = [columnsName, rows.sort((a, b) => (a[0] > b[0] ? 1 : -1))];
+        const result = [columnsName, ...rows.sort((a, b) => (a[0] > b[0] ? 1 : -1))];
         return result;
     }
 
@@ -100,15 +133,20 @@ export class ListService {
         const entitiesRelation = this.getEntitiesRelation();
         const where = `l.id = '${id}' and ${this.queryService.getQuery(entitiesRelation, query)}`;
         const [list] = await queryBuild
-            .loadRelationCountAndMap('l.questionsCount', 'l.questions')
+            .leftJoinAndMapMany('l.questions', 'l.questions', 'lq')
+            .leftJoinAndMapMany('lq.question', 'lq.question', 'lqq')
             .leftJoinAndMapMany('l.users', 'l.users', 'ul')
             .leftJoinAndMapMany('ul.user', 'ul.user', 'u')
-            .leftJoinAndMapMany('ul.questions', 'ul.questions', 'lq')
+            .leftJoinAndMapMany('ul.questions', 'ul.questions', 'uql')
             .leftJoinAndMapMany('lq.question', 'lq.question', 'q')
             .where(where)
             .getMany();
 
-        return list;
+        if (list) {
+            return this.addUserGrade(list);
+        }
+
+        throw new HttpException('NotFound', 404);
     }
 
     async setQuestions(id: number, questionIds: number[]): Promise<void> {
