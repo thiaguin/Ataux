@@ -1,6 +1,6 @@
-import { Body, HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getCustomRepository, getManager, Repository } from 'typeorm';
+import { createQueryBuilder, getCustomRepository, getManager, Repository } from 'typeorm';
 import { Question } from './questions.entity';
 import { QuestionRepository } from './questions.repository';
 import { CreateQuestionDTO } from './dto/create-question.dto';
@@ -13,23 +13,27 @@ import { QuestionLevel } from 'src/enums/questionLevel.enum';
 import { TagsService } from 'src/tags/tags.service';
 import { Tag } from 'src/tags/tags.entity';
 import { NewQuestionDTO } from './dto/new-question.dto';
-import { SubmissionsService } from 'src/submissions/submissions.service';
-import { SubmissionAssociationDTO } from 'src/submissions/submission-associations.dto';
-import { CheckSubmissionQuestionDTO } from './dto/checkSubmission-question.dto';
+import { AddQuestionsByContestResult } from './dto/addByContest-result.dto';
+import { PaginateService } from 'src/utils/paginate.service';
+import { QueryService } from 'src/utils/query.service';
+import { EntityToQuery } from 'src/utils/dto/entityQuery.dto';
+import { Query } from 'typeorm/driver/Query';
 
 @Injectable()
 export class QuestionsService {
     @InjectRepository(Question)
     private repository: Repository<Question>;
     private codeforcesService: CodeforcesService;
-    private submissionService: SubmissionsService;
     private tagService: TagsService;
+    private paginateService: PaginateService;
+    private queryService: QueryService;
 
     constructor() {
         this.repository = getCustomRepository(QuestionRepository);
         this.codeforcesService = new CodeforcesService();
         this.tagService = new TagsService();
-        this.submissionService = new SubmissionsService();
+        this.paginateService = new PaginateService();
+        this.queryService = new QueryService();
     }
 
     getInfoByURL(url: string): { contestId: string; problemId: string } {
@@ -55,6 +59,17 @@ export class QuestionsService {
         throw new HttpException('BadRequest', 400);
     }
 
+    getContestByURL(url: string): string {
+        const SEPARATOR = 'codeforces.com/';
+        const CONTEST = 'contest/';
+
+        const [, body] = url.split(SEPARATOR);
+        const [, aux] = body ? body.split(CONTEST) : ['', ''];
+
+        const [result] = aux ? aux.split('/') : [''];
+        return result;
+    }
+
     getMissedTags(createdTags: Tag[], allTags: string[]): string[] {
         const createds = {};
 
@@ -65,10 +80,27 @@ export class QuestionsService {
         return allTags.filter((tag) => !createds[tag]);
     }
 
+    getEntitiesRelation(): EntityToQuery[] {
+        return [
+            { entity: Question, nick: 'q' },
+            { entity: QuestionTag, nick: 'qt' },
+            { entity: Tag, nick: 't' },
+        ];
+    }
+
     async findAndCountAll(query: QueryQuestionDTO): Promise<FindAllQuestionDTO> {
-        const [questions, count] = await this.repository.findAndCount({
-            where: { ...query },
-        });
+        const page = this.paginateService.getPage(query);
+        const queryBuild = createQueryBuilder(Question, 'q');
+        const entitiesRelation = this.getEntitiesRelation();
+        const where = this.queryService.getQuery(entitiesRelation, <Query>query);
+
+        const [questions, count] = await queryBuild
+            .leftJoinAndMapMany('q.tags', 'q.tags', 'qt')
+            .leftJoinAndMapMany('qt.tag', 'qt.tag', 't')
+            .where(where)
+            .take(page.take)
+            .skip(page.skip)
+            .getManyAndCount();
 
         return { data: questions, count };
     }
@@ -126,9 +158,36 @@ export class QuestionsService {
         };
     }
 
-    async create(body: CreateQuestionDTO) {
+    async addContestQuestions(url: string): Promise<AddQuestionsByContestResult> {
+        const contestId = await this.getContestByURL(url);
+        const contest = await this.codeforcesService.getContest(contestId);
+        const result = { SUCCESS: [], ERROR: [] };
+
+        for (const question of contest.problems) {
+            try {
+                const problemId = question.index;
+                const newQuestion = {
+                    url: `https://codeforces.com/contest/${contestId}/problem/${problemId}`,
+                    contestId: contestId,
+                    problemId: problemId,
+                    // TODO: Calculate level
+                    level: QuestionLevel.MEDIUM,
+                    title: question.name,
+                    tags: question.tags,
+                };
+                await this.createQuestion(newQuestion);
+                result.SUCCESS.push(question.index);
+            } catch (error) {
+                result.ERROR.push(question.index);
+            }
+        }
+
+        return result;
+    }
+
+    async createQuestion(question: NewQuestionDTO): Promise<Question> {
         return await getManager().transaction(async (transactionManager) => {
-            const { tags, ...newQuestion } = await this.generateNewQuestion(body?.url);
+            const { tags, ...newQuestion } = question;
             const entity = transactionManager.create(Question, newQuestion);
 
             await transactionManager.save(entity);
@@ -150,6 +209,10 @@ export class QuestionsService {
             await transactionManager.save(questionTags);
             return entity;
         });
+    }
+    async create(body: CreateQuestionDTO): Promise<Question> {
+        const question = await this.generateNewQuestion(body?.url);
+        return this.createQuestion(question);
     }
 
     async update(id: number, body: UpdateQuestionDTO): Promise<void> {

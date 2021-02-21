@@ -1,6 +1,5 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { title } from 'process';
 import { getCustomRepository, Repository } from 'typeorm';
 import { CreateTagDTO } from './dto/create-tag.dto';
 import { FindAllTagDTO } from './dto/findAll-tag.dto';

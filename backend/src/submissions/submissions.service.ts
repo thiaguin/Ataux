@@ -8,9 +8,7 @@ import { SubmissionAssociationDTO } from './submission-associations.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserQuestionList } from 'src/userQuestionList/userQuestionList.entity';
 import { SetUserQuestionListSubmission } from './dto/setUserQuestionList-submission.dto';
-import { User } from 'src/users/users.entity';
 import { QuestionStatus } from 'src/enums/questionStatus.enum';
-import { Question } from 'src/questions/questions.entity';
 
 @Injectable()
 export class SubmissionsService {
