@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query } from '@nestjs/common';
+import { AddQuestionsByContestResult } from './dto/addByContest-result.dto';
 import { CheckSubmissionQuestionDTO } from './dto/checkSubmission-question.dto';
 import { CreateQuestionDTO } from './dto/create-question.dto';
 import { FindAllQuestionDTO } from './dto/findAll-questions.dto';
@@ -31,8 +32,13 @@ export class QuestionsController {
     }
 
     @Post('/')
-    create(@Body() body: CreateQuestionDTO) {
+    create(@Body() body: CreateQuestionDTO): Promise<Question> {
         return this.questionService.create(body);
+    }
+
+    @Post('/contest')
+    createByContest(@Body() body: CreateQuestionDTO): Promise<AddQuestionsByContestResult> {
+        return this.questionService.addContestQuestions(body.url);
     }
 
     @Put('/:id')

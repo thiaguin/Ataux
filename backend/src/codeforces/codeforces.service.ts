@@ -1,5 +1,4 @@
 import { HttpException, HttpService, Injectable } from '@nestjs/common';
-import { response } from 'express';
 import { CodeforcesContestDTO } from './dto/codeforces-contest.dto';
 import { CodeforcesProblemDTO } from './dto/codeforces-problem.dto';
 

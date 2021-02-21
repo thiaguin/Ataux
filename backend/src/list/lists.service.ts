@@ -1,8 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ListQuestion } from 'src/listQuestion/listQuestion.entity';
-import { QuestionsService } from 'src/questions/questions.service';
-import { createQueryBuilder, getConnection, getCustomRepository, getManager, getRepository, Repository } from 'typeorm';
+import { createQueryBuilder, getCustomRepository, getManager, getRepository, Repository } from 'typeorm';
 import { CreateListDTO } from './dto/create-list.dto';
 import { FindAllListDTO } from './dto/findAll-list.dto';
 import { QueryListDTO } from './dto/query-list.dto';
@@ -18,19 +17,21 @@ import { UserClass } from 'src/usersClasses/usersClasses.entity';
 import { UserQuestionList } from 'src/userQuestionList/userQuestionList.entity';
 import { User } from 'src/users/users.entity';
 import { Question } from 'src/questions/questions.entity';
+import { QueryService } from 'src/utils/query.service';
+import { EntityToQuery } from 'src/utils/dto/entityQuery.dto';
 
 @Injectable()
 export class ListService {
     @InjectRepository(List)
     private repository: Repository<List>;
     private submissionService: SubmissionsService;
-    private questionService: QuestionsService;
+    private queryService: QueryService;
     private codeforcesService: CodeforcesService;
 
     constructor() {
         this.submissionService = new SubmissionsService();
         this.codeforcesService = new CodeforcesService();
-        this.questionService = new QuestionsService();
+        this.queryService = new QueryService();
         this.repository = getCustomRepository(ListRepository);
     }
 
@@ -42,34 +43,14 @@ export class ListService {
         return getManager().getRepository(UserClass);
     }
 
-    getNickFromAttribute(attributeName: string): string {
-        const entities = [
+    getEntitiesRelation(): EntityToQuery[] {
+        return [
             { entity: List, nick: 'l' },
             { entity: UserList, nick: 'ul' },
             { entity: UserQuestionList, nick: 'lq' },
             { entity: User, nick: 'u' },
             { entity: Question, nick: 'q' },
         ];
-
-        for (const value of entities) {
-            const entityColumns = getConnection().getMetadata(value.entity).ownColumns;
-            const entityColumnsName = entityColumns.map((column) => column.propertyName);
-
-            if (entityColumnsName.includes(attributeName)) return value.nick;
-        }
-
-        return '';
-    }
-
-    getWhereToResume(id, attributes) {
-        let result = `l.id = ${id}`;
-
-        for (const key in attributes) {
-            const nick = this.getNickFromAttribute(key);
-            if (nick) result += ` and ${nick}.${key} = '${attributes[key]}'`;
-        }
-
-        return result;
     }
 
     async create(body: CreateListDTO): Promise<List> {
@@ -80,7 +61,8 @@ export class ListService {
 
     async getResume(id: number, query): Promise<List[]> {
         const queryBuild = createQueryBuilder(List, 'l');
-        const where = this.getWhereToResume(id, query);
+        const entitiesRelation = this.getEntitiesRelation();
+        const where = `l.id = '${id}' and ${this.queryService.getQuery(entitiesRelation, query)}`;
         const list = await queryBuild
             .leftJoinAndMapMany('l.users', 'l.users', 'ul')
             .leftJoinAndMapMany('ul.user', 'ul.user', 'u')

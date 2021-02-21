@@ -11,7 +11,6 @@ import { RegisterUserDTO } from './dto/register-user.dto';
 import { UserClassRepository } from 'src/usersClasses/usersClasses.repository';
 import { ListService } from 'src/list/lists.service';
 import { QuestionStatus } from 'src/enums/questionStatus.enum';
-import { QuestionResumeClass } from './dto/questionResume-class.dto';
 import { UserResumeClass } from './dto/userResume-class.dto';
 
 @Injectable()
