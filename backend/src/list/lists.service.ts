@@ -20,6 +20,8 @@ import { Question } from 'src/questions/questions.entity';
 import { QueryService } from 'src/utils/query.service';
 import { EntityToQuery } from 'src/utils/dto/entityQuery.dto';
 import { ListResumeDTO } from './dto/resume-list.dto';
+import { Query } from 'typeorm/driver/Query';
+import { QuestionStatus } from 'src/enums/questionStatus.enum';
 
 @Injectable()
 export class ListService {
@@ -60,11 +62,44 @@ export class ListService {
         return newList;
     }
 
-    async getResume(id: number, query): Promise<List[]> {
+    async getToCSV(id: number) {
+        const list = await this.findById(id);
+        const listResume = await this.getResume(list.id, {});
+
+        const columnsName = [
+            'Name',
+            'Handle',
+            ...list.questions.map((el, index) => {
+                return `Question ${index + 1} - (${el.question.title})`;
+            }),
+        ];
+
+        const rows = [];
+
+        for (const user of listResume.users) {
+            const questionsSubmmited = {};
+            const [currentUser] = <any>user.user;
+
+            for (const question of user.questions) {
+                questionsSubmmited[question.questionId] = `${question.status} - (${question.count})`;
+            }
+
+            const userQuestions = list.questions.map((question) => {
+                return questionsSubmmited[question.questionId] || `${QuestionStatus.BLANK} - (0)`;
+            });
+
+            rows.push([currentUser.name, currentUser.handle, ...userQuestions]);
+        }
+
+        const result = [columnsName, rows.sort((a, b) => (a[0] > b[0] ? 1 : -1))];
+        return result;
+    }
+
+    async getResume(id: number, query): Promise<List> {
         const queryBuild = createQueryBuilder(List, 'l');
         const entitiesRelation = this.getEntitiesRelation();
         const where = `l.id = '${id}' and ${this.queryService.getQuery(entitiesRelation, query)}`;
-        const list = await queryBuild
+        const [list] = await queryBuild
             .loadRelationCountAndMap('l.questionsCount', 'l.questions')
             .leftJoinAndMapMany('l.users', 'l.users', 'ul')
             .leftJoinAndMapMany('ul.user', 'ul.user', 'u')

@@ -22,6 +22,11 @@ export class ClassesController {
         return this.classService.findById(params.id);
     }
 
+    @Get('/:id/csv')
+    getCSV(@Param() params: { id: number }) {
+        return this.classService.getToCSV(params.id);
+    }
+
     @Get('/:id/resume')
     getResume(@Param() params: { id: number }): Promise<Class> {
         return this.classService.getResume(params.id);

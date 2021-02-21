@@ -13,6 +13,9 @@ export class ListQuestion {
     @Column()
     listId: number;
 
+    @Column({ default: 1 })
+    weight: number;
+
     @ManyToOne(() => Question, (question) => question.lists)
     question: Question;
 

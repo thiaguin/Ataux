@@ -14,7 +14,7 @@ export class Class {
     @Column({ nullable: true })
     code: string;
 
-    @OneToMany(() => List, (list) => list.class) // note: we will create author property in the Photo class below
+    @OneToMany(() => List, (list) => list.class)
     lists: List[];
 
     @OneToMany(() => UserClass, (userClass) => userClass.class)

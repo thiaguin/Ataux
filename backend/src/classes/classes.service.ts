@@ -12,6 +12,7 @@ import { UserClassRepository } from 'src/usersClasses/usersClasses.repository';
 import { ListService } from 'src/list/lists.service';
 import { QuestionStatus } from 'src/enums/questionStatus.enum';
 import { UserResumeClass } from './dto/userResume-class.dto';
+import { List } from 'src/list/lists.entity';
 
 @Injectable()
 export class ClassesService {
@@ -43,7 +44,7 @@ export class ClassesService {
         const listResumes = [];
 
         for (const list of entity.lists) {
-            const [listResume] = await this.listService.getResume(list.id, {});
+            const listResume = await this.listService.getResume(list.id, {});
 
             const usersResume = [];
 
@@ -72,6 +73,52 @@ export class ClassesService {
         return { ...entity, lists: listResumes };
     }
 
+    async getToCSV(id: number) {
+        const classResume = await this.getResume(id);
+        const columnsName = [
+            'Name',
+            'Handle',
+            ...classResume.lists.map((el, index) => `List ${index + 1} - ${el.title}`),
+        ];
+        const rows = [];
+        const usersClass = {};
+        const users = {};
+
+        for (const user of classResume.users) {
+            users[user.user.id] = { name: user.user.name, handle: user.user.handle };
+            usersClass[user.user.id] = {};
+        }
+
+        for (const list of classResume.lists) {
+            const visiteds = {};
+
+            for (const userList of list.users) {
+                const [currentUser] = <any>userList.user;
+                const currentQuestions = <any>userList.questions;
+                usersClass[currentUser.id][list.id] = currentQuestions;
+                visiteds[currentUser.id] = true;
+            }
+
+            for (const user of classResume.users) {
+                if (!visiteds[user.userId]) {
+                    usersClass[user.user.id][list.id] = { BLANK: list.questionsCount };
+                }
+            }
+        }
+
+        for (const key in usersClass) {
+            const currentUser = users[key];
+            const row = [currentUser.name, currentUser.handle];
+
+            for (const list of classResume.lists) {
+                row.push(usersClass[id][list.id]);
+            }
+
+            rows.push(row);
+        }
+
+        return [columnsName, ...rows.sort((a, b) => (a[0] > b[0] ? 1 : -1))];
+    }
     async findAndCountAll(): Promise<{ classes: Class[]; count: number }> {
         const [classes, count] = await this.repository.findAndCount();
         return { classes, count };
