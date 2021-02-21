@@ -45,4 +45,6 @@ export class List {
 
     @UpdateDateColumn({ type: 'timestamp with time zone' })
     updatedAt: string;
+
+    questionsCount?: number;
 }

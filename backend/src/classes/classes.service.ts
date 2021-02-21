@@ -44,16 +44,22 @@ export class ClassesService {
 
         for (const list of entity.lists) {
             const [listResume] = await this.listService.getResume(list.id, {});
+
             const usersResume = [];
 
             for (const user of listResume.users) {
                 const userResume: UserResumeClass = {};
-                const questionsResume = { [QuestionStatus.OK]: 0, [QuestionStatus.NOK]: 0 };
+                const questionsResume = {
+                    [QuestionStatus.OK]: 0,
+                    [QuestionStatus.NOK]: 0,
+                    [QuestionStatus.BLANK]: listResume.questionsCount,
+                };
 
                 userResume.user = user.user;
 
                 for (const question of user.questions) {
                     questionsResume[question.status] += 1;
+                    questionsResume.BLANK -= 1;
                 }
 
                 userResume.questions = questionsResume;
@@ -74,7 +80,7 @@ export class ClassesService {
     async findById(id: number): Promise<Class> {
         const entity = await this.repository.findOne({
             where: { id: id },
-            relations: ['lists', 'users'],
+            relations: ['lists', 'users', 'users.user'],
         });
 
         if (!entity) {

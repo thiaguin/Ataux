@@ -2,7 +2,6 @@ import { CodeforcesSubmissionDTO } from 'src/codeforces/dto/codeforces-submissio
 
 export class CheckSubmissionQuestionDTO {
     handle: string;
-    listQuestionId: number;
     listId: number;
     questionId: number;
     submissions?: CodeforcesSubmissionDTO[];
