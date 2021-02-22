@@ -1,4 +1,5 @@
-import { Body, Controller, Get, HttpCode, Param, Post, Put, Query, Req } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Param, Post, Put, Query, Req, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { AddQuestionListDTO } from './dto/addQuestion-list.dto';
 import { CheckSubmissionListDTO } from './dto/checkSubmission-list.dto';
 import { CreateListDTO } from './dto/create-list.dto';
@@ -26,8 +27,8 @@ export class ListController {
     }
 
     @Get('/:id/csv')
-    getCSV(@Param() params: { id: number }) {
-        return this.listService.getToCSV(params.id);
+    getCSV(@Param() params: { id: number }, @Res() res: Response) {
+        return this.listService.getToCSV(params.id, res);
     }
 
     @Get('/:id/resume')

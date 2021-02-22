@@ -21,6 +21,9 @@ export class Question {
     @Column({ type: 'text' })
     url: string;
 
+    @Column({ nullable: true })
+    resolution: string;
+
     @Column()
     level: QuestionLevel;
 
