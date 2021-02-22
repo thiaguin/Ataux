@@ -90,19 +90,12 @@ export class ListService {
 
     async getToCSV(id: number) {
         const listResume = await this.getResume(id, {});
-        const questionsWeight = {};
-        let totalWeight = 0;
-
-        for (const value of listResume.questions) {
-            questionsWeight[value.questionId] = value.weight;
-            totalWeight += value.weight;
-        }
-
         const columnsName = [
             'Name',
             'Handle',
             ...listResume.questions.map((el, index) => {
-                return `Question ${index + 1} - (${el.question.title})`;
+                const [question] = <any>el.question;
+                return `Question ${index + 1} - (${question.title})`;
             }),
             'Grade',
         ];
