@@ -1,4 +1,5 @@
-import { Body, Controller, Get, HttpCode, Param, Post, Query, Req } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Param, Post, Query, Req, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { Class } from './classes.entity';
 import { ClassesService } from './classes.service';
 import { CreateClassDTO } from './dto/create-class.dto';
@@ -23,8 +24,8 @@ export class ClassesController {
     }
 
     @Get('/:id/csv')
-    getCSV(@Param() params: { id: number }) {
-        return this.classService.getToCSV(params.id);
+    getCSV(@Param() params: { id: number }, @Res() res: Response) {
+        return this.classService.getToCSV(params.id, res);
     }
 
     @Get('/:id/resume')

@@ -36,6 +36,9 @@ export class User {
     @Column({ nullable: true })
     googleId: string;
 
+    @Column({ nullable: true })
+    registration: string;
+
     @OneToMany(() => UserClass, (userClass) => userClass.user)
     classes: UserClass[];
 

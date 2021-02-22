@@ -12,16 +12,20 @@ import { UserClassRepository } from 'src/usersClasses/usersClasses.repository';
 import { ListService } from 'src/list/lists.service';
 import { QuestionStatus } from 'src/enums/questionStatus.enum';
 import { UserResumeClass } from './dto/userResume-class.dto';
+import { CsvService } from 'src/utils/csv.service';
+import { Response } from 'express';
 
 @Injectable()
 export class ClassesService {
     @InjectRepository(Class)
     private repository: Repository<Class>;
     private listService: ListService;
+    private csvService: CsvService;
 
     constructor() {
-        this.repository = getCustomRepository(ClassRepository);
         this.listService = new ListService();
+        this.csvService = new CsvService();
+        this.repository = getCustomRepository(ClassRepository);
     }
 
     generateCode(): string {
@@ -72,7 +76,7 @@ export class ClassesService {
         return { ...entity, lists: listResumes };
     }
 
-    async getToCSV(id: number) {
+    async getToCSV(id: number, res: Response) {
         const classResume = await this.getResume(id);
         const columnsName = [
             'Name',
@@ -112,15 +116,22 @@ export class ClassesService {
         for (const key in usersClass) {
             const currentUser = users[key];
             const row = [currentUser.name, currentUser.handle];
+            const rowToInsert = {};
 
             for (const list of classResume.lists) {
                 row.push(usersClass[key][list.id].grade);
             }
 
-            rows.push(row);
+            for (const index in columnsName) {
+                rowToInsert[columnsName[index]] = row[index];
+            }
+
+            rows.push(rowToInsert);
         }
 
-        return [columnsName, ...rows.sort((a, b) => (a[0] > b[0] ? 1 : -1))];
+        const comparator = columnsName[0];
+        const result = [columnsName, ...rows.sort((a, b) => (a[comparator] > b[comparator] ? 1 : -1))];
+        return this.csvService.getCSV(result, classResume.name, res);
     }
     async findAndCountAll(): Promise<{ classes: Class[]; count: number }> {
         const [classes, count] = await this.repository.findAndCount();

@@ -22,6 +22,8 @@ import { EntityToQuery } from 'src/utils/dto/entityQuery.dto';
 import { ListResumeDTO } from './dto/resume-list.dto';
 import { Query } from 'typeorm/driver/Query';
 import { QuestionStatus } from 'src/enums/questionStatus.enum';
+import { CsvService } from 'src/utils/csv.service';
+import { Response } from 'express';
 
 @Injectable()
 export class ListService {
@@ -30,11 +32,13 @@ export class ListService {
     private submissionService: SubmissionsService;
     private queryService: QueryService;
     private codeforcesService: CodeforcesService;
+    private csvService: CsvService;
 
     constructor() {
         this.submissionService = new SubmissionsService();
         this.codeforcesService = new CodeforcesService();
         this.queryService = new QueryService();
+        this.csvService = new CsvService();
         this.repository = getCustomRepository(ListRepository);
     }
 
@@ -88,11 +92,12 @@ export class ListService {
         return newList;
     }
 
-    async getToCSV(id: number) {
+    async getToCSV(id: number, res: Response) {
         const listResume = await this.getResume(id, {});
         const columnsName = [
             'Name',
             'Handle',
+            'Registration',
             ...listResume.questions.map((el, index) => {
                 const [question] = <any>el.question;
                 return `Question ${index + 1} - (${question.title})`;
@@ -114,11 +119,28 @@ export class ListService {
                 return questionsSubmmited[question.questionId] || `${QuestionStatus.BLANK} - (0)`;
             });
 
-            rows.push([currentUser.name, currentUser.handle, ...userQuestions, user.grade]);
+            const rowValues = [
+                currentUser.name,
+                currentUser.handle,
+                currentUser.registration || '',
+                ...userQuestions,
+                user.grade,
+            ];
+
+            const rowToInsert = {};
+
+            for (const key in rowValues) {
+                rowToInsert[columnsName[key]] = rowValues[key];
+            }
+
+            rows.push(rowToInsert);
         }
 
-        const result = [columnsName, ...rows.sort((a, b) => (a[0] > b[0] ? 1 : -1))];
-        return result;
+        const comparator = columnsName[0];
+        const result = [columnsName, ...rows.sort((a, b) => (a[comparator] > b[comparator] ? 1 : -1))];
+
+        console.log('here');
+        return this.csvService.getCSV(result, listResume.title, res);
     }
 
     async getResume(id: number, query): Promise<List> {
