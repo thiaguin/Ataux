@@ -11,6 +11,7 @@ import { ListModule } from './list/lists.module';
 import { QuestionsModule } from './questions/questions.module';
 import { TagsModule } from './tags/tags.module';
 import { SubmissionsModule } from './submissions/submissions.module';
+import { CsvModule } from './csv/csv.module';
 
 const metadata: ModuleMetadata = {
     imports: [
@@ -23,6 +24,7 @@ const metadata: ModuleMetadata = {
         QuestionsModule,
         TagsModule,
         SubmissionsModule,
+        CsvModule,
     ],
     controllers: [AppController],
     providers: [AppService],
