@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Req } from '@nestjs/common';
 import { CreateUserClassDTO } from 'src/usersClasses/dto/create-user-class.dto';
 import { UserClass } from 'src/usersClasses/usersClasses.entity';
 import { CreateUserDTO } from './dto/create-user.dto';
@@ -16,6 +16,26 @@ export class UsersController {
     @Get('/')
     findAll(): Promise<{ users: User[]; count: number }> {
         return this.userService.findAndCountAll();
+    }
+
+    @Get('/:id')
+    findOne(@Param() params: { id: number }): Promise<User> {
+        return this.userService.findById(params.id);
+    }
+
+    @Post('/resetPassword')
+    setCodeToResetPassord(@Body() body) {
+        return this.userService.setCodeToResetPassord(body);
+    }
+
+    @Put('/:id/resetPassword')
+    resetPassword(@Param() params: { id: number }, @Body() body) {
+        return this.userService.resetPassword(params.id, body);
+    }
+
+    @Put('/resetPassword')
+    resetPasswordByURL(@Body() body) {
+        return this.userService.resetPasswordByURL(body);
     }
 
     @Post('/google')

@@ -6,12 +6,15 @@ import {
     UpdateDateColumn,
     BeforeInsert,
     OneToMany,
+    OneToOne,
+    BeforeUpdate,
 } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { UserClass } from 'src/usersClasses/usersClasses.entity';
 import { SubmissionAssociationDTO } from 'src/submissions/submission-associations.dto';
 import { Submission } from 'src/submissions/submissions.entity';
 import { UserList } from 'src/userList/userList.entity';
+import { UserResetPassword } from 'src/userResetPassword/userResetPassword.entity';
 
 @Entity()
 export class User {
@@ -45,6 +48,9 @@ export class User {
     @OneToMany(() => UserList, (userList) => userList.user)
     lists: UserList[];
 
+    @OneToOne(() => UserResetPassword, (userResetPassword) => userResetPassword.user) // specify inverse side as a second parameter
+    resetPassword: UserResetPassword;
+
     @OneToMany(() => Submission, (submission) => submission.user)
     submissions: Submission[];
 
@@ -54,6 +60,7 @@ export class User {
     @UpdateDateColumn({ type: 'timestamp with time zone' })
     updatedAt: string;
 
+    @BeforeUpdate()
     @BeforeInsert()
     cryptPassword() {
         if (this.password) {
