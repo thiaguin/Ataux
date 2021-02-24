@@ -17,6 +17,9 @@ export class UserResetPassword {
     @Column()
     expirationTime: string;
 
+    @Column({ default: false })
+    used: boolean;
+
     @OneToOne(() => User, (user) => user.resetPassword)
     user: User;
 }

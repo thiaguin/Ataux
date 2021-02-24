@@ -108,7 +108,7 @@ export class UsersService {
 
         if (!user) throw new HttpException('NotFound', 404);
 
-        const userResetPassword = await userResetPasswordRepository.findOne({ where: { id: user.id } });
+        const userResetPassword = await userResetPasswordRepository.findOne({ where: { userId: user.id } });
         const date = new Date();
 
         date.setUTCHours(date.getUTCHours() + 1);
@@ -131,7 +131,9 @@ export class UsersService {
 
     async resetPasswordByURL(body): Promise<void> {
         const userResetPasswordRepository = this.getUserResetPasswordRepository();
-        const userResetPassword = await userResetPasswordRepository.findOne({ where: { code: body.code } });
+        const userResetPassword = await userResetPasswordRepository.findOne({
+            where: { code: body.code, used: false },
+        });
         const currentTime = new Date();
 
         if (userResetPassword && body.password) {
@@ -142,9 +144,14 @@ export class UsersService {
             }
 
             const user = await this.repository.findOne({ where: { id: userResetPassword.userId } });
-            user.password = body.password;
 
-            await this.repository.save(user);
+            user.password = body.password;
+            userResetPassword.used = true;
+
+            await getManager().transaction(async (transactionManager) => {
+                await transactionManager.save(userResetPassword);
+                await transactionManager.save(user);
+            });
         } else {
             throw new HttpException('BadRequest', 400);
         }
