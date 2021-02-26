@@ -8,7 +8,7 @@ const googleButton = (props) => {
 
     return (
         <>
-            <Button onClick={props.onClick} style={googleButtonStyle} variant="primary" type="submit">
+            <Button onClick={props.onClick} style={googleButtonStyle} variant="primary">
                 <Image src={googleImg} style={googleImgStyle} />
                 Login With Google
             </Button>
