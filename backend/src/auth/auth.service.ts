@@ -7,6 +7,7 @@ import { User } from 'src/users/users.entity';
 import { UserMethod } from 'src/enums/userMethod.enum';
 import { IncomingHttpHeaders } from 'http';
 import { PayloadUserDTO } from 'src/users/dto/payload-user.dto';
+import { INVALID_PASSWORD, NOT_FOUND } from 'src/resource/errorType.resource';
 
 @Injectable()
 export class AuthService {
@@ -22,8 +23,8 @@ export class AuthService {
     }
 
     getToken(user: User): { token: string } {
-        const { id, email, name } = user;
-        const token = this.jwtService.sign({ id, email, name });
+        const { id, email, name, handle, registration } = user;
+        const token = this.jwtService.sign({ id, email, name, handle, registration });
         return { token };
     }
 
@@ -73,10 +74,10 @@ export class AuthService {
             if (bcrypt.compareSync(body.password, user.password)) {
                 return this.getToken(user);
             }
-            throw new HttpException('InvalidPassword', 400);
+            throw new HttpException({ entity: 'User', type: INVALID_PASSWORD }, 400);
         }
 
-        throw new HttpException('NotFound', 404);
+        throw new HttpException({ entity: 'User', type: NOT_FOUND }, 404);
     }
 
     async googleLogin(body: any): Promise<AuthResultDTO> {
