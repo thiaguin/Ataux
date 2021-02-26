@@ -10,6 +10,7 @@ const initialState = {
     email: null,
     name: null,
     expirationDate: null,
+    pathToRedirect: '/',
 };
 
 const loginStart = (state) => ({
@@ -51,6 +52,44 @@ const resetLogin = (state) => ({
     ...initialState,
 });
 
+const authSucces = (state) => {
+    const token = localStorage.getItem('token');
+    const email = localStorage.getItem('email');
+    const userId = localStorage.getItem('userId');
+    const name = localStorage.getItem('name');
+
+    return {
+        ...state,
+        token,
+        email,
+        userId,
+        name,
+        pathToRedirect: '/',
+    };
+};
+
+const authLogout = (state) => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('expirationDate');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('name');
+    localStorage.removeItem('email');
+
+    return {
+        ...state,
+        token: null,
+        userId: null,
+        email: null,
+        name: null,
+        expirationDate: null,
+    };
+};
+
+const setRedirectPath = (state, action) => ({
+    ...state,
+    pathToRedirect: action.pathToRedirect,
+});
+
 const reducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.LOGIN_START:
@@ -61,6 +100,12 @@ const reducer = (state = initialState, action) => {
             return loginFail(state, action.error.response.data);
         case actionTypes.RESET_LOGIN:
             return resetLogin(state);
+        case actionTypes.AUTH_CHECK_SUCCESS:
+            return authSucces(state);
+        case actionTypes.AUTH_LOGOUT:
+            return authLogout(state);
+        case actionTypes.SET_REDIRECT_PATH:
+            return setRedirectPath(state, action);
         default:
             return { ...state };
     }

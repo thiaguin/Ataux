@@ -4,13 +4,18 @@ import { GoogleLogin } from 'react-google-login';
 import { connect } from 'react-redux';
 import * as yup from 'yup';
 import { Formik } from 'formik';
+import { useHistory } from 'react-router-dom';
 import * as actions from '../../store/actions';
 import GoogleButton from '../../components/utils/GoogleButton';
 import Popup from '../../components/utils/Popup';
 
-const login = (props) => {
+const Login = (props) => {
+    const { login } = props;
     const [popup, setPopup] = useState(null);
-    const loginError = props.login.error;
+    const [resetPasswordHover, setResetPasswordHover] = useState(false);
+    const [resetPasswordStyle, setResetPasswordStyle] = useState({ textAlign: 'center' });
+    const history = useHistory();
+    const loginError = login.error;
 
     const schema = yup.object().shape({
         email: yup.string().email().required(),
@@ -30,6 +35,10 @@ const login = (props) => {
         margin: '10% 10% 3% 10%',
     };
 
+    const resetPasswordHoverHandler = () => {
+        setResetPasswordHover(!resetPasswordHover);
+    };
+
     const loginGoogleHandler = (response) => {
         // eslint-disable-next-line no-console
         console.log('response', response);
@@ -39,12 +48,24 @@ const login = (props) => {
         props.onClickLogin(value);
     };
 
+    const handleResetPasswordClick = () => {
+        history.push('resetPassword');
+    };
+
     useEffect(() => {
         if (loginError) {
             setPopup(<Popup type="error" message={loginError} />);
             props.onResetLogin();
         }
     }, [loginError]);
+
+    useEffect(() => {
+        if (resetPasswordHover) {
+            setResetPasswordStyle({ ...resetPasswordStyle, textDecoration: 'underline', cursor: 'pointer' });
+        } else {
+            setResetPasswordStyle({ textAlign: 'center' });
+        }
+    }, [resetPasswordHover]);
 
     return (
         <>
@@ -78,11 +99,25 @@ const login = (props) => {
                                         onBlur={handleBlur}
                                     />
                                 </Form.Group>
+                                <Form.Text
+                                    onClick={handleResetPasswordClick}
+                                    onMouseEnter={resetPasswordHoverHandler}
+                                    onMouseLeave={resetPasswordHoverHandler}
+                                    style={resetPasswordStyle}
+                                    className="text-muted"
+                                >
+                                    Esqueceu sua senha?
+                                </Form.Text>
                                 <Form.Row style={{ paddingTop: '20px' }}>
                                     <Form.Group as={Col} controlId="formGridGoogleButton">
                                         <GoogleLogin
                                             clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-                                            render={(renderProps) => <GoogleButton onClick={renderProps.onClick} />}
+                                            render={(renderProps) => (
+                                                <GoogleButton
+                                                    onClick={renderProps.onClick}
+                                                    style={{ minWidth: '200px' }}
+                                                />
+                                            )}
                                             onSuccess={loginGoogleHandler}
                                             onFailure={loginGoogleHandler}
                                             cookiePolicy="single_host_origin"
@@ -90,7 +125,7 @@ const login = (props) => {
                                     </Form.Group>
                                     <Form.Group as={Col} controlId="formGridSubmtiButton">
                                         <Button
-                                            style={{ width: '100%' }}
+                                            style={{ width: '100%', minWidth: '200px' }}
                                             variant="primary"
                                             type="submit"
                                             disabled={touched.email && touched.password && !isValid}
@@ -118,4 +153,4 @@ const mapDispatchToProps = (dispatch) => ({
     onResetLogin: () => dispatch(actions.resetLogin()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(login);
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

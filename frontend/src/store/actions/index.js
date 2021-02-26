@@ -1,1 +1,1 @@
-export { login, resetLogin } from './login';
+export { login, resetLogin, authCheck, setRedirectPath, logout } from './login';
