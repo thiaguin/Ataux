@@ -2,3 +2,6 @@ export const LOGIN_START = 'LOGIN_START';
 export const LOGIN_FAIL = 'LOGIN_FAIL';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const RESET_LOGIN = 'RESET_LOGIN';
+export const AUTH_LOGOUT = 'AUTH_LOGOUT';
+export const AUTH_CHECK_SUCCESS = 'AUTH_CHECK_SUCCESS';
+export const SET_REDIRECT_PATH = 'SET_REDIRECT_PATH';

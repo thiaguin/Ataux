@@ -3,7 +3,7 @@ import { Button, Image } from 'react-bootstrap';
 import googleImg from '../../assets/google-image-button.png';
 
 const googleButton = (props) => {
-    const googleButtonStyle = { width: '100%', backgroundColor: 'gray', alignItems: 'left' };
+    const googleButtonStyle = { ...props.style, width: '100%', backgroundColor: 'gray', alignItems: 'left' };
     const googleImgStyle = { width: '24px', borderRadius: '0.2em', marginRight: '15px' };
 
     return (

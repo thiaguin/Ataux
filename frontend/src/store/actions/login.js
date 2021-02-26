@@ -24,3 +24,40 @@ export const login = (body) => (dispatch) => {
         .then((response) => dispatch(loginSucces(response.data)))
         .catch((error) => dispatch(loginFail(error)));
 };
+
+const authCheckSucces = () => ({
+    type: actionTypes.AUTH_CHECK_SUCCESS,
+});
+
+export const logout = () => ({
+    type: actionTypes.AUTH_LOGOUT,
+});
+
+const authLogoutAsync = (expiresTime) => (dispatch) => {
+    setTimeout(() => dispatch(logout()), expiresTime * 1000);
+};
+
+export const authCheck = () => (dispatch) => {
+    const token = localStorage.getItem('token');
+
+    if (token) {
+        const dateExpiration = localStorage.getItem('expirationDate') || '';
+        const expirationDate = new Date(dateExpiration);
+        const dateNow = new Date();
+
+        if (expirationDate > dateNow) {
+            const expiresIn = (expirationDate.getTime() - dateNow.getTime()) / 1000;
+            dispatch(authCheckSucces());
+            dispatch(authLogoutAsync(expiresIn));
+        } else {
+            dispatch(logout());
+        }
+    } else {
+        dispatch(logout());
+    }
+};
+
+export const setRedirectPath = (path) => ({
+    type: actionTypes.SET_REDIRECT_PATH,
+    pathToRedirect: path,
+});

@@ -1,23 +1,47 @@
-import React from 'react';
-import { withRouter, Switch, Route } from 'react-router-dom';
+import React, { useCallback, useEffect } from 'react';
+import { connect, useDispatch } from 'react-redux';
+import { withRouter, Switch, Route, Redirect } from 'react-router-dom';
 import Header from './components/header/Header';
 import Login from './pages/login/Login';
 import Register from './pages/register/Register';
+import ResetPassword from './pages/resetPassword/ResetPassword';
+import * as actions from './store/actions';
 
-function App() {
-    const routes = (
+const App = (props) => {
+    const dispatch = useDispatch();
+    const onAuthCheck = useCallback(() => dispatch(actions.authCheck()), [dispatch]);
+
+    const { isAuth } = props;
+
+    useEffect(() => {
+        onAuthCheck();
+    }, [onAuthCheck]);
+
+    const freeRoutes = (
         <Switch>
-            <Route path="/login" component={(props) => <Login {...props} />} />
-            <Route path="/register" render={(props) => <Register {...props} />} />
+            <Route path="/login" component={(currProps) => <Login {...currProps} />} />
+            <Route path="/register" render={(currProps) => <Register {...currProps} />} />
+            <Route path="/resetPassword" render={(currProps) => <ResetPassword {...currProps} />} />
+            <Redirect to="/" />
+        </Switch>
+    );
+
+    const loggedRoutes = (
+        <Switch>
             <Route path="/" />
         </Switch>
     );
+
     return (
         <>
             <Header />
-            {routes}
+            {isAuth ? loggedRoutes : freeRoutes}
         </>
     );
-}
+};
 
-export default withRouter(App);
+const mapStateToProps = (state) => ({
+    isAuth: !!state.login.token,
+});
+
+export default withRouter(connect(mapStateToProps)(App));
