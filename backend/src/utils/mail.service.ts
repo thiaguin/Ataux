@@ -39,7 +39,7 @@ export class MailService {
     }
 
     sendEmailConfirmation(email: string, code: string) {
-        const title = 'Confirm Email';
+        const title = 'Email Confirmation';
         const body = `
         Please, to confirm your email open this link and confirm:
         
