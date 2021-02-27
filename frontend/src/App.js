@@ -7,6 +7,7 @@ import Register from './pages/register/Register';
 import RecoverPassword from './pages/recoverPasword/RecoverPassword';
 import UpdateRecoveredPassword from './pages/updateRecoveredPassword/UpdateRecoveredPassword';
 import * as actions from './store/actions';
+import ConfirmEmail from './pages/confirmEmail/ConfirmEmail';
 
 const App = (props) => {
     const dispatch = useDispatch();
@@ -22,6 +23,7 @@ const App = (props) => {
         <Switch>
             <Route path="/login" component={(currProps) => <Login {...currProps} />} />
             <Route path="/register" render={(currProps) => <Register {...currProps} />} />
+            <Route path="/confirm/:code" render={(currProps) => <ConfirmEmail {...currProps} />} />
             <Route path="/recoverPassword/:code" render={(currProps) => <UpdateRecoveredPassword {...currProps} />} />
             <Route path="/recoverPassword" render={(currProps) => <RecoverPassword {...currProps} />} />
             <Redirect to="/" />
