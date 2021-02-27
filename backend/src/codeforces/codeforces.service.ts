@@ -19,7 +19,7 @@ export class CodeforcesService {
             }
         }
 
-        throw new HttpException('NotFound', 404);
+        throw new HttpException('NOT_FOUND', 404);
     }
 
     async getContest(contestId: string, count = 3): Promise<CodeforcesContestDTO> {
@@ -41,7 +41,7 @@ export class CodeforcesService {
             }
             const comment = error?.response?.data?.comment;
             const statusError = comment && comment.includes('not found') ? 404 : 400;
-            const messageError = statusError === 404 ? 'NotFound' : 'BadRequest';
+            const messageError = statusError === 404 ? 'NOT_FOUND' : 'BAD_REQUEST';
 
             throw new HttpException(messageError, statusError);
         }
@@ -57,7 +57,7 @@ export class CodeforcesService {
             if (error.response.status === 429 && count > 0) {
                 return this.getSubmissions(handle, contestId, count - 1);
             }
-            throw new HttpException('BadRequest', 400);
+            throw new HttpException('BAD_REQUEST', 400);
         }
     }
 
@@ -72,7 +72,7 @@ export class CodeforcesService {
             if (error.response.status === 429 && count > 0) {
                 return this.getUser(handle, count - 1);
             }
-            throw new HttpException('NotFound', 404);
+            throw new HttpException('NOT_FOUND', 404);
         }
     }
 }

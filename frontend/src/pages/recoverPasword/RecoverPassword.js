@@ -39,13 +39,13 @@ const recoverPassword = (props) => {
         history.goBack();
     };
 
-    const getSubmitButton = (values, disabled) => (
+    const SubmitButton = ({ values, disabled }) => (
         <Button type="submit" onClick={() => submitHandler(values)} variant="primary" disabled={disabled}>
             Enviar
         </Button>
     );
 
-    const getBackToLoginButton = () => (
+    const BackToLoginButton = () => (
         <Button type="submit" onClick={() => goBackHandler()} variant="primary">
             Voltar
         </Button>
@@ -99,7 +99,11 @@ const recoverPassword = (props) => {
                                     </Toast>
                                 </Form.Group>
                                 <Form.Group style={{ textAlign: 'right' }} controlId="formGridSubmtiButton">
-                                    {props.data.success ? getBackToLoginButton() : getSubmitButton(values, !isValid)}
+                                    {props.data.success ? (
+                                        <BackToLoginButton />
+                                    ) : (
+                                        <SubmitButton values={values} disabled={!isValid} />
+                                    )}
                                 </Form.Group>
                             </Form>
                         </div>

@@ -5,6 +5,7 @@ import Header from './components/header/Header';
 import Login from './pages/login/Login';
 import Register from './pages/register/Register';
 import RecoverPassword from './pages/recoverPasword/RecoverPassword';
+import UpdateRecoveredPassword from './pages/updateRecoveredPassword/UpdateRecoveredPassword';
 import * as actions from './store/actions';
 
 const App = (props) => {
@@ -21,6 +22,7 @@ const App = (props) => {
         <Switch>
             <Route path="/login" component={(currProps) => <Login {...currProps} />} />
             <Route path="/register" render={(currProps) => <Register {...currProps} />} />
+            <Route path="/recoverPassword/:code" render={(currProps) => <UpdateRecoveredPassword {...currProps} />} />
             <Route path="/recoverPassword" render={(currProps) => <RecoverPassword {...currProps} />} />
             <Redirect to="/" />
         </Switch>

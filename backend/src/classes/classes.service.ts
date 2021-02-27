@@ -145,7 +145,7 @@ export class ClassesService {
         });
 
         if (!entity) {
-            throw new HttpException('NotFound', 404);
+            throw new HttpException('NOT_FOUND', 404);
         }
 
         return entity;
@@ -179,7 +179,7 @@ export class ClassesService {
         });
 
         if (!entity) {
-            throw new HttpException('NotFound', 404);
+            throw new HttpException('NOT_FOUND', 404);
         }
 
         if (entity.code === body.code) {

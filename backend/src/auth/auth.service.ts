@@ -92,6 +92,6 @@ export class AuthService {
             }
         }
 
-        throw new HttpException('NotFound', 404);
+        throw new HttpException('NOT_FOUND', 404);
     }
 }

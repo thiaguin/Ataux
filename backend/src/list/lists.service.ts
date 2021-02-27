@@ -161,7 +161,7 @@ export class ListService {
             return this.addUserGrade(list);
         }
 
-        throw new HttpException('NotFound', 404);
+        throw new HttpException('NOT_FOUND', 404);
     }
 
     async setQuestions(id: number, questionIds: number[]): Promise<void> {
@@ -195,7 +195,7 @@ export class ListService {
         });
 
         if (!list) {
-            throw new HttpException('NotFound', 404);
+            throw new HttpException('NOT_FOUND', 404);
         }
 
         return list;
@@ -207,7 +207,7 @@ export class ListService {
         });
 
         if (!list) {
-            throw new HttpException('NotFound', 404);
+            throw new HttpException('NOT_FOUND', 404);
         }
 
         await this.repository.update({ id: params.id }, body);
@@ -237,7 +237,7 @@ export class ListService {
             return userList;
         }
 
-        throw new HttpException('BadRequest', 400);
+        throw new HttpException('BAD_REQUEST', 400);
     }
 
     async checkSubmissions(id: number, user: PayloadUserDTO, body: CheckSubmissionListDTO) {
