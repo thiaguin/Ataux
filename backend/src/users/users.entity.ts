@@ -42,6 +42,12 @@ export class User {
     @Column({ nullable: true })
     registration: string;
 
+    @Column({ nullable: true })
+    confirmationCode: string;
+
+    @Column({ default: false })
+    confirmed: boolean;
+
     @OneToMany(() => UserClass, (userClass) => userClass.user)
     classes: UserClass[];
 

@@ -37,4 +37,17 @@ export class MailService {
 
         this.transporter.sendMail(this.mailOptions(email, body, title));
     }
+
+    sendEmailConfirmation(email: string, code: string) {
+        const title = 'Confirm Email';
+        const body = `
+        Please, to confirm your email open this link and confirm:
+        
+        ${process.env.FRONTEND_URL}/confirmEmail/${code}
+
+        Team Ataux.
+        `;
+
+        this.transporter.sendMail(this.mailOptions(email, body, title));
+    }
 }

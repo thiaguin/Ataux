@@ -25,7 +25,7 @@ export class UsersController {
 
     @Post('/resetPassword')
     setCodeToResetPassord(@Body() body) {
-        return this.userService.setCodeToResetPassord(body);
+        return this.userService.sendCodeToResetPassword(body);
     }
 
     @Put('/:id/resetPassword')

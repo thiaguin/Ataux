@@ -4,7 +4,7 @@ import { withRouter, Switch, Route, Redirect } from 'react-router-dom';
 import Header from './components/header/Header';
 import Login from './pages/login/Login';
 import Register from './pages/register/Register';
-import ResetPassword from './pages/resetPassword/ResetPassword';
+import RecoverPassword from './pages/recoverPasword/RecoverPassword';
 import * as actions from './store/actions';
 
 const App = (props) => {
@@ -21,7 +21,7 @@ const App = (props) => {
         <Switch>
             <Route path="/login" component={(currProps) => <Login {...currProps} />} />
             <Route path="/register" render={(currProps) => <Register {...currProps} />} />
-            <Route path="/resetPassword" render={(currProps) => <ResetPassword {...currProps} />} />
+            <Route path="/recoverPassword" render={(currProps) => <RecoverPassword {...currProps} />} />
             <Redirect to="/" />
         </Switch>
     );

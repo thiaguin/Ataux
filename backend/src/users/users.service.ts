@@ -73,8 +73,10 @@ export class UsersService {
         const user = await this.findOne(body.email);
 
         if (!user) {
-            const userObject = { ...body, method: UserMethod.LOCAL };
+            const confirmationCode = uuidv4();
+            const userObject = { ...body, method: UserMethod.LOCAL, confirmationCode };
             const newUser = await this.repository.create(userObject);
+            await this.mailService.sendEmailConfirmation(body.email, confirmationCode);
             await this.repository.save(newUser);
             return newUser;
         }
@@ -90,7 +92,7 @@ export class UsersService {
             const user = await this.findOne(email);
 
             if (!user) {
-                const userObject = { email, name, googleId, method: UserMethod.GOOGLE };
+                const userObject = { email, name, googleId, method: UserMethod.GOOGLE, confirmed: true };
                 const newUser = await this.repository.create(userObject);
                 await this.repository.save(newUser);
                 return newUser;
@@ -102,11 +104,11 @@ export class UsersService {
         throw new HttpException('NotFound', 404);
     }
 
-    async setCodeToResetPassord(body): Promise<void> {
+    async sendCodeToResetPassword(body): Promise<void> {
         const userResetPasswordRepository = this.getUserResetPasswordRepository();
         const user = await this.findOne(body.email);
 
-        if (!user) throw new HttpException('NotFound', 404);
+        if (!user) throw new HttpException({ entity: 'User', type: 'NOT_FOUND' }, 404);
 
         const userResetPassword = await userResetPasswordRepository.findOne({ where: { userId: user.id } });
         const date = new Date();

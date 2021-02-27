@@ -12,8 +12,8 @@ import Popup from '../../components/utils/Popup';
 const Login = (props) => {
     const { login } = props;
     const [popup, setPopup] = useState(null);
-    const [resetPasswordHover, setResetPasswordHover] = useState(false);
-    const [resetPasswordStyle, setResetPasswordStyle] = useState({ textAlign: 'center' });
+    const [recoverPasswordHover, setrecoverPasswordHover] = useState(false);
+    const [recoverPasswordStyle, setrecoverPasswordStyle] = useState({ textAlign: 'center' });
     const history = useHistory();
     const loginError = login.error;
 
@@ -35,8 +35,8 @@ const Login = (props) => {
         margin: '10% 10% 3% 10%',
     };
 
-    const resetPasswordHoverHandler = () => {
-        setResetPasswordHover(!resetPasswordHover);
+    const recoverPasswordHoverHandler = () => {
+        setrecoverPasswordHover(!recoverPasswordHover);
     };
 
     const loginGoogleHandler = (response) => {
@@ -48,8 +48,9 @@ const Login = (props) => {
         props.onClickLogin(value);
     };
 
-    const handleResetPasswordClick = () => {
-        history.push('resetPassword');
+    const recoverPasswordClickHandler = () => {
+        props.onResetRecoverPassword();
+        history.push('recoverPassword');
     };
 
     useEffect(() => {
@@ -60,12 +61,12 @@ const Login = (props) => {
     }, [loginError]);
 
     useEffect(() => {
-        if (resetPasswordHover) {
-            setResetPasswordStyle({ ...resetPasswordStyle, textDecoration: 'underline', cursor: 'pointer' });
+        if (recoverPasswordHover) {
+            setrecoverPasswordStyle({ ...recoverPasswordStyle, textDecoration: 'underline', cursor: 'pointer' });
         } else {
-            setResetPasswordStyle({ textAlign: 'center' });
+            setrecoverPasswordStyle({ textAlign: 'center' });
         }
-    }, [resetPasswordHover]);
+    }, [recoverPasswordHover]);
 
     return (
         <>
@@ -100,10 +101,10 @@ const Login = (props) => {
                                     />
                                 </Form.Group>
                                 <Form.Text
-                                    onClick={handleResetPasswordClick}
-                                    onMouseEnter={resetPasswordHoverHandler}
-                                    onMouseLeave={resetPasswordHoverHandler}
-                                    style={resetPasswordStyle}
+                                    onClick={recoverPasswordClickHandler}
+                                    onMouseEnter={recoverPasswordHoverHandler}
+                                    onMouseLeave={recoverPasswordHoverHandler}
+                                    style={recoverPasswordStyle}
                                     className="text-muted"
                                 >
                                     Esqueceu sua senha?
@@ -151,6 +152,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
     onClickLogin: (value) => dispatch(actions.login(value)),
     onResetLogin: () => dispatch(actions.resetLogin()),
+    onResetRecoverPassword: () => dispatch(actions.resetRecoverPassword()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
