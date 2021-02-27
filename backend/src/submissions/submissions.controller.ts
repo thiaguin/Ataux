@@ -11,7 +11,6 @@ export class SubmissionsController {
 
     @Get('/')
     findAll(@Query() query) {
-        console.log('here');
         return this.submissionService.getUserSubmission(query);
     }
 }

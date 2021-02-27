@@ -7,7 +7,7 @@ import { User } from 'src/users/users.entity';
 import { UserMethod } from 'src/enums/userMethod.enum';
 import { IncomingHttpHeaders } from 'http';
 import { PayloadUserDTO } from 'src/users/dto/payload-user.dto';
-import { INVALID_PASSWORD, NOT_FOUND } from 'src/resource/errorType.resource';
+import { INVALID_PASSWORD, NOT_FOUND, UNAUTHORIZED } from 'src/resource/errorType.resource';
 
 @Injectable()
 export class AuthService {
@@ -71,10 +71,13 @@ export class AuthService {
         const user = await this.userService.findOneWithPassword(body.email);
 
         if (user?.password) {
-            if (bcrypt.compareSync(body.password, user.password)) {
-                return this.getToken(user);
+            if (!bcrypt.compareSync(body.password, user.password)) {
+                throw new HttpException({ entity: 'User', type: INVALID_PASSWORD }, 400);
             }
-            throw new HttpException({ entity: 'User', type: INVALID_PASSWORD }, 400);
+            if (user && !user.confirmed) {
+                throw new HttpException({ entity: 'NotConfirmed', type: UNAUTHORIZED }, 401);
+            }
+            return this.getToken(user);
         }
 
         throw new HttpException({ entity: 'User', type: NOT_FOUND }, 404);

@@ -13,6 +13,8 @@ import { UserResetPassword } from 'src/userResetPassword/userResetPassword.entit
 import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcryptjs';
 import { MailService } from 'src/utils/mail.service';
+import { UpdateUserDTO } from './dto/update-user.dto';
+import { BAD_REQUEST, NOT_FOUND } from 'src/resource/errorType.resource';
 
 @Injectable()
 export class UsersService {
@@ -38,12 +40,12 @@ export class UsersService {
         const userResetPassword = await userResetPasswordRepository.findOne({ where: { code, used: false } });
         const currentTime = new Date();
 
-        if (!userResetPassword) throw new HttpException({ entity: 'UserResetPassword', type: 'NOT_FOUND' }, 404);
+        if (!userResetPassword) throw new HttpException({ entity: 'UserResetPassword', type: NOT_FOUND }, 404);
 
         const resetPasswordLimitTime = new Date(userResetPassword.expirationTime);
 
         if (currentTime.getTime() > resetPasswordLimitTime.getTime()) {
-            throw new HttpException({ entity: 'Expired', type: 'BAD_REQUEST' }, 400);
+            throw new HttpException({ entity: 'Expired', type: BAD_REQUEST }, 400);
         }
     }
 
@@ -57,7 +59,7 @@ export class UsersService {
             return user;
         }
 
-        throw new HttpException('NOT_FOUND', 404);
+        throw new HttpException(NOT_FOUND, 404);
     }
 
     async findOne(email: string): Promise<User> {
@@ -83,6 +85,22 @@ export class UsersService {
         return { users, count };
     }
 
+    async confirmEmail(code: string): Promise<void> {
+        const user = await this.repository.findOne({ where: { confirmationCode: code, confirmed: false } });
+
+        if (!user) {
+            throw new HttpException({ entity: 'User', type: NOT_FOUND }, 404);
+        }
+
+        await this.update(user.id, { confirmed: true, confirmationCode: '' });
+    }
+
+    async update(id: number, body: UpdateUserDTO): Promise<void> {
+        const user = await this.findById(id);
+        delete body.password;
+        await this.repository.update({ id: user.id }, body);
+    }
+
     async create(body: CreateUserDTO): Promise<User> {
         const user = await this.findOne(body.email);
 
@@ -90,12 +108,24 @@ export class UsersService {
             const confirmationCode = uuidv4();
             const userObject = { ...body, method: UserMethod.LOCAL, confirmationCode };
             const newUser = await this.repository.create(userObject);
-            await this.mailService.sendEmailConfirmation(body.email, confirmationCode);
             await this.repository.save(newUser);
+            await this.mailService.sendEmailConfirmation(body.email, confirmationCode);
             return newUser;
         }
 
         throw new HttpException('NotUnique', 409);
+    }
+
+    async resendEmailConfirmation(email: string): Promise<void> {
+        const user = await this.findOne(email);
+        const confirmationCode = uuidv4();
+
+        if (!user) {
+            throw new HttpException({ entity: 'User', type: NOT_FOUND }, 404);
+        }
+
+        await this.update(user.id, { confirmed: false, confirmationCode: confirmationCode });
+        await this.mailService.sendEmailConfirmation(email, confirmationCode);
     }
 
     async createByGoogle(body: { token: string }): Promise<User> {
@@ -115,14 +145,14 @@ export class UsersService {
             throw new HttpException('NotUnique', 409);
         }
 
-        throw new HttpException('NOT_FOUND', 404);
+        throw new HttpException(NOT_FOUND, 404);
     }
 
     async sendCodeToResetPassword(body): Promise<void> {
         const userResetPasswordRepository = this.getUserResetPasswordRepository();
         const user = await this.findOne(body.email);
 
-        if (!user) throw new HttpException({ entity: 'User', type: 'NOT_FOUND' }, 404);
+        if (!user) throw new HttpException({ entity: 'User', type: NOT_FOUND }, 404);
 
         const userResetPassword = await userResetPasswordRepository.findOne({ where: { userId: user.id } });
         const date = new Date();
@@ -154,13 +184,13 @@ export class UsersService {
         });
         const currentTime = new Date();
 
-        if (!userResetPassword) throw new HttpException({ entity: 'UserResetPasswordCode', type: 'NOT_FOUND' }, 404);
+        if (!userResetPassword) throw new HttpException({ entity: 'UserResetPasswordCode', type: NOT_FOUND }, 404);
 
         if (body.password && body.password.length >= 6) {
             const resetPasswordLimitTime = new Date(userResetPassword.expirationTime);
 
             if (currentTime.getTime() > resetPasswordLimitTime.getTime() || userResetPassword.used) {
-                throw new HttpException({ entity: 'UserResetPassword', type: 'BAD_REQUEST' }, 400);
+                throw new HttpException({ entity: 'UserResetPassword', type: BAD_REQUEST }, 400);
             }
 
             const user = await this.repository.findOne({ where: { id: userResetPassword.userId } });
@@ -173,7 +203,7 @@ export class UsersService {
                 await transactionManager.save(user);
             });
         } else {
-            throw new HttpException({ entity: 'InvalidPassword', type: 'BAD_REQUEST' }, 400);
+            throw new HttpException({ entity: 'InvalidPassword', type: BAD_REQUEST }, 400);
         }
     }
 
@@ -183,13 +213,13 @@ export class UsersService {
             select: ['id', 'email', 'googleId', 'handle', 'method', 'name', 'password', 'registration'],
         });
 
-        if (!user) throw new HttpException('NOT_FOUND', 404);
+        if (!user) throw new HttpException(NOT_FOUND, 404);
 
         if (bcrypt.compareSync(body.currentPassword, user.password)) {
             user.password = body.newPassword;
             await this.repository.save(user);
         } else {
-            throw new HttpException('BAD_REQUEST', 400);
+            throw new HttpException(BAD_REQUEST, 400);
         }
     }
 

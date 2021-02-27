@@ -33,6 +33,16 @@ export class UsersController {
         return this.userService.sendCodeToResetPassword(body);
     }
 
+    @Post('/resendEmail')
+    resendEmail(@Body() body: { email: string }): Promise<void> {
+        return this.userService.resendEmailConfirmation(body.email);
+    }
+
+    @Post('/confirm')
+    confirm(@Body() body: { code: string }) {
+        return this.userService.confirmEmail(body.code);
+    }
+
     @Put('/:id/resetPassword')
     resetPassword(@Param() params: { id: number }, @Body() body) {
         return this.userService.resetPassword(params.id, body);

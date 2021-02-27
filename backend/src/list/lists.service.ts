@@ -139,7 +139,6 @@ export class ListService {
         const comparator = columnsName[0];
         const result = [columnsName, ...rows.sort((a, b) => (a[comparator] > b[comparator] ? 1 : -1))];
 
-        console.log('here');
         return this.csvService.getCSV(result, listResume.title, res);
     }
 

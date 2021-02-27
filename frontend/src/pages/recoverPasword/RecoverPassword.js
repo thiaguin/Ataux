@@ -7,7 +7,7 @@ import { useHistory } from 'react-router-dom';
 import * as actions from '../../store/actions';
 import Popup from '../../components/utils/Popup';
 
-const recoverPassword = (props) => {
+const RecoverPassword = (props) => {
     const [popup, setPopup] = useState(null);
     const [toastClosed, setToastClosed] = useState(false);
 
@@ -124,4 +124,4 @@ const mapDispatchToProps = (dispatch) => ({
     onResetRecoverPassword: () => dispatch(actions.resetRecoverPassword()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(recoverPassword);
+export default connect(mapStateToProps, mapDispatchToProps)(RecoverPassword);
