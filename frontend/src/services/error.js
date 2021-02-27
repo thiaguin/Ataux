@@ -5,13 +5,18 @@ const getNouFoundMessageError = (entity) => `${entitiesTypes[entity]} ${errorTyp
 
 const getInvalidPasswordMessageError = () => errorTypes.INVALID_PASSWORD.label;
 
-export const getErrorMessage = (entity, type) => {
+const getInternalServerError = () => errorTypes.INTERNAL_SERVER.label;
+
+export const getErrorMessage = (response) => {
+    if (response.statusCode === 500) return getInternalServerError();
+    const { type, entity } = response.data;
+
     switch (type) {
         case errorTypes.NOT_FOUND.value:
-            return getNouFoundMessageError(entity);
+            return getNouFoundMessageError(entity.toUpperCase());
         case errorTypes.INVALID_PASSWORD.value:
             return getInvalidPasswordMessageError();
         default:
-            return 'Aconteceu um erro inesperado.';
+            return getInternalServerError();
     }
 };

@@ -44,7 +44,7 @@ const loginSucess = (state, data) => {
 const loginFail = (state, data) => ({
     ...state,
     loading: false,
-    error: getErrorMessage(data.entity.toUpperCase(), data.type),
+    error: getErrorMessage(data),
 });
 
 const resetLogin = (state) => ({
@@ -97,7 +97,7 @@ const reducer = (state = initialState, action) => {
         case actionTypes.LOGIN_SUCCESS:
             return loginSucess(state, action.data);
         case actionTypes.LOGIN_FAIL:
-            return loginFail(state, action.error.response.data);
+            return loginFail(state, action.error.response);
         case actionTypes.RESET_LOGIN:
             return resetLogin(state);
         case actionTypes.AUTH_CHECK_SUCCESS:
