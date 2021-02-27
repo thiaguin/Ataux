@@ -30,7 +30,7 @@ export class MailService {
         const body = `
         You can reset your password at this link:
         
-        ${process.env.FRONTEND_URL}/resetPassword/${code}
+        ${process.env.FRONTEND_URL}/recoverPassword/${code}
 
         Team Ataux.
         `;

@@ -33,6 +33,20 @@ export class UsersService {
         return getManager().getRepository(UserResetPassword);
     }
 
+    async getResetPasswordByCode(code: string): Promise<void> {
+        const userResetPasswordRepository = this.getUserResetPasswordRepository();
+        const userResetPassword = await userResetPasswordRepository.findOne({ where: { code, used: false } });
+        const currentTime = new Date();
+
+        if (!userResetPassword) throw new HttpException({ entity: 'UserResetPassword', type: 'NOT_FOUND' }, 404);
+
+        const resetPasswordLimitTime = new Date(userResetPassword.expirationTime);
+
+        if (currentTime.getTime() > resetPasswordLimitTime.getTime()) {
+            throw new HttpException({ entity: 'Expired', type: 'BAD_REQUEST' }, 400);
+        }
+    }
+
     async findById(id: number): Promise<User> {
         const user = await this.repository.findOne({
             where: { id },
@@ -43,7 +57,7 @@ export class UsersService {
             return user;
         }
 
-        throw new HttpException('NotFound', 404);
+        throw new HttpException('NOT_FOUND', 404);
     }
 
     async findOne(email: string): Promise<User> {
@@ -101,7 +115,7 @@ export class UsersService {
             throw new HttpException('NotUnique', 409);
         }
 
-        throw new HttpException('NotFound', 404);
+        throw new HttpException('NOT_FOUND', 404);
     }
 
     async sendCodeToResetPassword(body): Promise<void> {
@@ -118,6 +132,7 @@ export class UsersService {
         if (userResetPassword) {
             userResetPassword.expirationTime = date.toISOString();
             userResetPassword.code = uuidv4();
+            userResetPassword.used = false;
             await userResetPasswordRepository.save(userResetPassword);
             return this.mailService.sendCodeToResetPassword(user.email, userResetPassword.code);
         } else {
@@ -125,6 +140,7 @@ export class UsersService {
                 code: uuidv4(),
                 expirationTime: date.toISOString(),
                 userId: user.id,
+                used: false,
             });
             await userResetPasswordRepository.save(newUserResetPassword);
             return await this.mailService.sendCodeToResetPassword(user.email, newUserResetPassword.code);
@@ -134,15 +150,17 @@ export class UsersService {
     async resetPasswordByURL(body): Promise<void> {
         const userResetPasswordRepository = this.getUserResetPasswordRepository();
         const userResetPassword = await userResetPasswordRepository.findOne({
-            where: { code: body.code, used: false },
+            where: { code: body.code },
         });
         const currentTime = new Date();
 
-        if (userResetPassword && body.password) {
+        if (!userResetPassword) throw new HttpException({ entity: 'UserResetPasswordCode', type: 'NOT_FOUND' }, 404);
+
+        if (body.password && body.password.length >= 6) {
             const resetPasswordLimitTime = new Date(userResetPassword.expirationTime);
 
-            if (currentTime.getTime() > resetPasswordLimitTime.getTime()) {
-                throw new HttpException('BadRequest', 400);
+            if (currentTime.getTime() > resetPasswordLimitTime.getTime() || userResetPassword.used) {
+                throw new HttpException({ entity: 'UserResetPassword', type: 'BAD_REQUEST' }, 400);
             }
 
             const user = await this.repository.findOne({ where: { id: userResetPassword.userId } });
@@ -155,7 +173,7 @@ export class UsersService {
                 await transactionManager.save(user);
             });
         } else {
-            throw new HttpException('BadRequest', 400);
+            throw new HttpException({ entity: 'InvalidPassword', type: 'BAD_REQUEST' }, 400);
         }
     }
 
@@ -165,13 +183,13 @@ export class UsersService {
             select: ['id', 'email', 'googleId', 'handle', 'method', 'name', 'password', 'registration'],
         });
 
-        if (!user) throw new HttpException('NotFound', 404);
+        if (!user) throw new HttpException('NOT_FOUND', 404);
 
         if (bcrypt.compareSync(body.currentPassword, user.password)) {
             user.password = body.newPassword;
             await this.repository.save(user);
         } else {
-            throw new HttpException('BadRequest', 400);
+            throw new HttpException('BAD_REQUEST', 400);
         }
     }
 

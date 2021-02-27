@@ -23,6 +23,11 @@ export class UsersController {
         return this.userService.findById(params.id);
     }
 
+    @Get('/resetPassword/:code')
+    getResetPasswordByCode(@Param() params: { code: string }): Promise<void> {
+        return this.userService.getResetPasswordByCode(params.code);
+    }
+
     @Post('/resetPassword')
     setCodeToResetPassord(@Body() body) {
         return this.userService.sendCodeToResetPassword(body);

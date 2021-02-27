@@ -38,7 +38,7 @@ export class TagsService {
             return tag;
         }
 
-        throw new HttpException('NotFound', 404);
+        throw new HttpException('NOT_FOUND', 404);
     }
 
     async create(body: CreateTagDTO): Promise<Tag> {
@@ -64,7 +64,7 @@ export class TagsService {
         });
 
         if (!tag) {
-            throw new HttpException('NotFound', 404);
+            throw new HttpException('NOT_FOUND', 404);
         }
 
         await this.repository.update({ id }, body);

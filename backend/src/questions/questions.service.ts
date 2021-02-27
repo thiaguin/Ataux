@@ -56,7 +56,7 @@ export class QuestionsService {
             }
         }
 
-        throw new HttpException('BadRequest', 400);
+        throw new HttpException('BAD_REQUEST', 400);
     }
 
     getContestByURL(url: string): string {
@@ -122,7 +122,7 @@ export class QuestionsService {
             return question;
         }
 
-        throw new HttpException('NotFound', 404);
+        throw new HttpException('NOT_FOUND', 404);
     }
 
     async findByURL(url: string): Promise<Question> {
@@ -133,7 +133,7 @@ export class QuestionsService {
             return question;
         }
 
-        throw new HttpException('NotFound', 404);
+        throw new HttpException('NOT_FOUND', 404);
     }
 
     async generateNewQuestion(url: string): Promise<NewQuestionDTO> {
@@ -221,7 +221,7 @@ export class QuestionsService {
         });
 
         if (!question) {
-            throw new HttpException('NotFound', 404);
+            throw new HttpException('NOT_FOUND', 404);
         }
 
         await this.repository.update({ id }, body);
@@ -231,7 +231,7 @@ export class QuestionsService {
         const question = await this.repository.findOne({ where: { id } });
 
         if (!question) {
-            throw new HttpException('NotFound', 404);
+            throw new HttpException('NOT_FOUND', 404);
         }
 
         this.repository.delete(id);
