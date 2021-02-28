@@ -43,7 +43,7 @@ export class MailService {
         const body = `
         Please, to confirm your email open this link and confirm:
         
-        ${process.env.FRONTEND_URL}/confirmEmail/${code}
+        ${process.env.FRONTEND_URL}/confirm/${code}
 
         Team Ataux.
         `;

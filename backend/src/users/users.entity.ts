@@ -15,6 +15,7 @@ import { SubmissionAssociationDTO } from 'src/submissions/submission-association
 import { Submission } from 'src/submissions/submissions.entity';
 import { UserList } from 'src/userList/userList.entity';
 import { UserResetPassword } from 'src/userResetPassword/userResetPassword.entity';
+import { UserRole } from 'src/enums/userRole.enum';
 
 @Entity()
 export class User {
@@ -42,8 +43,11 @@ export class User {
     @Column({ nullable: true })
     registration: string;
 
-    @Column({ nullable: true })
+    @Column({ nullable: true, default: '' })
     confirmationCode: string;
+
+    @Column({ default: UserRole.MEMBER, enum: [UserRole.MEMBER, UserRole.COLABORATOR, UserRole.ADMIN] })
+    role: string;
 
     @Column({ default: false })
     confirmed: boolean;

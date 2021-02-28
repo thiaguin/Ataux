@@ -1,6 +1,11 @@
 import * as actionTypes from './actionTypes';
 import axios from '../../axios';
 
+export const setRedirectPath = (path) => ({
+    type: actionTypes.SET_REDIRECT_PATH,
+    pathToRedirect: path,
+});
+
 const loginStart = () => ({
     type: actionTypes.LOGIN_START,
 });
@@ -57,7 +62,10 @@ export const authCheck = () => (dispatch) => {
     }
 };
 
-export const setRedirectPath = (path) => ({
-    type: actionTypes.SET_REDIRECT_PATH,
-    pathToRedirect: path,
-});
+export const googleLogin = (body) => (dispatch) => {
+    dispatch(loginStart());
+    axios
+        .post('/auth/google', body)
+        .then((response) => dispatch(loginSucces(response.data)))
+        .catch((error) => dispatch(loginFail(error)));
+};

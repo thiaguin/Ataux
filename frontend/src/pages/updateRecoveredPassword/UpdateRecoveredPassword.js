@@ -5,7 +5,7 @@ import * as yup from 'yup';
 import { Formik } from 'formik';
 import { Form, Button, Spinner, Toast } from 'react-bootstrap';
 import * as actions from '../../store/actions';
-import Popup from '../../components/utils/Popup';
+import Popup from '../../components/popup/Popup';
 
 const UpdatePasswordRecovered = (props) => {
     const dispatch = useDispatch();

@@ -5,7 +5,7 @@ import { Form, Button, Toast } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import * as actions from '../../store/actions';
-import Popup from '../../components/utils/Popup';
+import Popup from '../../components/popup/Popup';
 
 const RecoverPassword = (props) => {
     const [popup, setPopup] = useState(null);

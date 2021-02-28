@@ -3,4 +3,5 @@ export class UpdateUserDTO {
     confirmationCode?: string;
     confirmed?: boolean;
     password?: string;
+    googleId?: string;
 }
