@@ -97,6 +97,8 @@ const reducer = (state = initialState, action) => {
         case actionTypes.LOGIN_SUCCESS:
             return loginSucess(state, action.data);
         case actionTypes.LOGIN_FAIL:
+            // eslint-disable-next-line no-console
+            console.log('here login reducer', action.error.response);
             return loginFail(state, action.error.response);
         case actionTypes.RESET_LOGIN:
             return resetLogin(state);

@@ -1,6 +1,6 @@
-export { login, resetLogin, authCheck, setRedirectPath, logout } from './login';
+export { login, resetLogin, authCheck, setRedirectPath, logout, googleLogin } from './login';
 export { recoverPassword, resetRecoverPassword } from './recoverPassword';
-export { confirmEmail, resetConfirmEmail } from './confirmEmail';
+export { confirmEmail, resetConfirmEmail, resendEmail, resetResendEmail } from './confirmEmail';
 export {
     existCodeToRecover,
     resetExistCodeToRecoverPassword,

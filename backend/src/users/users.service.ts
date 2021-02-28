@@ -74,7 +74,7 @@ export class UsersService {
     async findOneWithPassword(email: string): Promise<User> {
         const user = await this.repository.findOne({
             where: { email },
-            select: ['id', 'email', 'name', 'password'],
+            select: ['id', 'email', 'name', 'password', 'confirmed', 'handle', 'registration', 'method'],
         });
 
         return user;

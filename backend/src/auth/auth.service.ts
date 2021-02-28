@@ -7,7 +7,7 @@ import { User } from 'src/users/users.entity';
 import { UserMethod } from 'src/enums/userMethod.enum';
 import { IncomingHttpHeaders } from 'http';
 import { PayloadUserDTO } from 'src/users/dto/payload-user.dto';
-import { INVALID_PASSWORD, NOT_FOUND, UNAUTHORIZED } from 'src/resource/errorType.resource';
+import { BAD_REQUEST, INVALID_PASSWORD, NOT_FOUND, UNAUTHORIZED, GOOGLE_USER } from 'src/resource/errorType.resource';
 
 @Injectable()
 export class AuthService {
@@ -70,13 +70,19 @@ export class AuthService {
     async login(body: any): Promise<AuthResultDTO> {
         const user = await this.userService.findOneWithPassword(body.email);
 
+        if (user?.method === UserMethod.GOOGLE) {
+            throw new HttpException({ entity: 'User', type: GOOGLE_USER }, 400);
+        }
+
         if (user?.password) {
             if (!bcrypt.compareSync(body.password, user.password)) {
                 throw new HttpException({ entity: 'User', type: INVALID_PASSWORD }, 400);
             }
+
             if (user && !user.confirmed) {
                 throw new HttpException({ entity: 'NotConfirmed', type: UNAUTHORIZED }, 401);
             }
+
             return this.getToken(user);
         }
 
@@ -89,12 +95,19 @@ export class AuthService {
         if (googleUser) {
             const { email, sub } = googleUser;
             const user = await this.userService.findOne(email);
+            if (!user) {
+                const newUser = await this.userService.createByGoogle({ token: body.token });
+                return this.getToken(newUser);
+            }
 
-            if (user?.googleId === sub && user?.method === UserMethod.GOOGLE) {
+            if (user.googleId && user.googleId === sub) {
+                return this.getToken(user);
+            } else if (!user.googleId) {
+                await this.userService.update(user.id, { googleId: sub });
                 return this.getToken(user);
             }
         }
 
-        throw new HttpException('NOT_FOUND', 404);
+        throw new HttpException({ entity: 'GoogleLogin', type: BAD_REQUEST }, 400);
     }
 }

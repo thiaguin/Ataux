@@ -3,4 +3,6 @@ export const errors = {
     BAD_REQUEST: { value: 'BAD_REQUEST', label: 'bad request' },
     INVALID_PASSWORD: { value: 'INVALID_PASSWORD', label: 'Senha Incorreta.' },
     INTERNAL_SERVER: { value: 'INTERNAL_SERVER', label: 'Ocorreu um erro inesperado.' },
+    UNAUTHORIZED: { value: 'UNAUTHORIZED', label: 'Você não tem autorização para isso.' },
+    GOOGLE_USER: { value: 'GOOGLE_USER', label: 'Usuário cadastrado pelo google.' },
 };
