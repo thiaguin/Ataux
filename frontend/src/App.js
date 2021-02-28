@@ -13,11 +13,16 @@ const App = (props) => {
     const dispatch = useDispatch();
     const onAuthCheck = useCallback(() => dispatch(actions.authCheck()), [dispatch]);
 
-    const { isAuth } = props;
+    const { login } = props;
+    const isAuth = login.token;
+    const missInfo = login.role === 'MEMBER' && (!login.handle || !login.registration);
 
-    useEffect(() => {
-        onAuthCheck();
-    }, [onAuthCheck]);
+    const missInfoRoutes = (
+        <Switch>
+            <Route path="/confirmInfo" />
+            <Redirect to="/confirmInfo" />
+        </Switch>
+    );
 
     const freeRoutes = (
         <Switch>
@@ -30,11 +35,17 @@ const App = (props) => {
         </Switch>
     );
 
-    const loggedRoutes = (
+    const loggedRoutesOk = (
         <Switch>
             <Route path="/" />
         </Switch>
     );
+
+    const loggedRoutes = missInfo ? missInfoRoutes : loggedRoutesOk;
+
+    useEffect(() => {
+        onAuthCheck();
+    }, [onAuthCheck]);
 
     return (
         <>
@@ -45,7 +56,7 @@ const App = (props) => {
 };
 
 const mapStateToProps = (state) => ({
-    isAuth: !!state.login.token,
+    login: state.login,
 });
 
 export default withRouter(connect(mapStateToProps)(App));

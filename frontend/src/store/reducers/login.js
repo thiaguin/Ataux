@@ -9,6 +9,9 @@ const initialState = {
     userId: null,
     email: null,
     name: null,
+    role: null,
+    registration: null,
+    handle: null,
     expirationDate: null,
     pathToRedirect: '/',
 };
@@ -25,9 +28,6 @@ const loginSucess = (state, data) => {
 
     localStorage.setItem('token', data.token);
     localStorage.setItem('expirationDate', `${expirationDate}`);
-    localStorage.setItem('userId', decoded.id);
-    localStorage.setItem('name', decoded.name);
-    localStorage.setItem('email', decoded.email);
 
     return {
         ...state,
@@ -37,6 +37,9 @@ const loginSucess = (state, data) => {
         userId: decoded.id,
         email: decoded.email,
         name: decoded.name,
+        role: decoded.role,
+        handle: decoded.handle,
+        registration: decoded.registration,
         expirationDate,
     };
 };
@@ -54,16 +57,16 @@ const resetLogin = (state) => ({
 
 const authSucces = (state) => {
     const token = localStorage.getItem('token');
-    const email = localStorage.getItem('email');
-    const userId = localStorage.getItem('userId');
-    const name = localStorage.getItem('name');
-
+    const decoded = jwt(token);
     return {
         ...state,
         token,
-        email,
-        userId,
-        name,
+        userId: decoded.id,
+        email: decoded.email,
+        name: decoded.name,
+        role: decoded.role,
+        handle: decoded.handle,
+        registration: decoded.registration,
         pathToRedirect: '/',
     };
 };
@@ -71,9 +74,6 @@ const authSucces = (state) => {
 const authLogout = (state) => {
     localStorage.removeItem('token');
     localStorage.removeItem('expirationDate');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('name');
-    localStorage.removeItem('email');
 
     return {
         ...state,
@@ -81,7 +81,10 @@ const authLogout = (state) => {
         userId: null,
         email: null,
         name: null,
+        role: null,
+        registration: null,
         expirationDate: null,
+        handle: null,
     };
 };
 
@@ -97,8 +100,6 @@ const reducer = (state = initialState, action) => {
         case actionTypes.LOGIN_SUCCESS:
             return loginSucess(state, action.data);
         case actionTypes.LOGIN_FAIL:
-            // eslint-disable-next-line no-console
-            console.log('here login reducer', action.error.response);
             return loginFail(state, action.error.response);
         case actionTypes.RESET_LOGIN:
             return resetLogin(state);

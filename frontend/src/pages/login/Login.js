@@ -88,6 +88,8 @@ const Login = (props) => {
                     />,
                 );
             }
+        } else {
+            setModal(null);
         }
     }, [loginError]);
 
@@ -131,7 +133,7 @@ const Login = (props) => {
                                         <Form.Control.Feedback type="invalid">Not valid email!</Form.Control.Feedback>
                                     </Form.Group>
                                     <Form.Group controlId="formBasicPassword" onSubmit={loginHandler}>
-                                        <Form.Label>Password</Form.Label>
+                                        <Form.Label>Senha</Form.Label>
                                         <Form.Control
                                             name="password"
                                             value={values.password}
@@ -156,6 +158,7 @@ const Login = (props) => {
                                                 clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
                                                 render={(renderProps) => (
                                                     <GoogleButton
+                                                        name="Entrar com Google"
                                                         onClick={renderProps.onClick}
                                                         style={{ minWidth: '200px' }}
                                                     />
@@ -169,7 +172,7 @@ const Login = (props) => {
                                                 style={{ width: '100%', minWidth: '200px' }}
                                                 variant="primary"
                                                 type="submit"
-                                                disabled={touched.email && touched.password && !isValid}
+                                                disabled={!values.email || !values.password || !isValid}
                                                 onClick={() => loginHandler(values)}
                                             >
                                                 Login

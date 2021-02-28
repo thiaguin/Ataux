@@ -3,9 +3,10 @@ import { connect, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import * as yup from 'yup';
 import { Formik } from 'formik';
-import { Form, Button, Spinner, Toast } from 'react-bootstrap';
+import { Form, Button, Toast } from 'react-bootstrap';
 import * as actions from '../../store/actions';
 import Popup from '../../components/popup/Popup';
+import SpinnerButton from '../../components/spinnerButton/SpinnerButton';
 
 const UpdatePasswordRecovered = (props) => {
     const dispatch = useDispatch();
@@ -42,28 +43,6 @@ const UpdatePasswordRecovered = (props) => {
         history.push('/login');
     };
 
-    const SubmitButton = (currProps) => (
-        <>
-            <Button
-                type="submit"
-                variant="primary"
-                onClick={() => submitHandler(currProps.values)}
-                disabled={currProps.values.confirmPassword !== currProps.values.password || !currProps.isValid}
-            >
-                Enviar
-            </Button>
-        </>
-    );
-
-    const SpinnerSubmittButton = () => (
-        <>
-            <Button variant="primary" disabled>
-                <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
-                <span className="sr-only">Loading...</span>
-            </Button>
-        </>
-    );
-
     useEffect(() => {
         if (code) {
             onInitPage(code);
@@ -92,7 +71,7 @@ const UpdatePasswordRecovered = (props) => {
                             <div style={childInStyle}>
                                 <Form onSubmit={handleSubmit}>
                                     <Form.Group controlId="formBasicPassword">
-                                        <Form.Label>New Password</Form.Label>
+                                        <Form.Label>Nova Senha</Form.Label>
                                         <Form.Control
                                             name="password"
                                             value={values.password}
@@ -107,7 +86,7 @@ const UpdatePasswordRecovered = (props) => {
                                         </Form.Control.Feedback>
                                     </Form.Group>
                                     <Form.Group controlId="formBasicConfirmPassword">
-                                        <Form.Label>Confirm Password</Form.Label>
+                                        <Form.Label>Confirmar Senha</Form.Label>
                                         <Form.Control
                                             name="confirmPassword"
                                             value={values.confirmPassword}
@@ -125,9 +104,16 @@ const UpdatePasswordRecovered = (props) => {
                                     </Form.Group>
                                     <Form.Group style={{ textAlign: 'right' }} controlId="formGridSubmtiButton">
                                         {loadingUpdate ? (
-                                            <SpinnerSubmittButton />
+                                            <SpinnerButton />
                                         ) : (
-                                            <SubmitButton values={values} isValid={isValid} />
+                                            <Button
+                                                type="submit"
+                                                variant="primary"
+                                                onClick={() => submitHandler(values)}
+                                                disabled={values.confirmPassword !== values.password || !isValid}
+                                            >
+                                                Enviar
+                                            </Button>
                                         )}
                                     </Form.Group>
                                 </Form>

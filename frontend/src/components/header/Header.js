@@ -14,13 +14,14 @@ const header = (props) => {
     };
 
     const registerOnClickHandler = () => {
+        props.onResetRegister();
         history.push('register');
     };
 
     const loggedHeader = (
         <Navbar bg="dark" variant="dark">
             <Navbar.Brand onClick={props.onLogout} href="home">
-                AUTAUX
+                ATAUX
             </Navbar.Brand>
             <Nav className="mr-auto">
                 <Nav.Link href="questions">Questões</Nav.Link>
@@ -32,7 +33,7 @@ const header = (props) => {
 
     const notLoggedHeader = (
         <Navbar bg="dark" variant="dark">
-            <Navbar.Brand href="home">AUTAUX</Navbar.Brand>
+            <Navbar.Brand href="home">ATAUX</Navbar.Brand>
             <Nav className="mr-auto" />
             <div>
                 <Button style={{ width: '100px' }} variant="secondary" onClick={loginOnClickHandler}>
@@ -55,6 +56,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
     onLogout: () => dispatch(actions.logout()),
+    onResetRegister: () => dispatch(actions.resetRegister()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(header);
