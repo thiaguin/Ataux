@@ -69,3 +69,17 @@ export const googleLogin = (body) => (dispatch) => {
         .then((response) => dispatch(loginSucces(response.data)))
         .catch((error) => dispatch(loginFail(error)));
 };
+
+const refreshTokenSucces = (data) => ({
+    type: actionTypes.REFRESH_TOKEN_SUCCESS,
+    data,
+});
+
+export const resetRefreshToken = () => ({ type: actionTypes.RESET_REFRESH_TOKEN });
+
+export const refreshToken = (body) => (dispatch) => {
+    axios
+        .post('/auth/refresh', body)
+        .then((response) => dispatch(refreshTokenSucces(response.data)))
+        .catch((error) => dispatch(logout(error)));
+};

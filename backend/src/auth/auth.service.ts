@@ -67,6 +67,13 @@ export class AuthService {
         throw new HttpException('Unauthorized', 401);
     }
 
+    async refreshToken(token: string): Promise<AuthResultDTO> {
+        const payload = this.jwtService.verify(token);
+        const user = await this.userService.findById(payload.id);
+
+        return this.getToken(user);
+    }
+
     async login(body: any): Promise<AuthResultDTO> {
         const user = await this.userService.findOneWithPassword(body.email);
 

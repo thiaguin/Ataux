@@ -19,6 +19,11 @@ export class AuthController {
         return this.authService.login(body);
     }
 
+    @Post('/refresh')
+    refresh(@Body() body: { token: string }): Promise<AuthResultDTO> {
+        return this.authService.refreshToken(body.token);
+    }
+
     @Post('/google')
     googleLogin(@Body() body: { token: string }): Promise<AuthResultDTO> {
         return this.authService.googleLogin(body);

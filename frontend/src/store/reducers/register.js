@@ -38,8 +38,6 @@ const reducer = (state = initialState, action) => {
         case actionTypes.REGISTER_FAIL:
             return registerFail(state, action.error.response);
         case actionTypes.RESET_REGISTER:
-            // eslint-disable-next-line no-console
-            console.log('here');
             return resetRegister(state);
         default:
             return { ...state };

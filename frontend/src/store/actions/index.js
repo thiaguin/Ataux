@@ -1,4 +1,4 @@
-export { login, resetLogin, authCheck, setRedirectPath, logout, googleLogin } from './login';
+export { login, resetLogin, authCheck, setRedirectPath, logout, googleLogin, refreshToken } from './login';
 export { recoverPassword, resetRecoverPassword } from './recoverPassword';
 export { confirmEmail, resetConfirmEmail, resendEmail, resetResendEmail } from './confirmEmail';
 export { register, resetRegister } from './register';
@@ -8,3 +8,4 @@ export {
     updateRecoverPassword,
     resetUpdateRecoverPassword,
 } from './updateRecoveredPassword';
+export { updateUser, resetUpdateUser, checkValidMissInfo } from './user';

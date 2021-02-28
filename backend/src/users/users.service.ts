@@ -15,6 +15,7 @@ import * as bcrypt from 'bcryptjs';
 import { MailService } from 'src/utils/mail.service';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { BAD_REQUEST, NOT_FOUND, NOT_UNIQUE } from 'src/resource/errorType.resource';
+import { CodeforcesService } from 'src/codeforces/codeforces.service';
 
 @Injectable()
 export class UsersService {
@@ -23,16 +24,22 @@ export class UsersService {
     private googleClient: OAuth2Client;
     private googleClientId: string;
     private mailService: MailService;
+    private codeforceService: CodeforcesService;
 
     constructor() {
         this.repository = getCustomRepository(UserRepository);
         this.googleClientId = process.env.GOOGLE_CLIENT_ID;
         this.googleClient = new OAuth2Client(this.googleClientId);
         this.mailService = new MailService();
+        this.codeforceService = new CodeforcesService();
     }
 
     getUserResetPasswordRepository(): Repository<UserResetPassword> {
         return getManager().getRepository(UserResetPassword);
+    }
+
+    async existHandle(handle: string): Promise<void> {
+        await this.codeforceService.getUser(handle);
     }
 
     async getResetPasswordByCode(code: string): Promise<void> {
