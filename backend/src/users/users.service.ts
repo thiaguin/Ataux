@@ -14,7 +14,7 @@ import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcryptjs';
 import { MailService } from 'src/utils/mail.service';
 import { UpdateUserDTO } from './dto/update-user.dto';
-import { BAD_REQUEST, NOT_FOUND } from 'src/resource/errorType.resource';
+import { BAD_REQUEST, NOT_FOUND, NOT_UNIQUE } from 'src/resource/errorType.resource';
 
 @Injectable()
 export class UsersService {
@@ -74,7 +74,7 @@ export class UsersService {
     async findOneWithPassword(email: string): Promise<User> {
         const user = await this.repository.findOne({
             where: { email },
-            select: ['id', 'email', 'name', 'password', 'confirmed', 'handle', 'registration', 'method'],
+            select: ['id', 'email', 'name', 'password', 'confirmed', 'handle', 'registration', 'method', 'role'],
         });
 
         return user;
@@ -113,7 +113,7 @@ export class UsersService {
             return newUser;
         }
 
-        throw new HttpException('NotUnique', 409);
+        throw new HttpException({ entity: 'User', type: NOT_UNIQUE }, 409);
     }
 
     async resendEmailConfirmation(email: string): Promise<void> {

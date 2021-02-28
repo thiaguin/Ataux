@@ -10,7 +10,7 @@ const googleButton = (props) => {
         <>
             <Button onClick={props.onClick} style={googleButtonStyle} variant="primary">
                 <Image src={googleImg} style={googleImgStyle} />
-                Login With Google
+                {props.name}
             </Button>
         </>
     );

@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect } from 'react';
-// import { Button, Spinner, Toast } from 'react-bootstrap';
 import { connect, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import ConfirmedEmail from '../../components/confirmeEmail/ConfirmedEmail';

@@ -23,8 +23,8 @@ export class AuthService {
     }
 
     getToken(user: User): { token: string } {
-        const { id, email, name, handle, registration } = user;
-        const token = this.jwtService.sign({ id, email, name, handle, registration });
+        const { id, email, name, handle, registration, role } = user;
+        const token = this.jwtService.sign({ id, email, name, handle, registration, role });
         return { token };
     }
 
@@ -103,7 +103,7 @@ export class AuthService {
             if (user.googleId && user.googleId === sub) {
                 return this.getToken(user);
             } else if (!user.googleId) {
-                await this.userService.update(user.id, { googleId: sub });
+                await this.userService.update(user.id, { googleId: sub, confirmed: true, confirmationCode: '' });
                 return this.getToken(user);
             }
         }
