@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  pgadmin4:
+    image: dpage/pgadmin4
+    container_name: pgadmin4
+    ports:
+      - '25432:80'
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=ataux@mail.com
+      - PGADMIN_DEFAULT_PASSWORD=pwd2020
+    depends_on:
+      - ataux-postgres
+    networks:
+      - ataux-network
+
+  ataux-postgres:
+    image: 'postgres'
+    container_name: ataux-postgres
+    environment:
+      - POSTGRES_DB=ataux-db
+      - POSTGRES_USER=ataux-username
+      - POSTGRES_PASSWORD=pwd2020
+    ports:
+      - '54320:5432'
+    volumes:
+      - ./data/postgres/database
+    networks:
+      - ataux-network
+
+networks:
+  ataux-network:
+    driver: bridge
