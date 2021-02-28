@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query, Req } from '@nestjs/common';
 import { CreateUserClassDTO } from 'src/usersClasses/dto/create-user-class.dto';
 import { UserClass } from 'src/usersClasses/usersClasses.entity';
 import { CreateUserDTO } from './dto/create-user.dto';
@@ -16,6 +16,11 @@ export class UsersController {
     @Get('/')
     findAll(): Promise<{ users: User[]; count: number }> {
         return this.userService.findAndCountAll();
+    }
+
+    @Get('/existHandle')
+    existUserByHandle(@Query() query: { handle: string }): Promise<void> {
+        return this.userService.existHandle(query.handle);
     }
 
     @Get('/:id')
@@ -66,5 +71,10 @@ export class UsersController {
     @Post('/')
     create(@Body() body: CreateUserDTO): Promise<User> {
         return this.userService.create(body);
+    }
+
+    @Put('/:id')
+    update(@Param() params: { id: number }, @Body() body: CreateUserDTO): Promise<void> {
+        return this.userService.update(params.id, body);
     }
 }

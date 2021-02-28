@@ -93,6 +93,28 @@ const setRedirectPath = (state, action) => ({
     pathToRedirect: action.pathToRedirect,
 });
 
+const refreshTokenSuccess = (state, data) => {
+    const decoded = jwt(data.token);
+    const expirationDate = new Date(decoded.exp * 1000);
+
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('expirationDate', `${expirationDate}`);
+
+    return {
+        ...state,
+        loading: false,
+        error: null,
+        token: data.token,
+        userId: decoded.id,
+        email: decoded.email,
+        name: decoded.name,
+        role: decoded.role,
+        handle: decoded.handle,
+        registration: decoded.registration,
+        expirationDate,
+    };
+};
+
 const reducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.LOGIN_START:
@@ -109,6 +131,8 @@ const reducer = (state = initialState, action) => {
             return authLogout(state);
         case actionTypes.SET_REDIRECT_PATH:
             return setRedirectPath(state, action);
+        case actionTypes.REFRESH_TOKEN_SUCCESS:
+            return refreshTokenSuccess(state, action.data);
         default:
             return { ...state };
     }

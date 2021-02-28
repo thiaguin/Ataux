@@ -8,6 +8,7 @@ import RecoverPassword from './pages/recoverPasword/RecoverPassword';
 import UpdateRecoveredPassword from './pages/updateRecoveredPassword/UpdateRecoveredPassword';
 import * as actions from './store/actions';
 import ConfirmEmail from './pages/confirmEmail/ConfirmEmail';
+import ConfirmInfoPage from './pages/confirmMemberInfo/ConfirmMemberInfo';
 
 const App = (props) => {
     const dispatch = useDispatch();
@@ -19,7 +20,7 @@ const App = (props) => {
 
     const missInfoRoutes = (
         <Switch>
-            <Route path="/confirmInfo" />
+            <Route path="/confirmInfo" render={(currProps) => <ConfirmInfoPage {...currProps} />} />
             <Redirect to="/confirmInfo" />
         </Switch>
     );
@@ -37,7 +38,7 @@ const App = (props) => {
 
     const loggedRoutesOk = (
         <Switch>
-            <Route path="/" />
+            <Route path="/" render={() => <div>Main Page Logged</div>} />
         </Switch>
     );
 

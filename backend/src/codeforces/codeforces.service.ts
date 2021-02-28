@@ -1,4 +1,5 @@
 import { HttpException, HttpService, Injectable } from '@nestjs/common';
+import { NOT_FOUND } from 'src/resource/errorType.resource';
 import { CodeforcesContestDTO } from './dto/codeforces-contest.dto';
 import { CodeforcesProblemDTO } from './dto/codeforces-problem.dto';
 
@@ -72,7 +73,7 @@ export class CodeforcesService {
             if (error.response.status === 429 && count > 0) {
                 return this.getUser(handle, count - 1);
             }
-            throw new HttpException('NOT_FOUND', 404);
+            throw new HttpException({ entity: 'Handle', type: NOT_FOUND }, 404);
         }
     }
 }
