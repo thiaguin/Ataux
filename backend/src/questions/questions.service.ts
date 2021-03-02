@@ -18,6 +18,7 @@ import { PaginateService } from 'src/utils/paginate.service';
 import { QueryService } from 'src/utils/query.service';
 import { EntityToQuery } from 'src/utils/dto/entityQuery.dto';
 import { Query } from 'typeorm/driver/Query';
+import { BAD_REQUEST, NOT_FOUND, NOT_UNIQUE } from 'src/resource/errorType.resource';
 
 @Injectable()
 export class QuestionsService {
@@ -56,7 +57,7 @@ export class QuestionsService {
             }
         }
 
-        throw new HttpException('BAD_REQUEST', 400);
+        throw new HttpException({ entity: 'CodeforcesURL', type: BAD_REQUEST }, 400);
     }
 
     getContestByURL(url: string): string {
@@ -108,6 +109,7 @@ export class QuestionsService {
     async findOne(query: QueryQuestionDTO): Promise<Question> {
         const question = await this.repository.findOne({
             where: query,
+            relations: ['tags', 'tags.tag'],
         });
 
         if (question) {
@@ -122,7 +124,7 @@ export class QuestionsService {
             return question;
         }
 
-        throw new HttpException('NOT_FOUND', 404);
+        throw new HttpException({ entity: 'Question', type: NOT_FOUND }, 404);
     }
 
     async findByURL(url: string): Promise<Question> {
@@ -144,7 +146,7 @@ export class QuestionsService {
         const question = await this.findOne({ contestId, problemId });
 
         if (question) {
-            throw new HttpException('NotUnique', 409);
+            throw new HttpException({ entity: 'Question', type: NOT_UNIQUE }, 409);
         }
 
         return {
@@ -159,26 +161,47 @@ export class QuestionsService {
     }
 
     async addContestQuestions(url: string): Promise<AddQuestionsByContestResult> {
-        const contestId = await this.getContestByURL(url);
+        const { contestId, problemId } = this.getInfoByURL(url);
         const contest = await this.codeforcesService.getContest(contestId);
-        const result = { SUCCESS: [], ERROR: [] };
+        const result: AddQuestionsByContestResult = { resume: { SUCCESS: [], ERROR: [] } };
 
         for (const question of contest.problems) {
             try {
-                const problemId = question.index;
                 const newQuestion = {
-                    url: `https://codeforces.com/contest/${contestId}/problem/${problemId}`,
+                    url: `https://codeforces.com/contest/${contestId}/problem/${question.index}`,
                     contestId: contestId,
-                    problemId: problemId,
+                    problemId: question.index,
                     // TODO: Calculate level
                     level: QuestionLevel.MEDIUM,
                     title: question.name,
                     tags: question.tags,
                 };
-                await this.createQuestion(newQuestion);
-                result.SUCCESS.push(question.index);
+
+                const currQuestion = await this.repository.findOne({ where: { contestId, problemId: question.index } });
+                const notUniqueError = { entity: 'Question', type: NOT_UNIQUE };
+                if (currQuestion) {
+                    result.resume.ERROR.push({ questionId: question.index, error: notUniqueError });
+                    if (currQuestion.problemId === problemId) {
+                        result.question = { questionId: `${currQuestion.id}`, error: notUniqueError };
+                    }
+                } else {
+                    const questionCreated = await this.createQuestion(newQuestion);
+                    if (questionCreated.problemId === problemId)
+                        result.question = { questionId: `${questionCreated.id}` };
+                    result.resume.SUCCESS.push(question.index);
+                }
             } catch (error) {
-                result.ERROR.push(question.index);
+                result.resume.ERROR.push({
+                    questionId: question.index,
+                    error: { entity: 'Question', type: error.message },
+                });
+
+                if (question.index === problemId) {
+                    result.question = {
+                        questionId: null,
+                        error: { entity: 'Question', type: error.message },
+                    };
+                }
             }
         }
 
