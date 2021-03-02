@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Form, Button, Col } from 'react-bootstrap';
 import { GoogleLogin } from 'react-google-login';
 import { connect } from 'react-redux';
-import * as yup from 'yup';
+import * as Yup from 'yup';
 import { Formik } from 'formik';
 import { useHistory } from 'react-router-dom';
 import * as actions from '../../store/actions';
@@ -21,9 +21,9 @@ const Login = (props) => {
     const history = useHistory();
     const loginError = login.error;
 
-    const schema = yup.object().shape({
-        email: yup.string().email().required(),
-        password: yup.string().required(),
+    const schema = Yup.object().shape({
+        email: Yup.string().email().required(),
+        password: Yup.string().required(),
     });
 
     const parentInStyle = {
@@ -119,7 +119,7 @@ const Login = (props) => {
                         <div style={parentInStyle}>
                             <div style={childInStyle}>
                                 <Form noValidate onSubmit={handleSubmit}>
-                                    <Form.Group controlId="formBasicEmail" onSubmit={loginHandler}>
+                                    <Form.Group controlId="formEmail" onSubmit={loginHandler}>
                                         <Form.Label>Email</Form.Label>
                                         <Form.Control
                                             name="email"
@@ -132,7 +132,7 @@ const Login = (props) => {
                                         />
                                         <Form.Control.Feedback type="invalid">Not valid email!</Form.Control.Feedback>
                                     </Form.Group>
-                                    <Form.Group controlId="formBasicPassword" onSubmit={loginHandler}>
+                                    <Form.Group controlId="formPassword" onSubmit={loginHandler}>
                                         <Form.Label>Senha</Form.Label>
                                         <Form.Control
                                             name="password"

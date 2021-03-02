@@ -9,3 +9,4 @@ export {
     resetUpdateRecoverPassword,
 } from './updateRecoveredPassword';
 export { updateUser, resetUpdateUser, checkValidMissInfo } from './user';
+export { createQuestion, resetCreateQuestion, getQuestionById, resetGetQuestionById } from './question';
