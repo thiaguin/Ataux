@@ -6,6 +6,7 @@ import updateRecoveredPasswordReducer from './updateRecoveredPassword';
 import confirmEmailReducer from './confirmEmail';
 import registerReducer from './register';
 import userReducer from './user';
+import questionReducer from './question';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -16,6 +17,7 @@ const reducers = combineReducers({
     confirmEmail: confirmEmailReducer,
     register: registerReducer,
     user: userReducer,
+    question: questionReducer,
 });
 
 export const Store = createStore(reducers, composeEnhancers(applyMiddleware(thunk)));

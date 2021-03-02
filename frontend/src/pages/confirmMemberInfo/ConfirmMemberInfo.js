@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import { Formik } from 'formik';
 import { connect } from 'react-redux';
-import * as yup from 'yup';
+import * as Yup from 'yup';
 import * as actions from '../../store/actions';
 import SpinnerButton from '../../components/spinnerButton/SpinnerButton';
 import Popup from '../../components/popup/Popup';
@@ -15,9 +15,9 @@ const ConfirmInfoPage = (props) => {
     const loginHandle = login && login.handle ? login.handle : '';
     const loginRegistration = login && login.registration ? login.registration : '';
 
-    const schema = yup.object().shape({
-        handle: yup.string().required(),
-        registration: yup.string().required(),
+    const schema = Yup.object().shape({
+        handle: Yup.string().required(),
+        registration: Yup.string().required(),
     });
 
     const parentInStyle = {
@@ -61,7 +61,7 @@ const ConfirmInfoPage = (props) => {
                                 <Form.Text style={{ margin: '10px' }} className="text-muted">
                                     Para continuar como aluno preencha as seguintes informações.
                                 </Form.Text>
-                                <Form.Group controlId="formBasicHandle" onSubmit={submitHandler}>
+                                <Form.Group controlId="formHandle" onSubmit={submitHandler}>
                                     <Form.Label>Codeforces Handle</Form.Label>
                                     <Form.Control
                                         disabled={!!loginHandle}
@@ -74,7 +74,7 @@ const ConfirmInfoPage = (props) => {
                                         onBlur={handleBlur}
                                     />
                                 </Form.Group>
-                                <Form.Group controlId="formBasicRegistration" onSubmit={submitHandler}>
+                                <Form.Group controlId="formRegistration" onSubmit={submitHandler}>
                                     <Form.Label>Matrícula da UFCG</Form.Label>
                                     <Form.Control
                                         disabled={!!loginRegistration}

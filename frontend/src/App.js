@@ -9,6 +9,8 @@ import UpdateRecoveredPassword from './pages/updateRecoveredPassword/UpdateRecov
 import * as actions from './store/actions';
 import ConfirmEmail from './pages/confirmEmail/ConfirmEmail';
 import ConfirmInfoPage from './pages/confirmMemberInfo/ConfirmMemberInfo';
+import Question from './pages/question/Question';
+import QuestionList from './pages/question/QuestionList';
 
 const App = (props) => {
     const dispatch = useDispatch();
@@ -32,12 +34,15 @@ const App = (props) => {
             <Route path="/confirm/:code" render={(currProps) => <ConfirmEmail {...currProps} />} />
             <Route path="/recoverPassword/:code" render={(currProps) => <UpdateRecoveredPassword {...currProps} />} />
             <Route path="/recoverPassword" render={(currProps) => <RecoverPassword {...currProps} />} />
+            <Route path="/" render={() => <div>Main Page Logged</div>} />
             <Redirect to="/" />
         </Switch>
     );
 
     const loggedRoutesOk = (
         <Switch>
+            <Route path="/question/:mode/:questionId?" render={(currProps) => <Question {...currProps} />} />
+            <Route path="/question" render={(currProps) => <QuestionList {...currProps} />} />
             <Route path="/" render={() => <div>Main Page Logged</div>} />
         </Switch>
     );
