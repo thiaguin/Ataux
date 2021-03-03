@@ -12,6 +12,11 @@ const initialState = {
         loading: false,
         question: null,
     },
+    update: {
+        error: null,
+        loading: false,
+        success: null,
+    },
 };
 
 const createQuestionStart = (state) => ({
@@ -79,9 +84,39 @@ const resetGetQuestionById = (state) => ({
     get: { ...initialState.get },
 });
 
+const updateQuestionStart = (state) => ({
+    ...state,
+    update: {
+        ...state.update,
+        loading: true,
+    },
+});
+
+const updateQuestionSuccess = (state) => ({
+    ...state,
+    update: {
+        ...state.update,
+        loading: false,
+        success: true,
+    },
+});
+
+const updateQuestionFail = (state, data) => ({
+    ...state,
+    update: {
+        ...state.update,
+        loading: false,
+        error: getErrorMessage(data),
+    },
+});
+
+const resetUpdateQuestion = (state) => ({
+    ...state,
+    ...initialState,
+    update: { ...initialState.update },
+});
+
 const reducer = (state = initialState, action) => {
-    // eslint-disable-next-line no-console
-    console.log('action', action.type);
     switch (action.type) {
         case actionTypes.CREATE_QUESTION_START:
             return createQuestionStart(state);
@@ -99,6 +134,14 @@ const reducer = (state = initialState, action) => {
             return getQuestionByIdFail(state, action.error.response);
         case actionTypes.RESET_GET_QUESTION_BY_ID:
             return resetGetQuestionById(state);
+        case actionTypes.UPDATE_QUESTION_START:
+            return updateQuestionStart(state);
+        case actionTypes.UPDATE_QUESTION_SUCCESS:
+            return updateQuestionSuccess(state, action.data);
+        case actionTypes.UPDATE_QUESTION_FAIL:
+            return updateQuestionFail(state, action.error.response);
+        case actionTypes.RESET_UPDATE_QUESTION:
+            return resetUpdateQuestion(state);
         default:
             return { ...state };
     }

@@ -41,9 +41,9 @@ const showQuestion = (props) => {
                             </Form.Group>{' '}
                             <Form.Group controlId="formTags" readOnly>
                                 <Form.Label>Tags</Form.Label>
-                                <Form.Control style={{ height: '150px' }} readonly as="select" multiple>
+                                <Form.Control style={{ height: '150px' }} readOnly as="select" multiple>
                                     {props.question.tags.map((value) => (
-                                        <option>{value.tag.name}</option>
+                                        <option key={value.tag.name}>{value.tag.name}</option>
                                     ))}
                                 </Form.Control>
                             </Form.Group>
