@@ -9,15 +9,18 @@ import * as actions from '../../store/actions';
 import Popup from '../../components/popup/Popup';
 import CreateQuestion from '../../components/question/CreateQuestion';
 import ShowQuestion from '../../components/question/ShowQuestion';
+import EditQuestion from '../../components/question/EditQuestion';
+// import levelTypes from '../../enums/levelTypes';
 
 const Question = (props) => {
-    const { question } = props;
+    const { question, tags } = props;
     const { mode, questionId } = props.match.params;
 
     const history = useHistory();
     const dispatch = useDispatch();
 
     const initQuestion = useCallback((param) => dispatch(actions.getQuestionById(param)), [dispatch]);
+    const initEditPage = useCallback(() => dispatch(actions.getAllTags()), [dispatch]);
 
     const [popup, setPopup] = useState(null);
 
@@ -59,6 +62,70 @@ const Question = (props) => {
         }
     }, [question.create.questionId]);
 
+    // Edit
+    // const schema = Yup.object().shape({
+    //     level: Yup.string().email().required(),
+    //     newTag: T,
+    // });
+
+    const allTags = tags && tags.data ? tags.data : [];
+
+    // eslint-disable-next-line no-console
+    // console.log('currQuestion', question.get.question);
+
+    const [questionTags, setQuestionTags] = useState([]);
+
+    const addTagHandler = (newTagId) => {
+        // eslint-disable-next-line no-unused-vars
+        const [tagToAdd] = allTags.filter((tag) => `${tag.id}` === newTagId);
+        const [hasTag] = questionTags.filter((tag) => `${tag.id}` === newTagId);
+        // eslint-disable-next-line no-console
+        console.log('questionTags', questionTags);
+
+        if (!hasTag && tagToAdd) {
+            setQuestionTags([...questionTags, { id: tagToAdd.id, name: tagToAdd.name }]);
+        }
+
+        // questionTags.push(newTag);
+    };
+
+    const removeTagHandler = (tagsIds) => {
+        const questionsFiltered = questionTags.filter((value) => !tagsIds.includes(`${value.id}`));
+        setQuestionTags(questionsFiltered);
+    };
+
+    const editHandler = (values) => {
+        // eslint-disable-next-line no-console
+        console.log('here');
+        props.onUpdateQuestion({
+            tags: questionTags.map((value) => value.id),
+            id: questionId,
+            level: values.level,
+        });
+    };
+
+    useEffect(() => {
+        if (mode && mode === 'edit') {
+            initEditPage();
+        }
+    }, [initEditPage, mode]);
+
+    useEffect(() => {
+        if (question.get.question) {
+            setQuestionTags(question.get.question.tags.map((value) => ({ id: value.tag.id, name: value.tag.name })));
+        }
+    }, [question.get.question]);
+
+    useEffect(() => {
+        if (question.update.success) {
+            props.onResetUpdateQuestion();
+            history.push(`/question/show/${question.get.question.id}`);
+        }
+    }, [question.update.success]);
+
+    // eslint-disable-next-line no-console
+    // console.log('levelTypes', levelTypes);
+
     return (
         <>
             {popup}
@@ -71,17 +138,32 @@ const Question = (props) => {
                     gotToEditPage={goToEditPageHandler}
                 />
             )}
+            {mode === 'edit' && question.get.question && (
+                <EditQuestion
+                    question={question.get.question}
+                    goToUrlPage={goToUrlPageHandler}
+                    goBack={goBackHandler}
+                    questionTags={questionTags}
+                    tags={allTags}
+                    addQuestionTag={addTagHandler}
+                    submit={editHandler}
+                    removeTag={removeTagHandler}
+                />
+            )}
         </>
     );
 };
 
 const mapStateToProps = (state) => ({
     question: state.question,
+    tags: state.tag.getAll.data,
 });
 
 const mapDispatchToProps = (dispatch) => ({
     onCreateQuestion: (values) => dispatch(actions.createQuestion(values)),
+    onUpdateQuestion: (values) => dispatch(actions.updateQuestion(values)),
     onResetCreateQuestion: () => dispatch(actions.resetCreateQuestion()),
+    onResetUpdateQuestion: () => dispatch(actions.resetUpdateQuestion()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Question);

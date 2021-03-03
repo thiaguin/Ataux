@@ -16,6 +16,8 @@ const getUnauthorizedMessageError = (entity) => entitiesTypes[entity];
 const getGoogleUserMessageError = () => errorTypes.GOOGLE_USER.label;
 
 export const getErrorMessage = (response) => {
+    if (!response.data) return getInternalServerError();
+
     const { type, entity } = response.data;
 
     if (response.status === 500 || !type || !entity) {

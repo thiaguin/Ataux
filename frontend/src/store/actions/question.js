@@ -48,3 +48,26 @@ export const getQuestionById = (id) => (dispatch) => {
         .then((response) => dispatch(getQuestionByIdSucces(response.data)))
         .catch((error) => dispatch(getQuestionByIdFail(error)));
 };
+
+const updateQuestionStart = () => ({
+    type: actionTypes.UPDATE_QUESTION_START,
+});
+
+const updateQuestionSucces = () => ({
+    type: actionTypes.UPDATE_QUESTION_SUCCESS,
+});
+
+const updateQuestionFail = (error) => ({
+    type: actionTypes.UPDATE_QUESTION_FAIL,
+    error,
+});
+
+export const resetUpdateQuestion = () => ({ type: actionTypes.RESET_UPDATE_QUESTION });
+
+export const updateQuestion = ({ id, ...body }) => (dispatch) => {
+    dispatch(updateQuestionStart());
+    axios
+        .put(`/questions/${id}`, body)
+        .then(() => dispatch(updateQuestionSucces()))
+        .catch((error) => dispatch(updateQuestionFail(error)));
+};

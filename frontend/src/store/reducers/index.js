@@ -7,6 +7,7 @@ import confirmEmailReducer from './confirmEmail';
 import registerReducer from './register';
 import userReducer from './user';
 import questionReducer from './question';
+import tagReducer from './tag';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -18,6 +19,7 @@ const reducers = combineReducers({
     register: registerReducer,
     user: userReducer,
     question: questionReducer,
+    tag: tagReducer,
 });
 
 export const Store = createStore(reducers, composeEnhancers(applyMiddleware(thunk)));

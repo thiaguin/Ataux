@@ -233,12 +233,15 @@ export class QuestionsService {
             return entity;
         });
     }
+
     async create(body: CreateQuestionDTO): Promise<Question> {
         const question = await this.generateNewQuestion(body?.url);
         return this.createQuestion(question);
     }
 
     async update(id: number, body: UpdateQuestionDTO): Promise<void> {
+        const { tags, ...questionBody } = body;
+        const questionTags = tags || [];
         const question = await this.repository.findOne({
             where: { id },
         });
@@ -247,7 +250,14 @@ export class QuestionsService {
             throw new HttpException('NOT_FOUND', 404);
         }
 
-        await this.repository.update({ id }, body);
+        return await getManager().transaction(async (transaction) => {
+            await transaction.update(Question, { id }, questionBody);
+            await transaction.delete(QuestionTag, { questionId: id });
+            const newQuestionTags = questionTags.map((tagId) => {
+                return transaction.create(QuestionTag, { questionId: id, tagId: tagId });
+            });
+            await transaction.save(newQuestionTags);
+        });
     }
 
     async remove(id: number): Promise<void> {

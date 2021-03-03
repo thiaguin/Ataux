@@ -9,4 +9,12 @@ export {
     resetUpdateRecoverPassword,
 } from './updateRecoveredPassword';
 export { updateUser, resetUpdateUser, checkValidMissInfo } from './user';
-export { createQuestion, resetCreateQuestion, getQuestionById, resetGetQuestionById } from './question';
+export {
+    createQuestion,
+    resetCreateQuestion,
+    getQuestionById,
+    resetGetQuestionById,
+    updateQuestion,
+    resetUpdateQuestion,
+} from './question';
+export { getAllTags, resetGetAllTags } from './tag';
