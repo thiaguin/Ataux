@@ -17,6 +17,11 @@ const initialState = {
         loading: false,
         success: null,
     },
+    getAll: {
+        error: null,
+        loading: false,
+        questions: null,
+    },
 };
 
 const createQuestionStart = (state) => ({
@@ -84,6 +89,38 @@ const resetGetQuestionById = (state) => ({
     get: { ...initialState.get },
 });
 
+const getAllQuestionsStart = (state) => ({
+    ...state,
+    getAll: {
+        ...state.getAll,
+        loading: true,
+    },
+});
+
+const getAllQuestionsSuccess = (state, data) => ({
+    ...state,
+    getAll: {
+        ...state.getAll,
+        loading: false,
+        questions: data,
+    },
+});
+
+const getAllQuestionsFail = (state, data) => ({
+    ...state,
+    getAll: {
+        ...state.getAll,
+        loading: false,
+        error: getErrorMessage(data),
+    },
+});
+
+const resetGetAllQuestions = (state) => ({
+    ...state,
+    ...initialState,
+    getAll: { ...initialState.getAll },
+});
+
 const updateQuestionStart = (state) => ({
     ...state,
     update: {
@@ -134,6 +171,14 @@ const reducer = (state = initialState, action) => {
             return getQuestionByIdFail(state, action.error.response);
         case actionTypes.RESET_GET_QUESTION_BY_ID:
             return resetGetQuestionById(state);
+        case actionTypes.GET_ALL_QUESTIONS_START:
+            return getAllQuestionsStart(state);
+        case actionTypes.GET_ALL_QUESTIONS_SUCCESS:
+            return getAllQuestionsSuccess(state, action.data);
+        case actionTypes.GET_ALL_QUESTIONS_FAIL:
+            return getAllQuestionsFail(state, action.error.response);
+        case actionTypes.RESET_GET_ALL_QUESTIONS:
+            return resetGetAllQuestions(state);
         case actionTypes.UPDATE_QUESTION_START:
             return updateQuestionStart(state);
         case actionTypes.UPDATE_QUESTION_SUCCESS:

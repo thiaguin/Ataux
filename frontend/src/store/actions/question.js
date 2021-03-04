@@ -71,3 +71,27 @@ export const updateQuestion = ({ id, ...body }) => (dispatch) => {
         .then(() => dispatch(updateQuestionSucces()))
         .catch((error) => dispatch(updateQuestionFail(error)));
 };
+
+const getAllQuestionsStart = () => ({
+    type: actionTypes.GET_ALL_QUESTIONS_START,
+});
+
+const getAllQuestionsSucces = (data) => ({
+    type: actionTypes.GET_ALL_QUESTIONS_SUCCESS,
+    data,
+});
+
+const getAllQuestionsFail = (error) => ({
+    type: actionTypes.GET_ALL_QUESTIONS_FAIL,
+    error,
+});
+
+export const resetGetAllQuestions = () => ({ type: actionTypes.RESET_GET_ALL_QUESTIONS });
+
+export const getAllQuestions = (query) => (dispatch) => {
+    dispatch(getAllQuestionsStart());
+    axios
+        .get(`/questions`, { params: query })
+        .then((response) => dispatch(getAllQuestionsSucces(response.data)))
+        .catch((error) => dispatch(getAllQuestionsFail(error)));
+};
