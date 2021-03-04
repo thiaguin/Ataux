@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, connect } from 'react-redux';
-import { Table, InputGroup, FormControl, OverlayTrigger, Popover, Button } from 'react-bootstrap';
+import { Table, InputGroup, FormControl, OverlayTrigger, Popover, Button, Pagination } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import * as actions from '../../store/actions';
 import levelTypes from '../../enums/levelTypes';
@@ -10,11 +10,16 @@ const QuestionList = (props) => {
     const onGetAllQuestions = useCallback((value) => dispatch(actions.getAllQuestions(value)), [dispatch]);
     const onGetAllTags = useCallback(() => dispatch(actions.getAllTags()), [dispatch]);
 
+    const wrapper = React.createRef();
     const history = useHistory();
+
     const [questionNameHover, setQuestionNameHover] = useState(false);
     const [queryName, setQueryName] = useState('');
     const [queryLevel, setQueryLevel] = useState('');
     const [queryTag, setQueryTag] = useState('');
+    // eslint-disable-next-line no-unused-vars
+    const [page, setPage] = useState(0);
+    const [query, setQuery] = useState({});
 
     const parentInStyle = {
         margin: '5%',
@@ -28,6 +33,12 @@ const QuestionList = (props) => {
         width: '100%',
         margin: '0',
     };
+
+    const questionsCount = props.questions && props.questions.count ? props.questions.count : 0;
+
+    const questionsPerPage = 30;
+    const initialPage = 0;
+    const lastPage = Math.floor((questionsCount - 1) / questionsPerPage);
 
     const getPopover = (tags = []) => {
         const tagsNames = tags.map((value) => (
@@ -66,13 +77,14 @@ const QuestionList = (props) => {
     };
 
     const filterHandler = () => {
-        const query = {};
+        const queryParams = {};
 
-        if (queryName !== '') query.title = queryName;
-        if (queryLevel !== '') query.level = queryLevel;
-        if (queryTag !== '') query.tagId = queryTag;
+        if (queryName !== '') queryParams.title = queryName;
+        if (queryLevel !== '') queryParams.level = queryLevel;
+        if (queryTag !== '') queryParams.tagId = queryTag;
 
-        onGetAllQuestions(query);
+        setQuery(queryParams);
+        // onGetAllQuestions(query);
     };
 
     const goToShowPageHandler = (questionId) => {
@@ -89,12 +101,15 @@ const QuestionList = (props) => {
     };
 
     useEffect(() => {
-        onGetAllQuestions({});
-    }, [onGetAllQuestions]);
+        onGetAllQuestions({ page, ...query, take: questionsPerPage });
+    }, [onGetAllQuestions, page, query]);
 
     useEffect(() => {
         onGetAllTags();
     }, [onGetAllTags]);
+
+    // eslint-disable-next-line no-console
+    console.log('porps', props);
 
     return (
         <>
@@ -151,7 +166,6 @@ const QuestionList = (props) => {
                                                 name="level"
                                                 onChange={onChangeQueryLevelHandler}
                                                 readOnly
-                                                defaultValue=""
                                                 type="text"
                                                 as="select"
                                                 placeholder="Nível"
@@ -174,7 +188,6 @@ const QuestionList = (props) => {
                                                 readOnly
                                                 type="text"
                                                 as="select"
-                                                defaultValue=""
                                                 value={queryTag}
                                                 placeholder="Tag"
                                             >
@@ -194,33 +207,52 @@ const QuestionList = (props) => {
                             <tbody>
                                 {props.questions.data.map((question, index) => (
                                     <tr key={question.id} id={question.id}>
-                                        <td key="key">{index + 1}</td>
+                                        <td key="key">{questionsPerPage * page + index + 1}</td>
                                         <td key="name">
-                                            <p
-                                                onClick={() => goToShowPageHandler(question.id)}
-                                                onMouseEnter={() => questionNameHoverHandler(question.id)}
-                                                onMouseLeave={() => questionNameHoverHandler(null)}
-                                                style={
-                                                    questionNameHover === question.id
-                                                        ? { textDecoration: 'underline', cursor: 'pointer' }
-                                                        : {}
-                                                }
-                                            >
-                                                {question.title}
-                                            </p>
+                                            <>
+                                                <p
+                                                    onClick={() => goToShowPageHandler(question.id)}
+                                                    onMouseEnter={() => questionNameHoverHandler(question.id)}
+                                                    onMouseLeave={() => questionNameHoverHandler(null)}
+                                                    style={
+                                                        questionNameHover === question.id
+                                                            ? { textDecoration: 'underline', cursor: 'pointer' }
+                                                            : {}
+                                                    }
+                                                >
+                                                    {question.title}
+                                                </p>
+                                            </>
                                         </td>
                                         <td key="level" style={{ textAlign: 'center' }}>
                                             {levelTypes[question.level]}
                                         </td>
                                         <td key="tags" style={{ textAlign: 'center' }}>
                                             <OverlayTrigger placement="left" overlay={getPopover(question.tags)}>
-                                                <p>{`${question.tags.length} tags`}</p>
+                                                <p ref={wrapper}>{`${question.tags.length} tags`}</p>
                                             </OverlayTrigger>
                                         </td>
                                     </tr>
                                 ))}
                             </tbody>
                         </Table>
+                        {/* <div style={{ textAlign: 'center' }}> */}
+                        <Pagination
+                            style={{
+                                textAlign: 'center',
+                                justifyContent: 'center',
+                                paginationFirstStyle: {
+                                    marginLeft: '5px',
+                                    color: 'red',
+                                },
+                            }}
+                        >
+                            <Pagination.First onClick={() => setPage(0)} disabled={page === initialPage} />
+                            <Pagination.Prev onClick={() => setPage(page - 1)} disabled={page === initialPage} />
+                            <Pagination.Next onClick={() => setPage(page + 1)} disabled={page === lastPage} />
+                            <Pagination.Last onClick={() => setPage(lastPage)} disabled={page === lastPage} />
+                        </Pagination>
+                        {/* </div> */}
                     </div>
                 </div>
             )}
