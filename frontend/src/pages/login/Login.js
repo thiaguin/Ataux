@@ -16,8 +16,8 @@ const Login = (props) => {
     const [popup, setPopup] = useState(null);
     const [modal, setModal] = useState(null);
     const [email, setEmail] = useState('');
-    const [recoverPasswordHover, setrecoverPasswordHover] = useState(false);
-    const [recoverPasswordStyle, setrecoverPasswordStyle] = useState({ textAlign: 'center' });
+    const [recoverPasswordHover, setRecoverPasswordHover] = useState(false);
+    const [recoverPasswordStyle, setRecoverPasswordStyle] = useState({ textAlign: 'center' });
     const history = useHistory();
     const loginError = login.error;
 
@@ -30,7 +30,7 @@ const Login = (props) => {
         margin: '10% 25%',
         width: '50%',
         justifyContent: 'center',
-        border: '3px solid silver',
+        border: '3px solid lightgrey',
         borderRadius: '0.2em',
     };
 
@@ -40,7 +40,7 @@ const Login = (props) => {
     };
 
     const recoverPasswordHoverHandler = () => {
-        setrecoverPasswordHover(!recoverPasswordHover);
+        setRecoverPasswordHover(!recoverPasswordHover);
     };
 
     const loginGoogleHandler = (response) => {
@@ -95,9 +95,9 @@ const Login = (props) => {
 
     useEffect(() => {
         if (recoverPasswordHover) {
-            setrecoverPasswordStyle({ ...recoverPasswordStyle, textDecoration: 'underline', cursor: 'pointer' });
+            setRecoverPasswordStyle({ ...recoverPasswordStyle, textDecoration: 'underline', cursor: 'pointer' });
         } else {
-            setrecoverPasswordStyle({ textAlign: 'center' });
+            setRecoverPasswordStyle({ textAlign: 'center' });
         }
     }, [recoverPasswordHover]);
 

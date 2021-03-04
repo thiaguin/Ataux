@@ -44,7 +44,7 @@ const Question = (props) => {
     useEffect(() => {
         if (['edit', 'show'].includes(mode) && questionId) {
             initQuestion(questionId);
-        } else {
+        } else if (mode !== 'create') {
             history.push('/question');
         }
     }, [initQuestion, questionId, mode]);
@@ -124,7 +124,7 @@ const Question = (props) => {
     }, [question.update.success]);
 
     // eslint-disable-next-line no-console
-    // console.log('levelTypes', levelTypes);
+    console.log('propos question', props);
 
     return (
         <>

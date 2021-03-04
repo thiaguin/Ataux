@@ -16,7 +16,11 @@ export class QueryService {
                 const operator = valueIsArray ? 'in' : '=';
                 const value = valueIsArray ? `(${attributeValue.join(', ')})` : `'${attributeValue}'`;
 
-                result += ` and ${nick}.${att} ${operator} ${value}`;
+                if (['name', 'title'].includes(att)) {
+                    result += ` and ${nick}.${att} ILIKE '%${attributeValue}%'`;
+                } else {
+                    result += ` and ${nick}.${att} ${operator} ${value}`;
+                }
             }
         }
 

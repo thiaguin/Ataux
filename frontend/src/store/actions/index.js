@@ -16,5 +16,7 @@ export {
     resetGetQuestionById,
     updateQuestion,
     resetUpdateQuestion,
+    getAllQuestions,
+    resetGetAllQuestions,
 } from './question';
 export { getAllTags, resetGetAllTags } from './tag';

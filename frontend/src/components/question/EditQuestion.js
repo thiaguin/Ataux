@@ -12,7 +12,7 @@ const editQuestion = (props) => {
         margin: '5% 25%',
         width: '50%',
         justifyContent: 'center',
-        border: '3px solid silver',
+        border: '3px solid lightgrey',
         borderRadius: '0.2em',
     };
 
@@ -127,6 +127,16 @@ const editQuestion = (props) => {
                                     Adicionar Tag
                                 </Button>
                             </div>
+                            {/* <Form.Text
+                                // onClick={recoverPasswordClickHandler}
+                                // onMouseEnter={recoverPasswordHoverHandler}
+                                // onMouseLeave={recoverPasswordHoverHandler}
+                                // style={recoverPasswordStyle}
+                                className="text-muted"
+                                style={{ textAlign: 'left', marginBottom: '10px' }}
+                            >
+                                Editar solução padrão
+                            </Form.Text> */}
                             <div style={{ textAlign: 'right' }}>
                                 <Form.Group
                                     style={{ width: '150px', display: 'inline-block' }}

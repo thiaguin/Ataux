@@ -26,6 +26,8 @@ const header = (props) => {
             <Nav className="mr-auto">
                 <Nav.Link href="question">Questões</Nav.Link>
                 <Nav.Link href="class">Turmas</Nav.Link>
+                <Nav.Link href="user">Usuários</Nav.Link>
+                <Nav.Link href="tag">Tags</Nav.Link>
             </Nav>
             <Nav className="mr-auto" />
         </Navbar>
