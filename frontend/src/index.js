@@ -10,9 +10,7 @@ import { Store } from './store/reducers';
 ReactDOM.render(
     <Provider store={Store}>
         <BrowserRouter>
-            <React.StrictMode>
-                <App />
-            </React.StrictMode>
+            <App />
         </BrowserRouter>
     </Provider>,
     document.getElementById('root'),
