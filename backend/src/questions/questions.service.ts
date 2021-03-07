@@ -93,7 +93,7 @@ export class QuestionsService {
         const page = this.paginateService.getPage(query);
         const queryBuild = createQueryBuilder(Question, 'q');
         const entitiesRelation = this.getEntitiesRelation();
-        const where = this.queryService.getQuery(entitiesRelation, <Query>query);
+        const where = this.queryService.getQueryToQueryBuilder(entitiesRelation, <Query>query);
 
         const [questions, count] = await queryBuild
             .leftJoinAndMapMany('q.tags', 'q.tags', 'qt')

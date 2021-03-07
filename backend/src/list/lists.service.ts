@@ -145,7 +145,7 @@ export class ListService {
     async getResume(id: number, query): Promise<List> {
         const queryBuild = createQueryBuilder(List, 'l');
         const entitiesRelation = this.getEntitiesRelation();
-        const where = `l.id = '${id}' and ${this.queryService.getQuery(entitiesRelation, query)}`;
+        const where = `l.id = '${id}' and ${this.queryService.getQueryToQueryBuilder(entitiesRelation, query)}`;
         const [list] = await queryBuild
             .leftJoinAndMapMany('l.questions', 'l.questions', 'lq')
             .leftJoinAndMapMany('lq.question', 'lq.question', 'lqq')

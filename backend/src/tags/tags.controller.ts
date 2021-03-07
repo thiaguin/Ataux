@@ -1,6 +1,7 @@
 import { Body, Controller, Get, HttpCode, Param, Post, Put, Query } from '@nestjs/common';
 import { CreateTagDTO } from './dto/create-tag.dto';
 import { FindAllTagDTO } from './dto/findAll-tag.dto';
+import { QueryTagDTO } from './dto/query-tag.dto';
 import { UpdateTagDTO } from './dto/update-tag.dto';
 import { Tag } from './tags.entity';
 import { TagsService } from './tags.service';
@@ -14,8 +15,8 @@ export class TagsController {
     }
 
     @Get('/')
-    findAll(): Promise<FindAllTagDTO> {
-        return this.tag.findAndCountAll();
+    findAll(@Query() query: QueryTagDTO): Promise<FindAllTagDTO> {
+        return this.tag.findAndCountAll(query);
     }
 
     @Get('/:id')
