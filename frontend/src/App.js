@@ -11,6 +11,8 @@ import ConfirmEmail from './pages/confirmEmail/ConfirmEmail';
 import ConfirmInfoPage from './pages/confirmMemberInfo/ConfirmMemberInfo';
 import Question from './pages/question/Question';
 import QuestionList from './pages/question/QuestionList';
+import Tag from './pages/tag/Tag';
+import TagList from './pages/tag/TagList';
 
 const App = (props) => {
     const dispatch = useDispatch();
@@ -43,6 +45,8 @@ const App = (props) => {
         <Switch>
             <Route path="/question/:mode/:questionId?" render={(currProps) => <Question {...currProps} />} />
             <Route path="/question" render={(currProps) => <QuestionList {...currProps} />} />
+            <Route path="/tag/:mode/:tagId?" render={(currProps) => <Tag {...currProps} />} />
+            <Route path="/tag" render={(currProps) => <TagList {...currProps} />} />
             <Route path="/" render={() => <div>Main Page Logged</div>} />
         </Switch>
     );

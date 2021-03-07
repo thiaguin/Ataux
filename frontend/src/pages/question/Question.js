@@ -20,7 +20,7 @@ const Question = (props) => {
     const dispatch = useDispatch();
 
     const initQuestion = useCallback((param) => dispatch(actions.getQuestionById(param)), [dispatch]);
-    const initEditPage = useCallback(() => dispatch(actions.getAllTags()), [dispatch]);
+    const initEditPage = useCallback(() => dispatch(actions.getAllTags({ take: 'ALL' })), [dispatch]);
 
     const [popup, setPopup] = useState(null);
 

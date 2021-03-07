@@ -17,10 +17,10 @@ const getAllTagsFail = (error) => ({
 
 export const resetGetAllTags = () => ({ type: actionTypes.RESET_GET_ALL_TAGS });
 
-export const getAllTags = () => (dispatch) => {
+export const getAllTags = (query) => (dispatch) => {
     dispatch(getAllTagsStart());
     axios
-        .get(`/tags`)
+        .get(`/tags`, { params: query })
         .then((response) => dispatch(getAllTagsSucces(response.data)))
         .catch((error) => dispatch(getAllTagsFail(error)));
 };
