@@ -8,7 +8,7 @@ import levelTypes from '../../enums/levelTypes';
 const QuestionList = (props) => {
     const dispatch = useDispatch();
     const onGetAllQuestions = useCallback((value) => dispatch(actions.getAllQuestions(value)), [dispatch]);
-    const onGetAllTags = useCallback(() => dispatch(actions.getAllTags()), [dispatch]);
+    const onGetAllTags = useCallback(() => dispatch(actions.getAllTags({ take: 'ALL' })), [dispatch]);
 
     const wrapper = React.createRef();
     const history = useHistory();
@@ -107,9 +107,6 @@ const QuestionList = (props) => {
     useEffect(() => {
         onGetAllTags();
     }, [onGetAllTags]);
-
-    // eslint-disable-next-line no-console
-    console.log('porps', props);
 
     return (
         <>
@@ -236,7 +233,6 @@ const QuestionList = (props) => {
                                 ))}
                             </tbody>
                         </Table>
-                        {/* <div style={{ textAlign: 'center' }}> */}
                         <Pagination
                             style={{
                                 textAlign: 'center',
@@ -252,7 +248,6 @@ const QuestionList = (props) => {
                             <Pagination.Next onClick={() => setPage(page + 1)} disabled={page === lastPage} />
                             <Pagination.Last onClick={() => setPage(lastPage)} disabled={page === lastPage} />
                         </Pagination>
-                        {/* </div> */}
                     </div>
                 </div>
             )}
