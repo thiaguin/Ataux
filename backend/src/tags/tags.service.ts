@@ -1,8 +1,11 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PaginateService } from 'src/utils/paginate.service';
+import { QueryService } from 'src/utils/query.service';
 import { getCustomRepository, Repository } from 'typeorm';
 import { CreateTagDTO } from './dto/create-tag.dto';
 import { FindAllTagDTO } from './dto/findAll-tag.dto';
+import { QueryTagDTO } from './dto/query-tag.dto';
 import { UpdateTagDTO } from './dto/update-tag.dto';
 import { Tag } from './tags.entity';
 import { TagRepository } from './tags.repository';
@@ -11,13 +14,22 @@ import { TagRepository } from './tags.repository';
 export class TagsService {
     @InjectRepository(Tag)
     private repository: Repository<Tag>;
+    private paginateService: PaginateService;
+    private queryService: QueryService;
 
     constructor() {
         this.repository = getCustomRepository(TagRepository);
+        this.paginateService = new PaginateService();
+        this.queryService = new QueryService();
     }
 
-    async findAndCountAll(): Promise<FindAllTagDTO> {
-        const [tags, count] = await this.repository.findAndCount();
+    async findAndCountAll(query: QueryTagDTO): Promise<FindAllTagDTO> {
+        const page = this.paginateService.getPage(query);
+        const where = this.queryService.getQueryToFind(Tag, query);
+        const [tags, count] = await this.repository.findAndCount({
+            ...page,
+            where,
+        });
 
         return { data: tags, count };
     }
