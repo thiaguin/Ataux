@@ -2,7 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PayloadUserDTO } from 'src/users/dto/payload-user.dto';
 import { UserClass } from 'src/usersClasses/usersClasses.entity';
-import { getCustomRepository, getManager, Repository } from 'typeorm';
+import { createQueryBuilder, getCustomRepository, getManager, Repository } from 'typeorm';
 import { Class } from './classes.entity';
 import { ClassRepository } from './classes.repository';
 import { CreateClassDTO } from './dto/create-class.dto';
@@ -14,6 +14,13 @@ import { QuestionStatus } from 'src/enums/questionStatus.enum';
 import { UserResumeClass } from './dto/userResume-class.dto';
 import { CsvService } from 'src/utils/csv.service';
 import { Response } from 'express';
+import { EntityToQuery } from 'src/utils/dto/entityQuery.dto';
+import { List } from 'src/list/lists.entity';
+import { User } from 'src/users/users.entity';
+import { Query } from 'typeorm/driver/Query';
+import { PaginateService } from 'src/utils/paginate.service';
+import { QueryService } from 'src/utils/query.service';
+import { QueryClassDTO } from './dto/query-class.dto';
 
 @Injectable()
 export class ClassesService {
@@ -21,10 +28,13 @@ export class ClassesService {
     private repository: Repository<Class>;
     private listService: ListService;
     private csvService: CsvService;
-
+    private paginateService: PaginateService;
+    private queryService: QueryService;
     constructor() {
         this.listService = new ListService();
         this.csvService = new CsvService();
+        this.paginateService = new PaginateService();
+        this.queryService = new QueryService();
         this.repository = getCustomRepository(ClassRepository);
     }
 
@@ -40,6 +50,15 @@ export class ClassesService {
         }
 
         return result.join('');
+    }
+
+    private getEntitiesRelation(): EntityToQuery[] {
+        return [
+            { entity: Class, nick: 'c' },
+            { entity: List, nick: 'cl' },
+            { entity: UserClass, nick: 'cu' },
+            { entity: User, nick: 'cuu' },
+        ];
     }
 
     async getResume(id: number): Promise<Class> {
@@ -133,9 +152,22 @@ export class ClassesService {
         const result = [columnsName, ...rows.sort((a, b) => (a[comparator] > b[comparator] ? 1 : -1))];
         return this.csvService.getCSV(result, classResume.name, res);
     }
-    async findAndCountAll(): Promise<{ classes: Class[]; count: number }> {
-        const [classes, count] = await this.repository.findAndCount();
-        return { classes, count };
+    async findAndCountAll(query: QueryClassDTO): Promise<{ data: Class[]; count: number }> {
+        const page = this.paginateService.getPage(query);
+        const queryBuild = createQueryBuilder(Class, 'c');
+        const entitiesRelation = this.getEntitiesRelation();
+        const where = this.queryService.getQueryToQueryBuilder(entitiesRelation, <Query>query);
+
+        const [classes, count] = await queryBuild
+            .leftJoin('c.lists', 'cl')
+            .leftJoin('c.users', 'cu')
+            .leftJoin('cu.user', 'cuu')
+            .where(where)
+            .take(page.take)
+            .skip(page.skip)
+            .getManyAndCount();
+
+        return { data: classes, count };
     }
 
     async findById(id: number): Promise<Class> {
