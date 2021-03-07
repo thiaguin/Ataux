@@ -1,16 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
-// import { Form, Button } from 'react-bootstrap';
-// import { Formik } from 'formik';
 import { connect, useDispatch } from 'react-redux';
-// import * as Yup from 'yup';
 import { useHistory } from 'react-router-dom';
 import * as actions from '../../store/actions';
-// import SpinnerButton from '../../components/spinnerButton/SpinnerButton';
 import Popup from '../../components/popup/Popup';
 import CreateQuestion from '../../components/question/CreateQuestion';
 import ShowQuestion from '../../components/question/ShowQuestion';
 import EditQuestion from '../../components/question/EditQuestion';
-// import levelTypes from '../../enums/levelTypes';
 
 const Question = (props) => {
     const { question, tags } = props;
@@ -62,31 +57,17 @@ const Question = (props) => {
         }
     }, [question.create.questionId]);
 
-    // Edit
-    // const schema = Yup.object().shape({
-    //     level: Yup.string().email().required(),
-    //     newTag: T,
-    // });
-
     const allTags = tags && tags.data ? tags.data : [];
-
-    // eslint-disable-next-line no-console
-    // console.log('currQuestion', question.get.question);
 
     const [questionTags, setQuestionTags] = useState([]);
 
     const addTagHandler = (newTagId) => {
-        // eslint-disable-next-line no-unused-vars
         const [tagToAdd] = allTags.filter((tag) => `${tag.id}` === newTagId);
         const [hasTag] = questionTags.filter((tag) => `${tag.id}` === newTagId);
-        // eslint-disable-next-line no-console
-        console.log('questionTags', questionTags);
 
         if (!hasTag && tagToAdd) {
             setQuestionTags([...questionTags, { id: tagToAdd.id, name: tagToAdd.name }]);
         }
-
-        // questionTags.push(newTag);
     };
 
     const removeTagHandler = (tagsIds) => {
@@ -95,8 +76,6 @@ const Question = (props) => {
     };
 
     const editHandler = (values) => {
-        // eslint-disable-next-line no-console
-        console.log('here');
         props.onUpdateQuestion({
             tags: questionTags.map((value) => value.id),
             id: questionId,
@@ -122,9 +101,6 @@ const Question = (props) => {
             history.push(`/question/show/${question.get.question.id}`);
         }
     }, [question.update.success]);
-
-    // eslint-disable-next-line no-console
-    console.log('propos question', props);
 
     return (
         <>

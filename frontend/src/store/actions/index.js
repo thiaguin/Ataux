@@ -19,4 +19,13 @@ export {
     getAllQuestions,
     resetGetAllQuestions,
 } from './question';
-export { getAllTags, resetGetAllTags } from './tag';
+export {
+    getAllTags,
+    resetGetAllTags,
+    getTagById,
+    resetGetTagById,
+    createTag,
+    resetCreateTag,
+    updateTag,
+    resetUpdateTag,
+} from './tag';

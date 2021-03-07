@@ -6,4 +6,5 @@ export const entities = {
     NOT_CONFIRMED: 'Usuário não confirmado.',
     HANDLE: 'Handle do Codeforces',
     QUESTION: 'Questão',
+    TAG: 'Tag',
 };
