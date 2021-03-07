@@ -1,5 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { NOT_FOUND, NOT_UNIQUE } from 'src/resource/errorType.resource';
 import { PaginateService } from 'src/utils/paginate.service';
 import { QueryService } from 'src/utils/query.service';
 import { getCustomRepository, Repository } from 'typeorm';
@@ -50,12 +51,19 @@ export class TagsService {
             return tag;
         }
 
-        throw new HttpException('NOT_FOUND', 404);
+        throw new HttpException({ entity: 'Tag', type: NOT_FOUND }, 404);
     }
 
     async create(body: CreateTagDTO): Promise<Tag> {
+        const tag = await this.repository.findOne({
+            where: { name: body.name },
+        });
+
+        if (tag) throw new HttpException({ entity: 'Tag', type: NOT_UNIQUE }, 404);
+
         const newTag = this.repository.create(body);
         await this.repository.save(newTag);
+
         return newTag;
     }
 
@@ -76,7 +84,7 @@ export class TagsService {
         });
 
         if (!tag) {
-            throw new HttpException('NOT_FOUND', 404);
+            throw new HttpException({ entity: 'Tag', type: NOT_FOUND }, 404);
         }
 
         await this.repository.update({ id }, body);
