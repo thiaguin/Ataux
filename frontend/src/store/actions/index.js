@@ -29,3 +29,4 @@ export {
     updateTag,
     resetUpdateTag,
 } from './tag';
+export { getAllClasses, resetGetAllClasses } from './class';

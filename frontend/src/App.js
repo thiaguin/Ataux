@@ -13,6 +13,7 @@ import Question from './pages/question/Question';
 import QuestionList from './pages/question/QuestionList';
 import Tag from './pages/tag/Tag';
 import TagList from './pages/tag/TagList';
+import ClassList from './pages/class/ClassList';
 
 const App = (props) => {
     const dispatch = useDispatch();
@@ -47,6 +48,7 @@ const App = (props) => {
             <Route path="/question" render={(currProps) => <QuestionList {...currProps} />} />
             <Route path="/tag/:mode/:tagId?" render={(currProps) => <Tag {...currProps} />} />
             <Route path="/tag" render={(currProps) => <TagList {...currProps} />} />
+            <Route path="/class" render={(currProps) => <ClassList {...currProps} />} />
             <Route path="/" render={() => <div>Main Page Logged</div>} />
         </Switch>
     );
