@@ -30,7 +30,7 @@ const TagList = (props) => {
 
     const tagsCount = props.tags && props.tags.count ? props.tags.count : 0;
 
-    const tagsPerPage = 5;
+    const tagsPerPage = 30;
     const initialPage = 0;
     const lastPage = Math.floor((tagsCount - 1) / tagsPerPage);
 
@@ -99,7 +99,7 @@ const TagList = (props) => {
                                 </Button>
                                 <div style={{ display: 'inline-block', position: 'relative', float: 'right' }}>
                                     <Button variant="secondary" type="button" onClick={clickAddTagHandler}>
-                                        Adicionar Questão
+                                        Adicionar Tag
                                     </Button>
                                 </div>
                             </div>
