@@ -3,6 +3,7 @@ import { Response } from 'express';
 import { Class } from './classes.entity';
 import { ClassesService } from './classes.service';
 import { CreateClassDTO } from './dto/create-class.dto';
+import { QueryClassDTO } from './dto/query-class.dto';
 import { RegisterUserDTO } from './dto/register-user.dto';
 
 @Controller('classes')
@@ -14,8 +15,8 @@ export class ClassesController {
     }
 
     @Get('/')
-    findAll(): Promise<{ classes: Class[]; count: number }> {
-        return this.classService.findAndCountAll();
+    findAll(@Query() query: QueryClassDTO): Promise<{ data: Class[]; count: number }> {
+        return this.classService.findAndCountAll(query);
     }
 
     @Get('/:id')
