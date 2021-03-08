@@ -55,9 +55,7 @@ const ClassList = (props) => {
     };
 
     const goToShowPageHandler = (classId) => {
-        const url = `${window.location.href}/show/${classId}`;
-        const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
-        if (newWindow) newWindow.opener = null;
+        history.push(`/class/show/${classId}/list`);
     };
 
     const resetFilterHandler = () => {

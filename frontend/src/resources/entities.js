@@ -7,4 +7,5 @@ export const entities = {
     HANDLE: 'Handle do Codeforces',
     QUESTION: 'Questão',
     TAG: 'Tag',
+    CLASS: 'Turma',
 };
