@@ -21,7 +21,7 @@ export class ClassesController {
 
     @Get('/:id')
     findById(@Param() params: { id: number }): Promise<Class> {
-        return this.classService.findById(params.id);
+        return this.classService.findOne(params.id);
     }
 
     @Get('/:id/csv')

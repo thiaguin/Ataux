@@ -149,10 +149,10 @@ export class UsersService {
                 return newUser;
             }
 
-            throw new HttpException('NotUnique', 409);
+            throw new HttpException({ entity: 'User', type: NOT_UNIQUE }, 409);
         }
 
-        throw new HttpException(NOT_FOUND, 404);
+        throw new HttpException({ entity: 'GoogleUser', type: NOT_FOUND }, 404);
     }
 
     async sendCodeToResetPassword(body): Promise<void> {
