@@ -64,7 +64,7 @@ export class AuthService {
             };
         }
 
-        throw new HttpException('Unauthorized', 401);
+        throw new HttpException({ enity: 'User', type: UNAUTHORIZED }, 401);
     }
 
     async refreshToken(token: string): Promise<AuthResultDTO> {
