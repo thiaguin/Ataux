@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { UsersService } from 'src/users/users.service';
 import { PayloadUserDTO } from 'src/users/dto/payload-user.dto';
 import { UserRole } from 'src/enums/userRole.enum';
+import { FORBIDDEN } from 'src/resource/errorType.resource';
 
 @Injectable()
 export class AuthenticateMiddleware implements NestMiddleware {
@@ -24,7 +25,7 @@ export class AuthorizeMiddleware implements NestMiddleware {
         const [userClass] = user.userClasses.filter((uc) => uc.classId == classId);
 
         if (userClass?.role != UserRole.ADMIN) {
-            throw new HttpException('Forbidden', 403);
+            throw new HttpException({ enity: 'User', type: FORBIDDEN }, 403);
         }
 
         next();
@@ -43,7 +44,7 @@ export class AuthorizeColaboratorMiddleware implements NestMiddleware {
         const isColaborator = userClass?.role === UserRole.COLABORATOR;
 
         if (!isAdmin && !isColaborator) {
-            throw new HttpException('Forbidden', 403);
+            throw new HttpException({ enity: 'User', type: FORBIDDEN }, 403);
         }
 
         next();
