@@ -21,6 +21,7 @@ import { Query } from 'typeorm/driver/Query';
 import { PaginateService } from 'src/utils/paginate.service';
 import { QueryService } from 'src/utils/query.service';
 import { QueryClassDTO } from './dto/query-class.dto';
+import { NOT_UNIQUE } from 'src/resource/errorType.resource';
 
 @Injectable()
 export class ClassesService {
@@ -183,24 +184,65 @@ export class ClassesService {
         return entity;
     }
 
+    async findOne(id: number): Promise<Class> {
+        const entity = await this.getResume(id);
+
+        const { users, lists } = entity;
+
+        const usersResult = [];
+        const usersList = {};
+        const userListDefault = [];
+
+        for (const list of lists) {
+            userListDefault.push({
+                resume: { [QuestionStatus.BLANK]: list.questions.length },
+                grade: 0,
+            });
+        }
+
+        for (const user of users) {
+            usersList[user.id] = userListDefault.map((a) => Object.assign({}, a));
+        }
+
+        for (const listKey in lists) {
+            const list = lists[listKey];
+            for (const userList of list.users) {
+                const [user] = <any>userList.user;
+                usersList[user.id][listKey] = userList.questions;
+            }
+        }
+
+        for (const user of users) {
+            usersResult.push({ ...user, lists: usersList[user.id] });
+        }
+
+        entity.users = <any>usersResult;
+
+        return entity;
+    }
+
     async create(body: CreateClassDTO, user: PayloadUserDTO): Promise<Class> {
         return await getManager().transaction(async (transactionManager) => {
-            const entity = transactionManager.create(Class, {
+            const entity = await transactionManager.findOne(Class, { where: { name: body.name } });
+
+            if (entity) throw new HttpException({ entity: 'Class', type: NOT_UNIQUE }, 409);
+
+            const newEntity = transactionManager.create(Class, {
                 ...body,
                 code: this.generateCode(),
             });
 
-            await transactionManager.save(entity);
+            await transactionManager.save(newEntity);
 
             const userClass = transactionManager.create(UserClass, {
                 userId: user.id,
-                classId: entity.id,
+                classId: newEntity.id,
                 role: UserRole.ADMIN,
             });
 
             await transactionManager.save(userClass);
 
-            return entity;
+            return newEntity;
         });
     }
 
