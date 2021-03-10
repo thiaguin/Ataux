@@ -37,3 +37,4 @@ export {
     getClassResume,
     resetGetClassResume,
 } from './class';
+export { existQuestionToList, resetExistQuestionToList, createList, resetCreateList } from './list';

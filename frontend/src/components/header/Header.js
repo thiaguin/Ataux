@@ -10,12 +10,13 @@ const header = (props) => {
     const history = useHistory();
 
     const loginOnClickHandler = () => {
-        history.push('login');
+        props.onResetLogin();
+        history.push('/login');
     };
 
     const registerOnClickHandler = () => {
         props.onResetRegister();
-        history.push('register');
+        history.push('/register');
     };
 
     const loggedHeader = (
@@ -59,6 +60,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
     onLogout: () => dispatch(actions.logout()),
     onResetRegister: () => dispatch(actions.resetRegister()),
+    onResetLogin: () => dispatch(actions.resetLogin()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(header);
