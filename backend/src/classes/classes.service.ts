@@ -64,11 +64,17 @@ export class ClassesService {
 
     async getResume(id: number): Promise<Class> {
         const entity = await this.findById(id);
+        const classUsers = entity.users.filter((user) => user.user.role === UserRole.MEMBER);
         const listResumes = [];
 
         for (const list of entity.lists) {
             const listResume = await this.listService.getResume(list.id, {});
+            const membersListResume = listResume.users.filter((userList) => {
+                const [currUser] = <any>userList.user;
+                return currUser.role === UserRole.MEMBER;
+            });
 
+            listResume.users = membersListResume;
             const usersResume = [];
 
             for (const user of listResume.users) {
@@ -93,7 +99,7 @@ export class ClassesService {
             listResumes.push({ ...listResume, users: usersResume });
         }
 
-        return { ...entity, lists: listResumes };
+        return <any>{ ...entity, lists: listResumes, users: classUsers };
     }
 
     async getToCSV(id: number, res: Response) {
@@ -237,7 +243,6 @@ export class ClassesService {
             const userClass = transactionManager.create(UserClass, {
                 userId: user.id,
                 classId: newEntity.id,
-                role: UserRole.ADMIN,
             });
 
             await transactionManager.save(userClass);
@@ -260,7 +265,6 @@ export class ClassesService {
             const userClass = userClassRepository.create({
                 userId: user.id,
                 classId: entity.id,
-                role: UserRole.MEMBER,
             });
 
             await userClassRepository.save(userClass);

@@ -22,7 +22,7 @@ export class List {
     @Column()
     classId: number;
 
-    @Column({ unique: true })
+    @Column()
     title: string;
 
     @Column({ nullable: true, type: 'timestamp with time zone' })

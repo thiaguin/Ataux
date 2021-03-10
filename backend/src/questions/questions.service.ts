@@ -57,7 +57,7 @@ export class QuestionsService {
             }
         }
 
-        throw new HttpException({ entity: 'CodeforcesURL', type: BAD_REQUEST }, 400);
+        throw new HttpException({ entity: 'CodeforcesUrl', type: BAD_REQUEST }, 400);
     }
 
     getContestByURL(url: string): string {
@@ -135,7 +135,7 @@ export class QuestionsService {
             return question;
         }
 
-        throw new HttpException('NOT_FOUND', 404);
+        throw new HttpException({ entity: 'Question', type: NOT_FOUND }, 404);
     }
 
     async generateNewQuestion(url: string): Promise<NewQuestionDTO> {
