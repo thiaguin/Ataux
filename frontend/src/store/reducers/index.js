@@ -9,6 +9,7 @@ import userReducer from './user';
 import questionReducer from './question';
 import tagReducer from './tag';
 import classReducer from './class';
+import listReducer from './list';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -22,6 +23,7 @@ const reducers = combineReducers({
     question: questionReducer,
     tag: tagReducer,
     class: classReducer,
+    list: listReducer,
 });
 
 export const Store = createStore(reducers, composeEnhancers(applyMiddleware(thunk)));

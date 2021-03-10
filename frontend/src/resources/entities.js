@@ -7,5 +7,6 @@ export const entities = {
     HANDLE: 'Handle do Codeforces',
     QUESTION: 'Questão',
     TAG: 'Tag',
+    CODEFORCES_URL: 'Link da questão inválido',
     CLASS: 'Turma',
 };

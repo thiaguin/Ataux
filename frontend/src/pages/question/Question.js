@@ -36,27 +36,6 @@ const Question = (props) => {
         history.goBack();
     };
 
-    useEffect(() => {
-        if (['edit', 'show'].includes(mode) && questionId) {
-            initQuestion(questionId);
-        } else if (mode !== 'create') {
-            history.push('/question');
-        }
-    }, [initQuestion, questionId, mode]);
-
-    useEffect(() => {
-        if (question.create.error) {
-            setPopup(<Popup type="error" message={question.create.error} />);
-            props.onResetCreateQuestion();
-        }
-    }, [question.create.error]);
-
-    useEffect(() => {
-        if (question.create.questionId) {
-            history.push(`/question/show/${question.create.questionId}`);
-        }
-    }, [question.create.questionId]);
-
     const allTags = tags && tags.data ? tags.data : [];
 
     const [questionTags, setQuestionTags] = useState([]);
@@ -82,6 +61,27 @@ const Question = (props) => {
             level: values.level,
         });
     };
+
+    useEffect(() => {
+        if (['edit', 'show'].includes(mode) && questionId) {
+            initQuestion(questionId);
+        } else if (mode !== 'create') {
+            history.push('/question');
+        }
+    }, [initQuestion, questionId, mode]);
+
+    useEffect(() => {
+        if (question.create.error) {
+            setPopup(<Popup type="error" message={question.create.error} />);
+            props.onResetCreateQuestion();
+        }
+    }, [question.create.error]);
+
+    useEffect(() => {
+        if (question.create.questionId) {
+            history.push(`/question/show/${question.create.questionId}`);
+        }
+    }, [question.create.questionId]);
 
     useEffect(() => {
         if (mode && mode === 'edit') {
