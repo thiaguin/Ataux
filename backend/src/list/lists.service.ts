@@ -1,7 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ListQuestion } from 'src/listQuestion/listQuestion.entity';
-import { createQueryBuilder, getCustomRepository, getManager, getRepository, Repository } from 'typeorm';
+import { createQueryBuilder, EntityManager, getCustomRepository, getManager, getRepository, Repository } from 'typeorm';
 import { CreateListDTO } from './dto/create-list.dto';
 import { FindAllListDTO } from './dto/findAll-list.dto';
 import { QueryListDTO } from './dto/query-list.dto';
@@ -87,9 +87,13 @@ export class ListService {
     }
 
     async create(body: CreateListDTO): Promise<List> {
-        const newList = this.repository.create(body);
-        await this.repository.save(newList);
-        return newList;
+        return await getManager().transaction(async (transactionManager) => {
+            const { questions, ...listBody } = body;
+            const newList = this.repository.create(listBody);
+            await transactionManager.save(newList);
+            await this.setListQuestions(transactionManager, newList, questions || []);
+            return newList;
+        });
     }
 
     async getToCSV(id: number, res: Response) {
@@ -165,20 +169,24 @@ export class ListService {
 
     async setQuestions(id: number, questionIds: number[]): Promise<void> {
         const list = await this.findById(id);
-        const listQuestionRepository = getRepository(ListQuestion);
 
         return await getManager().transaction(async (transactionManager) => {
-            await transactionManager.delete(ListQuestion, { listId: list.id });
-
-            const listQuestions = questionIds.map((questionId) =>
-                listQuestionRepository.create({
-                    questionId,
-                    listId: list.id,
-                }),
-            );
-
-            await listQuestionRepository.save(listQuestions);
+            await this.setListQuestions(transactionManager, list, questionIds);
         });
+    }
+
+    async setListQuestions(transaction: EntityManager, list: List, questions: number[]): Promise<void> {
+        const listQuestionRepository = getRepository(ListQuestion);
+        await transaction.delete(ListQuestion, { listId: list.id });
+
+        const listQuestions = questions.map((questionId) =>
+            listQuestionRepository.create({
+                questionId,
+                listId: list.id,
+            }),
+        );
+
+        await transaction.save(listQuestions);
     }
 
     async findAll(query: QueryListDTO): Promise<FindAllListDTO> {

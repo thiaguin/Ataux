@@ -6,4 +6,5 @@ export class PayloadUserDTO {
     name: string;
     handle?: string;
     userClasses: UserClass[];
+    role: string;
 }

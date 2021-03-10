@@ -42,6 +42,7 @@ export class AuthService {
                     name: user.name,
                     userClasses: user.classes,
                     handle: user.handle,
+                    role: user.role,
                 };
         }
     }
@@ -59,6 +60,7 @@ export class AuthService {
                 email,
                 id: user.id,
                 name: user.name,
+                role: user.role,
                 handle: user.handle,
                 userClasses: user.classes,
             };
