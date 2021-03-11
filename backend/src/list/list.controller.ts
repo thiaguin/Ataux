@@ -1,5 +1,6 @@
 import { Body, Controller, Get, HttpCode, Param, Post, Put, Query, Req, Res } from '@nestjs/common';
 import { Response } from 'express';
+import { UserList } from 'src/userList/userList.entity';
 import { AddQuestionListDTO } from './dto/addQuestion-list.dto';
 import { CheckSubmissionListDTO } from './dto/checkSubmission-list.dto';
 import { CreateListDTO } from './dto/create-list.dto';
@@ -34,6 +35,11 @@ export class ListController {
     @Get('/:id/resume')
     getResume(@Param() params: { id: number }, @Query() query): Promise<List> {
         return this.listService.getResume(params.id, query);
+    }
+
+    @Get('/:id/users')
+    getListUsers(@Param() params: { id: number }, @Query() query): Promise<UserList[]> {
+        return this.listService.getUsersList(params.id, query);
     }
 
     @Post('/')

@@ -18,16 +18,14 @@ const metadata: ModuleMetadata = {
 
 @Module(metadata)
 export class ListModule {
-    public configure() {
-        // consumer
-        //     .apply(AuthenticateMiddleware)
-        //     .forRoutes(
-        //         { path: 'lists', method: RequestMethod.GET },
-        //         { path: 'lists', method: RequestMethod.POST },
-        //         { path: 'lists/:id', method: RequestMethod.GET },
-        //         { path: 'lists/:id', method: RequestMethod.PUT },
-        //         { path: 'lists/:id/questions/submissions', method: RequestMethod.POST },
-        //     );
+    public configure(consumer: MiddlewareConsumer) {
+        consumer.apply(AuthenticateMiddleware).forRoutes(
+            // { path: 'lists', method: RequestMethod.GET },
+            // { path: 'lists', method: RequestMethod.POST },
+            // { path: 'lists/:id', method: RequestMethod.GET },
+            // { path: 'lists/:id', method: RequestMethod.PUT },
+            { path: 'lists/:id/questions/submissions', method: RequestMethod.POST },
+        );
         // consumer
         //     .apply(AuthorizeColaboratorMiddleware)
         //     .forRoutes({ path: 'lists', method: RequestMethod.POST }, { path: 'lists/:id', method: RequestMethod.PUT });
