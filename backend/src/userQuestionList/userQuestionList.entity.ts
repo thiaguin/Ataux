@@ -11,6 +11,12 @@ export class UserQuestionList {
     userListId: number;
 
     @Column()
+    listId: number;
+
+    @Column()
+    userId: number;
+
+    @Column()
     questionId: number;
 
     @Column()

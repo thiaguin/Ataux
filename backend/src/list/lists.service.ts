@@ -1,7 +1,15 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ListQuestion } from 'src/listQuestion/listQuestion.entity';
-import { createQueryBuilder, EntityManager, getCustomRepository, getManager, getRepository, Repository } from 'typeorm';
+import {
+    createQueryBuilder,
+    EntityManager,
+    getCustomRepository,
+    getManager,
+    getRepository,
+    In,
+    Repository,
+} from 'typeorm';
 import { CreateListDTO } from './dto/create-list.dto';
 import { FindAllListDTO } from './dto/findAll-list.dto';
 import { QueryListDTO } from './dto/query-list.dto';
@@ -24,6 +32,8 @@ import { Query } from 'typeorm/driver/Query';
 import { QuestionStatus } from 'src/enums/questionStatus.enum';
 import { CsvService } from 'src/utils/csv.service';
 import { Response } from 'express';
+import { NOT_FOUND } from 'src/resource/errorType.resource';
+import { Submission } from 'src/submissions/submissions.entity';
 
 @Injectable()
 export class ListService {
@@ -84,6 +94,53 @@ export class ListService {
         }
 
         return list;
+    }
+
+    getUserQuestions(userQuestions, questions) {
+        const result = [];
+
+        for (const question of questions) {
+            const [userQuestion] = userQuestions.filter((el) => el.questionId === question.questionId);
+            result.push(userQuestion || { ...question });
+        }
+
+        return result;
+    }
+
+    questionHasOnList(submission, listQuestions) {
+        for (const listQuestion of listQuestions) {
+            const isSameContest = `${listQuestion.question.contestId}` === `${submission.problem.contestId}`;
+            const isSameIndex = `${listQuestion.question.problemId}` === `${submission.problem.index}`;
+            if (isSameContest && isSameIndex) return true;
+        }
+
+        return false;
+    }
+
+    async getUsersList(listId: number, query): Promise<UserList[]> {
+        const { questions } = await this.findById(listId);
+
+        const userQuestionDefault = questions.map((el) => ({
+            question: el.question,
+            questionId: el.question.id,
+            count: 0,
+            status: QuestionStatus.BLANK,
+        }));
+
+        const where = this.queryService.getQueryToFind(UserList, { ...query, listId });
+        const userList = await this.getUserListRepository().find({
+            where,
+            relations: ['user', 'questions', 'questions.question'],
+        });
+
+        const users = userList.map((el) => {
+            return {
+                ...el,
+                questions: this.getUserQuestions(el.questions, userQuestionDefault),
+            };
+        });
+
+        return <any>users;
     }
 
     async create(body: CreateListDTO): Promise<List> {
@@ -175,11 +232,21 @@ export class ListService {
         });
     }
 
-    async setListQuestions(transaction: EntityManager, list: List, questions: number[]): Promise<void> {
+    async setListQuestions(
+        transaction: EntityManager,
+        list: List,
+        questionsToCreate: number[] = [],
+        questionsToRemove: number[] = [],
+    ): Promise<void> {
         const listQuestionRepository = getRepository(ListQuestion);
-        await transaction.delete(ListQuestion, { listId: list.id });
 
-        const listQuestions = questions.map((questionId) =>
+        if (questionsToRemove.length > 0) {
+            await transaction.delete(UserQuestionList, { listId: list.id, questionId: In(questionsToRemove) });
+            await transaction.delete(Submission, { listId: list.id, questionId: In(questionsToRemove) });
+            await transaction.delete(ListQuestion, { listId: list.id, questionId: In(questionsToRemove) });
+        }
+
+        const listQuestions = questionsToCreate.map((questionId) =>
             listQuestionRepository.create({
                 questionId,
                 listId: list.id,
@@ -209,15 +276,23 @@ export class ListService {
     }
 
     async update(params: { id: number }, body: UpdateListDTO): Promise<void> {
-        const list = await this.repository.findOne({
-            where: { id: params.id },
+        return await getManager().transaction(async (transactionManager) => {
+            const { questions, ...bodyToEdit } = body;
+            const list = await transactionManager.findOne(List, {
+                where: { id: params.id },
+                relations: ['questions', 'questions.question'],
+            });
+
+            if (!list) {
+                throw new HttpException({ entity: 'List', type: NOT_FOUND }, 404);
+            }
+
+            const listQuestionsId = list.questions.map((el) => el.question.id);
+            const questionsToCreate = questions.filter((el) => !listQuestionsId.includes(el));
+            const questionsToRemove = listQuestionsId.filter((el) => !questions.includes(el));
+            await transactionManager.update(List, { id: list.id }, { ...bodyToEdit });
+            await this.setListQuestions(transactionManager, list, questionsToCreate, questionsToRemove);
         });
-
-        if (!list) {
-            throw new HttpException('NOT_FOUND', 404);
-        }
-
-        await this.repository.update({ id: params.id }, body);
     }
 
     async createUserListIfNotExist(list: List, user: PayloadUserDTO): Promise<UserList> {
@@ -274,7 +349,9 @@ export class ListService {
             };
 
             for (const submission of submissions[value.question.contestId]) {
-                await this.submissionService.create(submission, data);
+                if (this.questionHasOnList(submission, listQuestions)) {
+                    await this.submissionService.create(submission, data);
+                }
             }
         }
     }

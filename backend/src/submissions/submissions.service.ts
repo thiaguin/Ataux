@@ -53,6 +53,8 @@ export class SubmissionsService {
                 userListId: data.userListId,
                 status: data.submission.verdict === statusOK ? statusOK : statusNOK,
                 count: 1,
+                listId: data.listId,
+                userId: data.userId,
             };
             this.getUserQuestionListRepository().create(newUserQuestionList);
             await this.getUserQuestionListRepository().save(newUserQuestionList);
@@ -75,6 +77,8 @@ export class SubmissionsService {
             questionId: data.questionId,
             userListId: data.userListId,
             submission: submission,
+            userId: data.userId,
+            listId: data.listId,
         };
 
         if (!exist && createdTime <= limitTime) {
