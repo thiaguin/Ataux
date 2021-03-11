@@ -50,7 +50,7 @@ const App = (props) => {
             <Route exact path="/question" render={(currProps) => <QuestionList {...currProps} />} />
             <Route exact path="/tag/:mode/:tagId?" render={(currProps) => <Tag {...currProps} />} />
             <Route exact path="/tag" render={(currProps) => <TagList {...currProps} />} />
-            <Route exact path="/class/:classId/list/:mode/:listId?" render={(currProps) => <List {...currProps} />} />
+            <Route exact path="/list/:mode/:listId?" render={(currProps) => <List {...currProps} />} />
             <Route exact path="/class/:mode/:classId/:relation" render={(currProps) => <Class {...currProps} />} />
             <Route exact path="/class/:mode/:classId?" render={(currProps) => <Class {...currProps} />} />
             <Route exact path="/class" render={(currProps) => <ClassList {...currProps} />} />

@@ -1,19 +1,8 @@
 import React, { useState } from 'react';
 import { Button, Form, Table } from 'react-bootstrap';
-// import { useHistory } from 'react-router-dom';
-// import { useDispatch } from 'react-redux';
-// import * as actions from '../../store/actions';
 
 const showClassList = (props) => {
-    // const dispatch = useDispatch();
-    // const onGetAllClasses = useCallback((value) => dispatch(actions.getAllClasses(value)), [dispatch]);
-
-    // const history = useHistory();
-
     const [classNameHover, setClassNameHover] = useState(false);
-    // const [queryName, setQueryName] = useState('');
-    // const [page, setPage] = useState(0);
-    // const [query, setQuery] = useState({});
 
     const parentInStyle = {
         margin: '5%',
@@ -51,11 +40,7 @@ const showClassList = (props) => {
                                     Listas de Questões da Turma
                                 </h3>
                                 <div style={{ display: 'inline-block', position: 'relative', float: 'right' }}>
-                                    <Button
-                                        variant="secondary"
-                                        type="button"
-                                        onClick={() => props.onAddList(props.class.id)}
-                                    >
+                                    <Button variant="secondary" type="button" onClick={props.onAddList}>
                                         Adicionar Lista
                                     </Button>
                                 </div>
@@ -83,7 +68,7 @@ const showClassList = (props) => {
                                         <td key="name">
                                             <>
                                                 <p
-                                                    onClick={() => props.onClickList(props.class.id, currList.id)}
+                                                    onClick={() => props.onClickList(currList.id)}
                                                     onMouseEnter={() => classNameHoverHandler(currList.id)}
                                                     onMouseLeave={() => classNameHoverHandler(null)}
                                                     style={

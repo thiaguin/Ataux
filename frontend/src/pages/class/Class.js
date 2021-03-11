@@ -26,23 +26,12 @@ const Class = (props) => {
         history.push(`/class/edit/${classIdToEdit}`);
     };
 
-    // const goBackHandler = () => {
-    //     history.goBack();
-    // };
-
     const goToClassPageHandler = () => {
         history.push('/class');
     };
 
-    // const editHandler = (values) => {
-    //     props.onUpdateClass({
-    //         id: classId,
-    //         name: values.name,
-    //     });
-    // };
-
-    const goToAddListPageHandler = (id) => {
-        history.push(`/class/${id}/list/create`);
+    const goToAddListPageHandler = () => {
+        history.push(`/list/create`);
     };
 
     const goToAddUserPageHandler = (id) => {
@@ -57,8 +46,8 @@ const Class = (props) => {
         history.push(`/class/show/${id}/list`);
     };
 
-    const goToListPage = (id, listId) => {
-        history.push(`/class/${id}/list/show/${listId}`);
+    const goToListPage = (listId) => {
+        history.push(`/list/show/${listId}`);
     };
 
     useEffect(() => {
@@ -81,13 +70,6 @@ const Class = (props) => {
             history.push(`/class/show/${classData.create.classId}`);
         }
     }, [classData.create.classId]);
-
-    // useEffect(() => {
-    //     if (classData.update.success) {
-    //         props.onResetUpdateClass();
-    //         history.push(`/class/show/${classData.get.data.id}`);
-    //     }
-    // }, [classData.update.success]);
 
     return (
         <>
@@ -127,9 +109,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
     onCreateClass: (...values) => dispatch(actions.createClass(...values)),
-    // onUpdateClass: (values) => dispatch(actions.updateClass(values)),
     onResetCreateClass: () => dispatch(actions.resetCreateClass()),
-    // onResetUpdateClass: () => dispatch(actions.resetUpdateClass()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Class);

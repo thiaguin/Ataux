@@ -4,76 +4,53 @@ import { useHistory } from 'react-router-dom';
 import * as actions from '../../store/actions';
 import Popup from '../../components/popup/Popup';
 import CreateList from '../../components/list/CreateList';
-// import ShowClassList from '../../components/class/ShowClassList';
-// import ShowClassUser from '../../components/class/ShowClassUser';
+import EditList from '../../components/list/EditList';
+import ShowListQuestion from '../../components/list/ShowListQuestion';
+import ShowListUsers from '../../components/list/ShowListUsers';
 
 const List = (props) => {
-    const { classData, list } = props;
-    const { mode, classId } = props.match.params;
-
+    const { list } = props;
+    const { mode, classId, listId } = props.match.params;
+    const QUESTIONS = 'QUESTIONS';
+    const USERS = 'USERS';
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const initClass = useCallback((param) => dispatch(actions.getClassResume(param)), [dispatch]);
+    const initList = useCallback((param) => dispatch(actions.getListById(param)), [dispatch]);
 
     const [popup, setPopup] = useState(null);
-
-    // const createHandler = (values) => {
-    //     props.onCreateClass(values, token);
-    // };
+    const [showMode, setShowMode] = useState(QUESTIONS);
 
     const [listQuestions, setListQuestions] = useState([]);
     const [newQuestionURL, setNewQuestionURL] = useState('');
-    // const goToEditPageHandler = (classIdToEdit) => {
-    //     history.push(`/class/edit/${classIdToEdit}`);
-    // };
 
-    // const goBackHandler = () => {
-    //     history.goBack();
-    // };
+    const onChangeShowMode = () => {
+        setShowMode(showMode === QUESTIONS ? USERS : QUESTIONS);
+    };
 
-    // const goToClassPageHandler = () => {
-    //     history.push('/class');
-    // };
-
-    // const editHandler = (values) => {
-    //     props.onUpdateClass({
-    //         id: classId,
-    //         name: values.name,
-    //     });
-    // };
-
-    // const goToAddListPageHandler = (id) => {
-    //     history.push(`/class/${id}/list/create`);
-    // };
-
-    // const goToAddUserPageHandler = (id) => {
-    //     history.push(`/class/${id}/user/add`);
-    // };
-
-    // const gotToClassUsersPageHandler = (id) => {
-    //     history.push(`/class/show/${id}/user`);
-    // };
-
-    // const gotToClassListsPageHandler = (id) => {
-    //     history.push(`/class/show/${id}/list`);
-    // };
-
-    // const goToListPage = (id, listId) => {
-    //     history.push(`/class/${id}/list/show/${listId}`);
-    // };
-
-    const onCreateHandler = (values) => {
+    const getExpirationTime = (values) => {
         const [hours, minutes] = values.expirationTime.split(':');
         const expirationDate = new Date(values.expirationDate);
         const year = expirationDate.getUTCFullYear();
         const month = expirationDate.getUTCMonth();
         const day = expirationDate.getUTCDate();
         const expirationTime = new Date(year, month, day, hours, minutes, 59);
+        return expirationTime;
+    };
 
+    const onEditHandler = (listToEdit, values) => {
+        props.onUpdateList(listToEdit.id, {
+            classId: listToEdit.classId,
+            expirationTime: getExpirationTime(values).toISOString(),
+            title: values.title,
+            questions: values.questions.map((question) => question.id),
+        });
+    };
+
+    const onCreateHandler = (values) => {
         props.onCreateList({
             classId,
-            expirationTime: expirationTime.toISOString(),
+            expirationTime: getExpirationTime(values).toISOString(),
             title: values.title,
             questions: values.questions.map((question) => question.id),
         });
@@ -83,9 +60,13 @@ const List = (props) => {
         props.onExistQuestionToList(url);
     };
 
-    // const onResetExistQuestionToListHandler = () => {
-    //     props.onResetExistQuestionToList();
-    // };
+    const onGoBackHandler = () => {
+        history.goBack();
+    };
+
+    const onGoToEditPageHandler = () => {
+        history.push(`/list/edit/${listId}`);
+    };
 
     const onRemoveQuestionHandler = (values) => {
         const listQuestionsFiltered = listQuestions.filter((value) => !values.includes(`${value.id}`));
@@ -93,20 +74,13 @@ const List = (props) => {
     };
 
     useEffect(() => {
-        if (['edit', 'show'].includes(mode) && classId) {
-            initClass(classId);
+        if (['edit', 'show'].includes(mode) && listId) {
+            initList(listId);
+            props.onGetListUsers(listId);
         } else if (mode !== 'create') {
             history.push('/class');
         }
-    }, [initClass, classId, mode]);
-
-    useEffect(() => {
-        if (classData.error) {
-            setPopup(<Popup type="error" message={classData.error} />);
-            // props.onResetCreateClass();
-            props.onResetExistQuestionToList();
-        }
-    }, [classData.error]);
+    }, [initList, listId, mode]);
 
     useEffect(() => {
         if (list.newQuestion.error) {
@@ -114,12 +88,6 @@ const List = (props) => {
             props.onResetExistQuestionToList();
         }
     }, [list.newQuestion.error]);
-
-    useEffect(() => {
-        if (!classData.data) {
-            initClass(classId);
-        }
-    }, [classData.data]);
 
     useEffect(() => {
         if (list.newQuestion.data) {
@@ -142,22 +110,29 @@ const List = (props) => {
 
     useEffect(() => {
         if (list.create.listId) {
-            history.push(`/class/${classId}/list/show/${list.create.listId}`);
+            history.push(`/list/show/${list.create.listId}`);
         }
     }, [list.create.listId]);
 
-    // useEffect(() => {
-    //     if (classData.update.success) {
-    //         props.onResetUpdateClass();
-    //         history.push(`/class/show/${classData.get.data.id}`);
-    //     }
-    // }, [classData.update.success]);
+    useEffect(() => {
+        if (mode === 'edit' && list.get.data) {
+            setListQuestions(list.get.data.questions.map((el) => el.question));
+        }
+    }, [mode, list.get.data]);
+
+    useEffect(() => {
+        if (list.update.success) {
+            props.onResetUpdateList();
+            history.push(`/list/show/${listId}`);
+        }
+    }, [list.update.success]);
+
     return (
         <>
             {popup}
             {mode === 'create' && (
                 <CreateList
-                    loading={classData.loading}
+                    loading={list.create.loading}
                     questions={listQuestions}
                     onAddQuestion={onAddQuestionToListHandler}
                     newQuestionLoading={list.newQuestion.loading}
@@ -168,35 +143,45 @@ const List = (props) => {
                     onNewQuestionURLChange={(value) => setNewQuestionURL(value.target.value)}
                 />
             )}
-            {/* {mode === 'show' && relation === 'list' && classData.get.data && (
-                <ShowClassList
-                    class={classData.get.data}
-                    goBack={goToClassPageHandler}
-                    gotToEditPage={goToEditPageHandler}
-                    onAddList={goToAddListPageHandler}
-                    onClickList={goToListPage}
-                    gotToClassUsersPage={gotToClassUsersPageHandler}
+            {mode === 'show' && showMode === QUESTIONS && list.get.data && (
+                <ShowListQuestion
+                    onClickQuestion
+                    list={list.get.data}
+                    goToEditPage={onGoToEditPageHandler}
+                    goBack={onGoBackHandler}
+                    gotToListUsersPage={onChangeShowMode}
                 />
             )}
-            {mode === 'show' && relation === 'user' && classData.get.data && (
-                <ShowClassUser
-                    class={classData.get.data}
-                    goBack={goToClassPageHandler}
-                    gotToEditPage={goToEditPageHandler}
-                    onAddUser={goToAddUserPageHandler}
-                    onClickList={goToListPage}
-                    gotToClassListsPage={gotToClassListsPageHandler}
+            {mode === 'show' && showMode === USERS && list.get.data && list.users.data && (
+                <ShowListUsers
+                    onClickQuestion
+                    list={list.get.data}
+                    users={list.users.data}
+                    goToEditPage={onGoToEditPageHandler}
+                    goBack={onGoBackHandler}
+                    gotToListUsersPage={onChangeShowMode}
                 />
-            )} */}
-            {/* mode === 'edit' && classData.get.class && (
-                <EditTag tag={classData.get.class} goBack={goBackHandler} submit={editHandler} />
-            )} */}
+            )}
+            {mode === 'edit' && list.get.data && (
+                <EditList
+                    list={list.get.data}
+                    loading={list.update.loading}
+                    questions={listQuestions}
+                    onAddQuestion={onAddQuestionToListHandler}
+                    newQuestionLoading={list.newQuestion.loading}
+                    onSubmit={onEditHandler}
+                    listQuestions={listQuestions}
+                    newQuestionURL={newQuestionURL}
+                    removeQuestion={onRemoveQuestionHandler}
+                    goBack={onGoBackHandler}
+                    onNewQuestionURLChange={(value) => setNewQuestionURL(value.target.value)}
+                />
+            )}
         </>
     );
 };
 
 const mapStateToProps = (state) => ({
-    classData: state.class.get,
     token: state.login.token,
     list: state.list,
 });
@@ -205,9 +190,12 @@ const mapDispatchToProps = (dispatch) => ({
     onExistQuestionToList: (value) => dispatch(actions.existQuestionToList(value)),
     onResetExistQuestionToList: (value) => dispatch(actions.resetExistQuestionToList(value)),
     onCreateList: (...values) => dispatch(actions.createList(...values)),
-    // onUpdateList: (values) => dispatch(actions.updateList(values)),
     onResetCreateList: () => dispatch(actions.resetCreateList()),
-    // onResetUpdateList: () => dispatch(actions.resetUpdateList()),
+    onGetListById: (value) => dispatch(actions.getListById(value)),
+    onGetListUsers: (value) => dispatch(actions.getListUsers(value)),
+    onResetGetListUsers: () => dispatch(actions.resetGetListUsers()),
+    onUpdateList: (...values) => dispatch(actions.updateList(...values)),
+    onResetUpdateList: () => dispatch(actions.resetUpdateList()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(List);

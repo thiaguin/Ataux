@@ -28,8 +28,6 @@ const sortClass = (data) => {
     const classUsers = data.users.sort((a, b) => (a.user.name.toLowerCase() > b.user.name.toLowerCase() ? 1 : -1));
     const classList = data.lists.sort((a, b) => (a.createdAt > b.createdAt ? 1 : -1));
 
-    // eslint-disable-next-line no-console
-    console.log('classUSers', classUsers);
     return {
         ...data,
         users: classUsers,

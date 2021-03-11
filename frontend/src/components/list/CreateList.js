@@ -6,7 +6,7 @@ import SpinnerButton from '../spinnerButton/SpinnerButton';
 import trashSVG from '../../assets/trash.svg';
 import whiteTrashSVG from '../../assets/trash-white.svg';
 
-const createClass = (props) => {
+const creatList = (props) => {
     const today = new Date();
 
     today.setUTCHours(0);
@@ -20,7 +20,7 @@ const createClass = (props) => {
     });
 
     const parentInStyle = {
-        margin: '12% 25%',
+        margin: '7% 25%',
         width: '50%',
         justifyContent: 'center',
         border: '3px solid lightgrey',
@@ -170,4 +170,4 @@ const createClass = (props) => {
     );
 };
 
-export default createClass;
+export default creatList;
