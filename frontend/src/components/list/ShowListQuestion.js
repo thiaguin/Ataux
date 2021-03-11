@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Form, Table } from 'react-bootstrap';
+import levelTypes from '../../enums/levelTypes';
 
-const showClassUser = (props) => {
+const showListQuestion = (props) => {
+    const [questionNameHover, setQuestionNameHover] = useState(false);
+
     const parentInStyle = {
         margin: '5%',
         width: '90%',
@@ -15,9 +18,13 @@ const showClassUser = (props) => {
         margin: '0',
     };
 
+    const questionNameHoverHandler = (value) => {
+        setQuestionNameHover(value);
+    };
+
     return (
         <>
-            {props.class && (
+            {props.list && (
                 <div style={parentInStyle}>
                     <div style={childInStyle}>
                         <div style={{ margin: '10px 30px' }}>
@@ -31,15 +38,11 @@ const showClassUser = (props) => {
                                         color: 'grey',
                                     }}
                                 >
-                                    Usuários da Turma
+                                    {props.list.title} - Questões
                                 </h3>
                                 <div style={{ display: 'inline-block', position: 'relative', float: 'right' }}>
-                                    <Button
-                                        variant="secondary"
-                                        type="button"
-                                        onClick={() => props.onAddUser(props.class.id)}
-                                    >
-                                        Adicionar Usuário
+                                    <Button variant="secondary" type="button" onClick={props.goToEditPage}>
+                                        Editar Lista
                                     </Button>
                                 </div>
                             </div>
@@ -50,47 +53,43 @@ const showClassUser = (props) => {
                                     <th key="key" style={{ width: '5%', textAlign: 'center' }}>
                                         {}
                                     </th>
-                                    <th key="name">Nome</th>
-                                    <th key="handle">Handle</th>
-                                    <th key="registration">Matrícula</th>
-                                    {props.class.lists.map((list) => (
-                                        <th key={list.id}>{list.title}</th>
-                                    ))}
+                                    <th key="question" style={{ width: '45%' }}>
+                                        Questão
+                                    </th>
+                                    <th key="level">Dificuldade</th>
+                                    <th key="status">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {props.class.users.map((data, index) => (
-                                    <tr key={data.id} id={data.id}>
+                                {props.list.questions.map((currQuestion, index) => (
+                                    <tr key={currQuestion.id} id={currQuestion.id}>
                                         <td key="key" style={{ textAlign: 'center' }}>
                                             {index + 1}
                                         </td>
                                         <td key="name">
                                             <>
-                                                {/* <p
-                                                    onClick={() => props.onClickList(props.class.id, currList.id)}
-                                                    onMouseEnter={() => classNameHoverHandler(currList.id)}
-                                                    onMouseLeave={() => classNameHoverHandler(null)}
+                                                <p
+                                                    onClick={() =>
+                                                        props.onClickQuestion(props.list.id, currQuestion.id)
+                                                    }
+                                                    onMouseEnter={() => questionNameHoverHandler(currQuestion.id)}
+                                                    onMouseLeave={() => questionNameHoverHandler(null)}
                                                     style={
-                                                        classNameHover === currList.id
+                                                        questionNameHover === currQuestion.id
                                                             ? { textDecoration: 'underline', cursor: 'pointer' }
                                                             : {}
                                                     }
-                                                > */}
-                                                {data.user.name}
-                                                {/* </p> */}
+                                                >
+                                                    {currQuestion.question.title}
+                                                </p>
                                             </>
                                         </td>
-                                        <td key="handle">{data.user.handle}</td>
-                                        <td key="registration">{data.user.registration}</td>
-                                        {data.lists &&
-                                            data.lists.map((list) => (
-                                                <td key="handle" style={{ textAlign: 'center' }}>
-                                                    {`${list.resume.OK || 0}/${Object.values(list.resume).reduce(
-                                                        (a, b) => a + (b || 0),
-                                                        0,
-                                                    )}`}
-                                                </td>
-                                            ))}
+                                        <td key="level" style={{ textAlign: 'center' }}>
+                                            {levelTypes[currQuestion.question.level]}
+                                        </td>
+                                        <td key="expirationTime" style={{ textAlign: 'center' }}>
+                                            ok
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -117,9 +116,9 @@ const showClassUser = (props) => {
                                     style={{ minWidth: '150px' }}
                                     variant="primary"
                                     type="submit"
-                                    onClick={() => props.gotToClassListsPage(props.class.id)}
+                                    onClick={() => props.gotToListUsersPage(props.list.id)}
                                 >
-                                    Ver Listas
+                                    Ver Usuários
                                 </Button>
                             </Form.Group>
                         </div>
@@ -130,4 +129,4 @@ const showClassUser = (props) => {
     );
 };
 
-export default showClassUser;
+export default showListQuestion;

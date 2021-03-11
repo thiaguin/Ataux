@@ -37,4 +37,15 @@ export {
     getClassResume,
     resetGetClassResume,
 } from './class';
-export { existQuestionToList, resetExistQuestionToList, createList, resetCreateList } from './list';
+export {
+    existQuestionToList,
+    resetExistQuestionToList,
+    createList,
+    resetCreateList,
+    getListById,
+    resetGetListById,
+    getListUsers,
+    resetGetListUsers,
+    updateList,
+    resetUpdateList,
+} from './list';

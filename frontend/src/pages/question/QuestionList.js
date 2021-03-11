@@ -17,7 +17,6 @@ const QuestionList = (props) => {
     const [queryName, setQueryName] = useState('');
     const [queryLevel, setQueryLevel] = useState('');
     const [queryTag, setQueryTag] = useState('');
-    // eslint-disable-next-line no-unused-vars
     const [page, setPage] = useState(0);
     const [query, setQuery] = useState({});
 
@@ -84,7 +83,6 @@ const QuestionList = (props) => {
         if (queryTag !== '') queryParams.tagId = queryTag;
 
         setQuery(queryParams);
-        // onGetAllQuestions(query);
     };
 
     const goToShowPageHandler = (questionId) => {
@@ -260,5 +258,4 @@ const mapStateToProps = (state) => ({
     tags: state.tag.getAll.data,
 });
 
-// const mapDispatchToProps = () => {};
-export default connect(mapStateToProps, null)(QuestionList);
+export default connect(mapStateToProps)(QuestionList);

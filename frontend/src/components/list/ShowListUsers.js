@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Form, Table } from 'react-bootstrap';
 
-const showClassUser = (props) => {
+const showListUsers = (props) => {
     const parentInStyle = {
         margin: '5%',
         width: '90%',
@@ -17,7 +17,7 @@ const showClassUser = (props) => {
 
     return (
         <>
-            {props.class && (
+            {props.list && (
                 <div style={parentInStyle}>
                     <div style={childInStyle}>
                         <div style={{ margin: '10px 30px' }}>
@@ -31,15 +31,11 @@ const showClassUser = (props) => {
                                         color: 'grey',
                                     }}
                                 >
-                                    Usuários da Turma
+                                    {props.list.title} - Questões
                                 </h3>
                                 <div style={{ display: 'inline-block', position: 'relative', float: 'right' }}>
-                                    <Button
-                                        variant="secondary"
-                                        type="button"
-                                        onClick={() => props.onAddUser(props.class.id)}
-                                    >
-                                        Adicionar Usuário
+                                    <Button variant="secondary" type="button" onClick={props.goToEditPage}>
+                                        Editar Lista
                                     </Button>
                                 </div>
                             </div>
@@ -52,45 +48,43 @@ const showClassUser = (props) => {
                                     </th>
                                     <th key="name">Nome</th>
                                     <th key="handle">Handle</th>
-                                    <th key="registration">Matrícula</th>
-                                    {props.class.lists.map((list) => (
-                                        <th key={list.id}>{list.title}</th>
+                                    {props.list.questions.map((el) => (
+                                        <th key={el.questionId}>{el.question.title}</th>
                                     ))}
                                 </tr>
                             </thead>
                             <tbody>
-                                {props.class.users.map((data, index) => (
-                                    <tr key={data.id} id={data.id}>
+                                {props.users.map((el, index) => (
+                                    <tr key={el.user.id} id={el.id}>
                                         <td key="key" style={{ textAlign: 'center' }}>
                                             {index + 1}
                                         </td>
                                         <td key="name">
-                                            <>
-                                                {/* <p
-                                                    onClick={() => props.onClickList(props.class.id, currList.id)}
-                                                    onMouseEnter={() => classNameHoverHandler(currList.id)}
-                                                    onMouseLeave={() => classNameHoverHandler(null)}
+                                            {/* <>
+                                                <p
+                                                    onClick={() =>
+                                                        props.onClickQuestion(props.list.id, currQuestion.id)
+                                                    }
+                                                    onMouseEnter={() => questionNameHoverHandler(currQuestion.id)}
+                                                    onMouseLeave={() => questionNameHoverHandler(null)}
                                                     style={
-                                                        classNameHover === currList.id
+                                                        questionNameHover === currQuestion.id
                                                             ? { textDecoration: 'underline', cursor: 'pointer' }
                                                             : {}
                                                     }
                                                 > */}
-                                                {data.user.name}
-                                                {/* </p> */}
-                                            </>
+                                            {el.user.name}
+                                            {/* </p>
+                                            </> */}
                                         </td>
-                                        <td key="handle">{data.user.handle}</td>
-                                        <td key="registration">{data.user.registration}</td>
-                                        {data.lists &&
-                                            data.lists.map((list) => (
-                                                <td key="handle" style={{ textAlign: 'center' }}>
-                                                    {`${list.resume.OK || 0}/${Object.values(list.resume).reduce(
-                                                        (a, b) => a + (b || 0),
-                                                        0,
-                                                    )}`}
-                                                </td>
-                                            ))}
+                                        <td key="handle" style={{ textAlign: 'center' }}>
+                                            {el.user.handle}
+                                        </td>
+                                        {el.questions.map((question) => (
+                                            <td
+                                                key={question.questionId}
+                                            >{`${question.status} (${question.count})`}</td>
+                                        ))}
                                     </tr>
                                 ))}
                             </tbody>
@@ -117,9 +111,9 @@ const showClassUser = (props) => {
                                     style={{ minWidth: '150px' }}
                                     variant="primary"
                                     type="submit"
-                                    onClick={() => props.gotToClassListsPage(props.class.id)}
+                                    onClick={() => props.gotToListUsersPage(props.list.id)}
                                 >
-                                    Ver Listas
+                                    Ver Questões
                                 </Button>
                             </Form.Group>
                         </div>
@@ -130,4 +124,4 @@ const showClassUser = (props) => {
     );
 };
 
-export default showClassUser;
+export default showListUsers;

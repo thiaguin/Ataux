@@ -159,16 +159,11 @@ const Login = (props) => {
                                                 render={(renderProps) => (
                                                     <GoogleButton
                                                         name="Entrar com Google"
-                                                        onClick={(currvalues) => {
-                                                            // eslint-disable-next-line no-console
-                                                            console.log('jere');
-                                                            return renderProps.onClick(currvalues);
-                                                        }}
+                                                        onClick={(currvalues) => renderProps.onClick(currvalues)}
                                                         style={{ minWidth: '200px' }}
                                                     />
                                                 )}
                                                 onSuccess={loginGoogleHandler}
-                                                // cookiePolicy="single_host_origin"
                                             />
                                         </Form.Group>
                                         <Form.Group as={Col} controlId="formGridSubmtiButton">
