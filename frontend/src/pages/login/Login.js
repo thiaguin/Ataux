@@ -16,6 +16,7 @@ const Login = (props) => {
     const [popup, setPopup] = useState(null);
     const [modal, setModal] = useState(null);
     const [email, setEmail] = useState('');
+    const [hasError, setHasError] = useState(false);
     const [recoverPasswordHover, setRecoverPasswordHover] = useState(false);
     const [recoverPasswordStyle, setRecoverPasswordStyle] = useState({ textAlign: 'center' });
     const history = useHistory();
@@ -72,8 +73,7 @@ const Login = (props) => {
     useEffect(() => {
         if (loginError) {
             if (loginError !== entitiesTypes.NOT_CONFIRMED) {
-                setPopup(<Popup type="error" message={loginError} />);
-                props.onResetLogin();
+                setPopup(<Popup type="error" message={loginError} onClose={props.onResetLogin} />);
             } else {
                 const body =
                     'Você ainda não confirmou seu email.\n caso seja necessário renviaremos outro email para confirmação de cadastro.';
@@ -94,6 +94,13 @@ const Login = (props) => {
     }, [loginError]);
 
     useEffect(() => {
+        if (hasError) {
+            props.onResetLogin();
+            setHasError(false);
+        }
+    }, [hasError]);
+
+    useEffect(() => {
         if (recoverPasswordHover) {
             setRecoverPasswordStyle({ ...recoverPasswordStyle, textDecoration: 'underline', cursor: 'pointer' });
         } else {
@@ -104,8 +111,13 @@ const Login = (props) => {
     useEffect(() => {
         if (confirmEmail.resended) {
             setModal(null);
-            setPopup(<Popup type="info" message="Você receberá um novo email para confirmar o seu cadastro." />);
-            props.onResetResendEmailToConfirm();
+            setPopup(
+                <Popup
+                    type="info"
+                    message="Você receberá um novo email para confirmar o seu cadastro."
+                    onClose={props.onResetResendEmailToConfirm}
+                />,
+            );
         }
     }, [confirmEmail.resended]);
 

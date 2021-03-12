@@ -9,4 +9,7 @@ export const entities = {
     TAG: 'Tag',
     CODEFORCES_URL: 'Link da questão inválido',
     CLASS: 'Turma',
+    USER_CLASS: 'Erro do usuário relacionad a turma',
+    INVALID_CODE: 'Código inválido',
+    WRONG_PASSWORD: 'Senha errada.',
 };

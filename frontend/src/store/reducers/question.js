@@ -10,7 +10,7 @@ const initialState = {
     get: {
         error: null,
         loading: false,
-        question: null,
+        data: null,
     },
     update: {
         error: null,
@@ -70,7 +70,7 @@ const getQuestionByIdSuccess = (state, data) => ({
     get: {
         ...state.get,
         loading: false,
-        question: data,
+        data,
     },
 });
 

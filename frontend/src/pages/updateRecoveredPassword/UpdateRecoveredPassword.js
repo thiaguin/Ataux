@@ -57,8 +57,13 @@ const UpdatePasswordRecovered = (props) => {
 
     useEffect(() => {
         if (props.updatePasswordRecovered.updateError) {
-            setPopup(<Popup type="error" message={props.updatePasswordRecovered.updateError} />);
-            props.onResetUpdateRecoveredPassowrd();
+            setPopup(
+                <Popup
+                    type="error"
+                    message={props.updatePasswordRecovered.updateError}
+                    onClose={props.onResetUpdateRecoveredPassowrd}
+                />,
+            );
         }
     }, [props.updatePasswordRecovered.updateError]);
 

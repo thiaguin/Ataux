@@ -82,6 +82,7 @@ const QuestionList = (props) => {
         if (queryLevel !== '') queryParams.level = queryLevel;
         if (queryTag !== '') queryParams.tagId = queryTag;
 
+        setPage(initialPage);
         setQuery(queryParams);
     };
 

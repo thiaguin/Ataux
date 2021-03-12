@@ -51,8 +51,7 @@ const Tag = (props) => {
 
     useEffect(() => {
         if (tag.create.error) {
-            setPopup(<Popup type="error" message={tag.create.error} />);
-            props.onResetCreateTag();
+            setPopup(<Popup type="error" message={tag.create.error} onClose={props.onResetCreateTag} />);
         }
     }, [tag.create.error]);
 

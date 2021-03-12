@@ -57,8 +57,7 @@ const RecoverPassword = (props) => {
 
     useEffect(() => {
         if (props.data.error) {
-            setPopup(<Popup type="error" message={props.data.error} />);
-            props.onResetRecoverPassword();
+            setPopup(<Popup type="error" message={props.data.error} onClose={props.onResetRecoverPassword} />);
         }
     }, [props.data.error]);
 

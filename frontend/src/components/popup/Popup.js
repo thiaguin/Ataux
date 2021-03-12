@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const popup = (props) => {
     const toastType = props.type ? toast[props.type] : toast;
-    toastType(props.message, { toastId: props.message });
+    toastType(props.message, { toastId: props.message, onClose: props.onClose });
 
     return <ToastContainer />;
 };
