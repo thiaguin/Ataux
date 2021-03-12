@@ -9,17 +9,20 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserQuestionList } from 'src/userQuestionList/userQuestionList.entity';
 import { SetUserQuestionListSubmission } from './dto/setUserQuestionList-submission.dto';
 import { QuestionStatus } from 'src/enums/questionStatus.enum';
+import { QueryService } from 'src/utils/query.service';
 
 @Injectable()
 export class SubmissionsService {
     @InjectRepository(Submission)
     private repository: Repository<Submission>;
     private httpService: HttpService;
+    private queryService: QueryService;
     private BASE_URL: string;
 
     constructor() {
         this.repository = getCustomRepository(SubmissionRepository);
         this.httpService = new HttpService();
+        this.queryService = new QueryService();
         this.BASE_URL = 'http://codeforces.com';
     }
 
@@ -94,6 +97,7 @@ export class SubmissionsService {
                 time: submission.timeConsumedMillis,
                 code: sourceCode,
                 memory: submission.memoryConsumedBytes,
+                createdTime: createdTime.toISOString(),
             });
             await this.repository.save(newSubmission);
             return newSubmission;
@@ -111,7 +115,8 @@ export class SubmissionsService {
     }
 
     async getUserSubmission(query) {
-        const submissions = await this.repository.find({ where: query, relations: ['user'] });
+        const where = this.queryService.getQueryToFind(Submission, query);
+        const submissions = await this.repository.find({ where, relations: ['user', 'question'] });
         return submissions;
     }
 }

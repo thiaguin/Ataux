@@ -32,7 +32,7 @@ import { Query } from 'typeorm/driver/Query';
 import { QuestionStatus } from 'src/enums/questionStatus.enum';
 import { CsvService } from 'src/utils/csv.service';
 import { Response } from 'express';
-import { NOT_FOUND } from 'src/resource/errorType.resource';
+import { BAD_REQUEST, NOT_FOUND } from 'src/resource/errorType.resource';
 import { Submission } from 'src/submissions/submissions.entity';
 
 @Injectable()
@@ -221,7 +221,7 @@ export class ListService {
             return this.addUserGrade(list);
         }
 
-        throw new HttpException('NOT_FOUND', 404);
+        throw new HttpException({ entity: 'List', type: NOT_FOUND }, 404);
     }
 
     async setQuestions(id: number, questionIds: number[]): Promise<void> {
@@ -269,7 +269,7 @@ export class ListService {
         });
 
         if (!list) {
-            throw new HttpException('NOT_FOUND', 404);
+            throw new HttpException({ entity: 'List', type: NOT_FOUND }, 404);
         }
 
         return list;
@@ -319,7 +319,7 @@ export class ListService {
             return userList;
         }
 
-        throw new HttpException('BAD_REQUEST', 400);
+        throw new HttpException({ entity: 'UserClass', type: BAD_REQUEST }, 400);
     }
 
     async checkSubmissions(id: number, user: PayloadUserDTO, body: CheckSubmissionListDTO) {

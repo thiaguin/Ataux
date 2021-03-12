@@ -1,5 +1,5 @@
 import { HttpException, HttpService, Injectable } from '@nestjs/common';
-import { BAD_REQUEST, NOT_FOUND } from 'src/resource/errorType.resource';
+import { BAD_REQUEST, NOT_FOUND, TO_MANY_REQUEST } from 'src/resource/errorType.resource';
 import { CodeforcesContestDTO } from './dto/codeforces-contest.dto';
 import { CodeforcesProblemDTO } from './dto/codeforces-problem.dto';
 
@@ -58,7 +58,9 @@ export class CodeforcesService {
             if (error.response.status === 429 && count > 0) {
                 return this.getSubmissions(handle, contestId, count - 1);
             }
-            throw new HttpException('BAD_REQUEST', 400);
+
+            const erroType = error.response.status === 429 ? TO_MANY_REQUEST : BAD_REQUEST;
+            throw new HttpException({ entity: 'Codeforces', type: erroType }, 400);
         }
     }
 

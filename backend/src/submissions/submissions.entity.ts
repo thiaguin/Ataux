@@ -36,6 +36,9 @@ export class Submission {
     @Column()
     userId: number;
 
+    @Column({ nullable: true, type: 'timestamp with time zone' })
+    createdTime: string;
+
     @ManyToOne(() => List, (entity) => entity.submissions)
     list: List;
 

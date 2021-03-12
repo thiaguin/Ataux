@@ -60,3 +60,14 @@ export class GetUserMiddleware implements NestMiddleware {
         next();
     }
 }
+
+@Injectable()
+export class MemberQueryMiddleware implements NestMiddleware {
+    async use(req: Request, res: Response, next: () => void): Promise<void> {
+        const user = <PayloadUserDTO>req.user;
+
+        if (user.role === UserRole.MEMBER) req.query.userId = <any>user.id;
+
+        next();
+    }
+}

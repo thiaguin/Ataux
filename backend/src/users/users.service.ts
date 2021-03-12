@@ -66,7 +66,7 @@ export class UsersService {
             return user;
         }
 
-        throw new HttpException(NOT_FOUND, 404);
+        throw new HttpException({ entity: 'User', type: NOT_FOUND }, 404);
     }
 
     async findOne(email: string): Promise<User> {
@@ -220,13 +220,13 @@ export class UsersService {
             select: ['id', 'email', 'googleId', 'handle', 'method', 'name', 'password', 'registration'],
         });
 
-        if (!user) throw new HttpException(NOT_FOUND, 404);
+        if (!user) throw new HttpException({ entity: 'User', type: NOT_FOUND }, 404);
 
         if (bcrypt.compareSync(body.currentPassword, user.password)) {
             user.password = body.newPassword;
             await this.repository.save(user);
         } else {
-            throw new HttpException(BAD_REQUEST, 400);
+            throw new HttpException({ entity: 'WrongPassword', type: BAD_REQUEST }, 400);
         }
     }
 

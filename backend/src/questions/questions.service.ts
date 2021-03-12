@@ -247,7 +247,7 @@ export class QuestionsService {
         });
 
         if (!question) {
-            throw new HttpException('NOT_FOUND', 404);
+            throw new HttpException({ entity: 'Question', type: NOT_FOUND }, 404);
         }
 
         return await getManager().transaction(async (transaction) => {
@@ -264,7 +264,7 @@ export class QuestionsService {
         const question = await this.repository.findOne({ where: { id } });
 
         if (!question) {
-            throw new HttpException('NOT_FOUND', 404);
+            throw new HttpException({ entity: 'Question', type: NOT_FOUND }, 404);
         }
 
         this.repository.delete(id);
