@@ -21,7 +21,7 @@ import { Query } from 'typeorm/driver/Query';
 import { PaginateService } from 'src/utils/paginate.service';
 import { QueryService } from 'src/utils/query.service';
 import { QueryClassDTO } from './dto/query-class.dto';
-import { NOT_UNIQUE } from 'src/resource/errorType.resource';
+import { BAD_REQUEST, NOT_FOUND, NOT_UNIQUE } from 'src/resource/errorType.resource';
 
 @Injectable()
 export class ClassesService {
@@ -184,7 +184,7 @@ export class ClassesService {
         });
 
         if (!entity) {
-            throw new HttpException('NOT_FOUND', 404);
+            throw new HttpException({ entity: 'Class', type: NOT_FOUND }, 404);
         }
 
         return entity;
@@ -258,7 +258,7 @@ export class ClassesService {
         });
 
         if (!entity) {
-            throw new HttpException('NOT_FOUND', 404);
+            throw new HttpException({ entity: 'Class', type: NOT_FOUND }, 404);
         }
 
         if (entity.code === body.code) {
@@ -270,6 +270,6 @@ export class ClassesService {
             await userClassRepository.save(userClass);
         }
 
-        throw new HttpException('CodeInvalidToEntity', 400);
+        throw new HttpException({ entity: 'InvalidCode', type: BAD_REQUEST }, 400);
     }
 }

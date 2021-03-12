@@ -7,7 +7,14 @@ import { User } from 'src/users/users.entity';
 import { UserMethod } from 'src/enums/userMethod.enum';
 import { IncomingHttpHeaders } from 'http';
 import { PayloadUserDTO } from 'src/users/dto/payload-user.dto';
-import { BAD_REQUEST, INVALID_PASSWORD, NOT_FOUND, UNAUTHORIZED, GOOGLE_USER } from 'src/resource/errorType.resource';
+import {
+    BAD_REQUEST,
+    INVALID_PASSWORD,
+    NOT_FOUND,
+    UNAUTHORIZED,
+    GOOGLE_USER,
+    FORBIDDEN,
+} from 'src/resource/errorType.resource';
 
 @Injectable()
 export class AuthService {
@@ -54,7 +61,7 @@ export class AuthService {
             const { email } = this.jwtService.verify(token);
             const user = await this.userService.findOne(email);
 
-            if (!user) throw new HttpException('Forbidden', 403);
+            if (!user) throw new HttpException({ entity: 'User', type: FORBIDDEN }, 403);
 
             return {
                 email,
