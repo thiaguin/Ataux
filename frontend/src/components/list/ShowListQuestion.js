@@ -70,7 +70,7 @@ const showListQuestion = (props) => {
                                             <>
                                                 <p
                                                     onClick={() =>
-                                                        props.onClickQuestion(props.list.id, currQuestion.id)
+                                                        props.onClickQuestion(props.list.id, currQuestion.questionId)
                                                     }
                                                     onMouseEnter={() => questionNameHoverHandler(currQuestion.id)}
                                                     onMouseLeave={() => questionNameHoverHandler(null)}

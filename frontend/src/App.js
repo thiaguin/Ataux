@@ -16,6 +16,7 @@ import TagList from './pages/tag/TagList';
 import ClassList from './pages/class/ClassList';
 import Class from './pages/class/Class';
 import List from './pages/list/List';
+import ListQuestion from './pages/listQuestion/ListQuestion';
 
 const App = (props) => {
     const dispatch = useDispatch();
@@ -50,10 +51,16 @@ const App = (props) => {
             <Route exact path="/question" render={(currProps) => <QuestionList {...currProps} />} />
             <Route exact path="/tag/:mode/:tagId?" render={(currProps) => <Tag {...currProps} />} />
             <Route exact path="/tag" render={(currProps) => <TagList {...currProps} />} />
+            <Route
+                exact
+                path="/list/:listId/question/show/:questionId?"
+                render={(currProps) => <ListQuestion {...currProps} />}
+            />
             <Route exact path="/list/:mode/:listId?" render={(currProps) => <List {...currProps} />} />
             <Route exact path="/class/:mode/:classId/:relation" render={(currProps) => <Class {...currProps} />} />
             <Route exact path="/class/:mode/:classId?" render={(currProps) => <Class {...currProps} />} />
             <Route exact path="/class" render={(currProps) => <ClassList {...currProps} />} />
+            <Route exact path="/submission" render={() => <div>Submissions</div>} />
             <Route exact path="/" render={() => <div>Main Page Logged</div>} />
         </Switch>
     );

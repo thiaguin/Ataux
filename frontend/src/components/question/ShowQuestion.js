@@ -70,9 +70,9 @@ const showQuestion = (props) => {
                                         style={{ minWidth: '150px' }}
                                         variant="primary"
                                         type="submit"
-                                        onClick={() => props.gotToEditPage(props.question.id)}
+                                        onClick={() => props.onSubmit(props.question.id)}
                                     >
-                                        Editar
+                                        {props.submitButton}
                                     </Button>
                                 </Form.Group>
                             </div>

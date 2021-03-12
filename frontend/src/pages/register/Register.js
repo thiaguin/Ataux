@@ -74,8 +74,7 @@ const Register = (props) => {
 
     useEffect(() => {
         if (props.register.error) {
-            setPopup(<Popup type="error" message={props.register.error} />);
-            props.onResetRegister();
+            setPopup(<Popup type="error" message={props.register.error} onClose={props.onResetRegister} />);
         }
     }, [props.register.error]);
 

@@ -39,7 +39,7 @@ const showClassUser = (props) => {
                                         type="button"
                                         onClick={() => props.onAddUser(props.class.id)}
                                     >
-                                        Adicionar Usuário
+                                        Adicionar Usuário na Turma
                                     </Button>
                                 </div>
                             </div>

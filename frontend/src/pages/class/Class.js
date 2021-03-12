@@ -60,8 +60,7 @@ const Class = (props) => {
 
     useEffect(() => {
         if (classData.create.error) {
-            setPopup(<Popup type="error" message={classData.create.error} />);
-            props.onResetCreateClass();
+            setPopup(<Popup type="error" message={classData.create.error} onClose={props.onResetCreateClass} />);
         }
     }, [classData.create.error]);
 

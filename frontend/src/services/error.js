@@ -15,6 +15,8 @@ const getUnauthorizedMessageError = (entity) => entitiesTypes[entity];
 
 const getGoogleUserMessageError = () => errorTypes.GOOGLE_USER.label;
 
+const getToManyRequestMessageError = () => errorTypes.TO_MANY_REQUEST.label;
+
 export const getErrorMessage = (response) => {
     if (!response || !response.data) return getInternalServerError();
 
@@ -34,12 +36,14 @@ export const getErrorMessage = (response) => {
             return getNotUniqueMessageError(entityType);
         case errorTypes.NOT_FOUND.value:
             return getNotFoundMessageError(entityType);
-        case errorTypes.INVALID_PASSWORD.value:
-            return getInvalidPasswordMessageError();
         case errorTypes.UNAUTHORIZED.value:
             return getUnauthorizedMessageError(entityType);
+        case errorTypes.INVALID_PASSWORD.value:
+            return getInvalidPasswordMessageError();
         case errorTypes.GOOGLE_USER.value:
-            return getGoogleUserMessageError(entity);
+            return getGoogleUserMessageError();
+        case errorTypes.TO_MANY_REQUEST.value:
+            return getToManyRequestMessageError();
         default:
             return getInternalServerError();
     }

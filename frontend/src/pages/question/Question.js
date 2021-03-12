@@ -72,8 +72,7 @@ const Question = (props) => {
 
     useEffect(() => {
         if (question.create.error) {
-            setPopup(<Popup type="error" message={question.create.error} />);
-            props.onResetCreateQuestion();
+            setPopup(<Popup type="error" message={question.create.error} onClose={props.onResetCreateQuestion} />);
         }
     }, [question.create.error]);
 
@@ -90,15 +89,15 @@ const Question = (props) => {
     }, [initEditPage, mode]);
 
     useEffect(() => {
-        if (question.get.question) {
-            setQuestionTags(question.get.question.tags.map((value) => ({ id: value.tag.id, name: value.tag.name })));
+        if (question.get.data) {
+            setQuestionTags(question.get.data.tags.map((value) => ({ id: value.tag.id, name: value.tag.name })));
         }
-    }, [question.get.question]);
+    }, [question.get.data]);
 
     useEffect(() => {
         if (question.update.success) {
             props.onResetUpdateQuestion();
-            history.push(`/question/show/${question.get.question.id}`);
+            history.push(`/question/show/${question.get.data.id}`);
         }
     }, [question.update.success]);
 
@@ -106,17 +105,18 @@ const Question = (props) => {
         <>
             {popup}
             {mode === 'create' && <CreateQuestion submitHandler={createHandler} loading={question.create.loading} />}
-            {mode === 'show' && question.get.question && (
+            {mode === 'show' && question.get.data && (
                 <ShowQuestion
-                    question={question.get.question}
+                    question={question.get.data}
                     goToUrlPage={goToUrlPageHandler}
                     goBack={goBackHandler}
-                    gotToEditPage={goToEditPageHandler}
+                    onSubmit={goToEditPageHandler}
+                    submitButton="Editar"
                 />
             )}
-            {mode === 'edit' && question.get.question && (
+            {mode === 'edit' && question.get.data && (
                 <EditQuestion
-                    question={question.get.question}
+                    question={question.get.data}
                     goToUrlPage={goToUrlPageHandler}
                     goBack={goBackHandler}
                     questionTags={questionTags}

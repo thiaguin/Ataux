@@ -6,4 +6,8 @@ export const errors = {
     INTERNAL_SERVER: { value: 'INTERNAL_SERVER', label: 'Ocorreu um erro inesperado.' },
     UNAUTHORIZED: { value: 'UNAUTHORIZED', label: 'Você não tem autorização para isso.' },
     GOOGLE_USER: { value: 'GOOGLE_USER', label: 'Usuário cadastrado pelo google.' },
+    TO_MANY_REQUEST: {
+        value: 'TO_MANY_REQUEST',
+        label: 'Seriço temporariamente indisponível. Tente novamente em instantes.',
+    },
 };

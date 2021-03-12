@@ -73,6 +73,10 @@ const List = (props) => {
         setListQuestions(listQuestionsFiltered);
     };
 
+    const onClickListQuestionHandler = (id, questionId) => {
+        history.push(`/list/${id}/question/show/${questionId}`);
+    };
+
     useEffect(() => {
         if (['edit', 'show'].includes(mode) && listId) {
             initList(listId);
@@ -84,8 +88,9 @@ const List = (props) => {
 
     useEffect(() => {
         if (list.newQuestion.error) {
-            setPopup(<Popup type="error" message={list.newQuestion.error} />);
-            props.onResetExistQuestionToList();
+            setPopup(
+                <Popup type="error" message={list.newQuestion.error} onClose={props.onResetExistQuestionToList} />,
+            );
         }
     }, [list.newQuestion.error]);
 
@@ -103,8 +108,7 @@ const List = (props) => {
 
     useEffect(() => {
         if (list.create.error) {
-            setPopup(<Popup type="error" message={list.create.error} />);
-            props.onResetCreateList();
+            setPopup(<Popup type="error" message={list.create.error} onClose={props.onResetCreateList} />);
         }
     }, [list.create.error]);
 
@@ -145,7 +149,7 @@ const List = (props) => {
             )}
             {mode === 'show' && showMode === QUESTIONS && list.get.data && (
                 <ShowListQuestion
-                    onClickQuestion
+                    onClickQuestion={onClickListQuestionHandler}
                     list={list.get.data}
                     goToEditPage={onGoToEditPageHandler}
                     goBack={onGoBackHandler}
