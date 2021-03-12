@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, FormControl, InputGroup, Pagination, Table } from 'react-bootstrap';
+import { Button, FormControl, InputGroup, Nav, Pagination, Table } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { connect, useDispatch } from 'react-redux';
 import * as actions from '../../store/actions';
@@ -10,7 +10,6 @@ const ClassList = (props) => {
 
     const history = useHistory();
 
-    const [classNameHover, setClassNameHover] = useState(false);
     const [queryName, setQueryName] = useState('');
     const [page, setPage] = useState(0);
     const [query, setQuery] = useState({});
@@ -34,10 +33,6 @@ const ClassList = (props) => {
     const initialPage = 0;
     const lastPage = Math.floor((classesCount - 1) / classesPerPage);
 
-    const classNameHoverHandler = (value) => {
-        setClassNameHover(value);
-    };
-
     const clickAddClassHandler = () => {
         history.push('/class/create');
     };
@@ -52,10 +47,6 @@ const ClassList = (props) => {
         if (queryName !== '') queryParams.name = queryName;
 
         setQuery(queryParams);
-    };
-
-    const goToShowPageHandler = (classId) => {
-        history.push(`/class/show/${classId}/list`);
     };
 
     const resetFilterHandler = () => {
@@ -123,22 +114,13 @@ const ClassList = (props) => {
                             <tbody>
                                 {props.classes.data.map((currClass, index) => (
                                     <tr key={currClass.id} id={currClass.id}>
-                                        <td key="key">{classesPerPage * page + index + 1}</td>
+                                        <td key="key" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                                            {classesPerPage * page + index + 1}
+                                        </td>
                                         <td key="name">
-                                            <>
-                                                <p
-                                                    onClick={() => goToShowPageHandler(currClass.id)}
-                                                    onMouseEnter={() => classNameHoverHandler(currClass.id)}
-                                                    onMouseLeave={() => classNameHoverHandler(null)}
-                                                    style={
-                                                        classNameHover === currClass.id
-                                                            ? { textDecoration: 'underline', cursor: 'pointer' }
-                                                            : {}
-                                                    }
-                                                >
-                                                    {currClass.name}
-                                                </p>
-                                            </>
+                                            <Nav.Link href={`/class/show/${currClass.id}/list`} eventKey="link-2">
+                                                {currClass.name}
+                                            </Nav.Link>
                                         </td>
                                     </tr>
                                 ))}

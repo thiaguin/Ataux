@@ -108,7 +108,6 @@ const Question = (props) => {
             {mode === 'show' && question.get.data && (
                 <ShowQuestion
                     question={question.get.data}
-                    goToUrlPage={goToUrlPageHandler}
                     goBack={goBackHandler}
                     onSubmit={goToEditPageHandler}
                     submitButton="Editar"

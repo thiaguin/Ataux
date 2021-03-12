@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Button, Form, Table } from 'react-bootstrap';
+import React from 'react';
+import { Button, Form, Nav, Table } from 'react-bootstrap';
 
 const showClassList = (props) => {
-    const [classNameHover, setClassNameHover] = useState(false);
+    // const [classNameHover, setClassNameHover] = useState(false);
 
     const parentInStyle = {
         margin: '5%',
@@ -17,9 +17,9 @@ const showClassList = (props) => {
         margin: '0',
     };
 
-    const classNameHoverHandler = (value) => {
-        setClassNameHover(value);
-    };
+    // const classNameHoverHandler = (value) => {
+    //     setClassNameHover(value);
+    // };
 
     return (
         <>
@@ -62,12 +62,12 @@ const showClassList = (props) => {
                             <tbody>
                                 {props.class.lists.map((currList, index) => (
                                     <tr key={currList.id} id={currList.id}>
-                                        <td key="key" style={{ textAlign: 'center' }}>
+                                        <td key="key" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                             {index + 1}
                                         </td>
                                         <td key="name">
                                             <>
-                                                <p
+                                                {/* <p
                                                     onClick={() => props.onClickList(currList.id)}
                                                     onMouseEnter={() => classNameHoverHandler(currList.id)}
                                                     onMouseLeave={() => classNameHoverHandler(null)}
@@ -78,13 +78,22 @@ const showClassList = (props) => {
                                                     }
                                                 >
                                                     {currList.title}
-                                                </p>
+                                                </p> */}
+                                                <Nav.Link href={`/list/show/${currList.id}`} eventKey="link-1">
+                                                    {currList.title}
+                                                </Nav.Link>
                                             </>
                                         </td>
-                                        <td key="questionsCount" style={{ textAlign: 'center' }}>
+                                        <td
+                                            key="questionsCount"
+                                            style={{ textAlign: 'center', verticalAlign: 'middle' }}
+                                        >
                                             {currList.questions ? currList.questions.length : 0}
                                         </td>
-                                        <td key="expirationTime" style={{ textAlign: 'center' }}>
+                                        <td
+                                            key="expirationTime"
+                                            style={{ textAlign: 'center', verticalAlign: 'middle' }}
+                                        >
                                             {currList.expirationTime}
                                         </td>
                                     </tr>

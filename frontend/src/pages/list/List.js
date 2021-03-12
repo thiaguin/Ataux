@@ -73,10 +73,6 @@ const List = (props) => {
         setListQuestions(listQuestionsFiltered);
     };
 
-    const onClickListQuestionHandler = (id, questionId) => {
-        history.push(`/list/${id}/question/show/${questionId}`);
-    };
-
     useEffect(() => {
         if (['edit', 'show'].includes(mode) && listId) {
             initList(listId);
@@ -149,7 +145,6 @@ const List = (props) => {
             )}
             {mode === 'show' && showMode === QUESTIONS && list.get.data && (
                 <ShowListQuestion
-                    onClickQuestion={onClickListQuestionHandler}
                     list={list.get.data}
                     goToEditPage={onGoToEditPageHandler}
                     goBack={onGoBackHandler}

@@ -144,7 +144,7 @@ const ListQuestion = (props) => {
                             </thead>
                             <tbody>
                                 {submissions &&
-                                    submissions.map((el, index) => (
+                                    submissions.data.map((el, index) => (
                                         <tr key={el.id} id={el.id}>
                                             <td key="key" style={{ textAlign: 'center' }}>
                                                 {index + 1}

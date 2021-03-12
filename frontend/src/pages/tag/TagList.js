@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, FormControl, InputGroup, Pagination, Table } from 'react-bootstrap';
+import { Button, FormControl, InputGroup, Nav, Pagination, Table } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { connect, useDispatch } from 'react-redux';
 import * as actions from '../../store/actions';
@@ -10,7 +10,6 @@ const TagList = (props) => {
 
     const history = useHistory();
 
-    const [tagNameHover, setTagNameHover] = useState(false);
     const [queryName, setQueryName] = useState('');
     const [page, setPage] = useState(0);
     const [query, setQuery] = useState({});
@@ -34,10 +33,6 @@ const TagList = (props) => {
     const initialPage = 0;
     const lastPage = Math.floor((tagsCount - 1) / tagsPerPage);
 
-    const tagNameHoverHandler = (value) => {
-        setTagNameHover(value);
-    };
-
     const clickAddTagHandler = () => {
         history.push('/tag/create');
     };
@@ -52,12 +47,6 @@ const TagList = (props) => {
         if (queryName !== '') queryParams.name = queryName;
 
         setQuery(queryParams);
-    };
-
-    const goToShowPageHandler = (tagId) => {
-        const url = `${window.location.href}/show/${tagId}`;
-        const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
-        if (newWindow) newWindow.opener = null;
     };
 
     const resetFilterHandler = () => {
@@ -125,22 +114,13 @@ const TagList = (props) => {
                             <tbody>
                                 {props.tags.data.map((tag, index) => (
                                     <tr key={tag.id} id={tag.id}>
-                                        <td key="key">{tagsPerPage * page + index + 1}</td>
+                                        <td key="key" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                                            {tagsPerPage * page + index + 1}
+                                        </td>
                                         <td key="name">
-                                            <>
-                                                <p
-                                                    onClick={() => goToShowPageHandler(tag.id)}
-                                                    onMouseEnter={() => tagNameHoverHandler(tag.id)}
-                                                    onMouseLeave={() => tagNameHoverHandler(null)}
-                                                    style={
-                                                        tagNameHover === tag.id
-                                                            ? { textDecoration: 'underline', cursor: 'pointer' }
-                                                            : {}
-                                                    }
-                                                >
-                                                    {tag.name}
-                                                </p>
-                                            </>
+                                            <Nav.Link href={`/tag/show/${tag.id}`} eventKey="link-2">
+                                                {tag.name}
+                                            </Nav.Link>
                                         </td>
                                     </tr>
                                 ))}
