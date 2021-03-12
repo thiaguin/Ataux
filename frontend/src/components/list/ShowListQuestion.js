@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
-import { Button, Form, Table } from 'react-bootstrap';
+import React from 'react';
+import { Button, Form, Nav, Table } from 'react-bootstrap';
 import levelTypes from '../../enums/levelTypes';
 
 const showListQuestion = (props) => {
-    const [questionNameHover, setQuestionNameHover] = useState(false);
-
     const parentInStyle = {
         margin: '5%',
         width: '90%',
@@ -16,10 +14,6 @@ const showListQuestion = (props) => {
     const childInStyle = {
         width: '100%',
         margin: '0',
-    };
-
-    const questionNameHoverHandler = (value) => {
-        setQuestionNameHover(value);
     };
 
     return (
@@ -63,31 +57,24 @@ const showListQuestion = (props) => {
                             <tbody>
                                 {props.list.questions.map((currQuestion, index) => (
                                     <tr key={currQuestion.id} id={currQuestion.id}>
-                                        <td key="key" style={{ textAlign: 'center' }}>
+                                        <td key="key" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                             {index + 1}
                                         </td>
                                         <td key="name">
-                                            <>
-                                                <p
-                                                    onClick={() =>
-                                                        props.onClickQuestion(props.list.id, currQuestion.questionId)
-                                                    }
-                                                    onMouseEnter={() => questionNameHoverHandler(currQuestion.id)}
-                                                    onMouseLeave={() => questionNameHoverHandler(null)}
-                                                    style={
-                                                        questionNameHover === currQuestion.id
-                                                            ? { textDecoration: 'underline', cursor: 'pointer' }
-                                                            : {}
-                                                    }
-                                                >
-                                                    {currQuestion.question.title}
-                                                </p>
-                                            </>
+                                            <Nav.Link
+                                                href={`/list/${props.list.id}/question/show/${currQuestion.questionId}`}
+                                                eventKey="link-2"
+                                            >
+                                                {currQuestion.question.title}
+                                            </Nav.Link>
                                         </td>
-                                        <td key="level" style={{ textAlign: 'center' }}>
+                                        <td key="level" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                             {levelTypes[currQuestion.question.level]}
                                         </td>
-                                        <td key="expirationTime" style={{ textAlign: 'center' }}>
+                                        <td
+                                            key="expirationTime"
+                                            style={{ textAlign: 'center', verticalAlign: 'middle' }}
+                                        >
                                             ok
                                         </td>
                                     </tr>

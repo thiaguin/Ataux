@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, connect } from 'react-redux';
-import { Table, InputGroup, FormControl, OverlayTrigger, Popover, Button, Pagination } from 'react-bootstrap';
+import { Table, InputGroup, FormControl, OverlayTrigger, Popover, Button, Pagination, Nav } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import * as actions from '../../store/actions';
 import levelTypes from '../../enums/levelTypes';
@@ -13,7 +13,7 @@ const QuestionList = (props) => {
     const wrapper = React.createRef();
     const history = useHistory();
 
-    const [questionNameHover, setQuestionNameHover] = useState(false);
+    // const [questionNameHover, setQuestionNameHover] = useState(false);
     const [queryName, setQueryName] = useState('');
     const [queryLevel, setQueryLevel] = useState('');
     const [queryTag, setQueryTag] = useState('');
@@ -55,10 +55,6 @@ const QuestionList = (props) => {
         return tags.length > 0 ? popover : null;
     };
 
-    const questionNameHoverHandler = (value) => {
-        setQuestionNameHover(value);
-    };
-
     const clickAddQuestionHandler = () => {
         history.push('/question/create');
     };
@@ -84,12 +80,6 @@ const QuestionList = (props) => {
 
         setPage(initialPage);
         setQuery(queryParams);
-    };
-
-    const goToShowPageHandler = (questionId) => {
-        const url = `${window.location.href}/show/${questionId}`;
-        const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
-        if (newWindow) newWindow.opener = null;
     };
 
     const resetFilterHandler = () => {
@@ -203,27 +193,18 @@ const QuestionList = (props) => {
                             <tbody>
                                 {props.questions.data.map((question, index) => (
                                     <tr key={question.id} id={question.id}>
-                                        <td key="key">{questionsPerPage * page + index + 1}</td>
-                                        <td key="name">
-                                            <>
-                                                <p
-                                                    onClick={() => goToShowPageHandler(question.id)}
-                                                    onMouseEnter={() => questionNameHoverHandler(question.id)}
-                                                    onMouseLeave={() => questionNameHoverHandler(null)}
-                                                    style={
-                                                        questionNameHover === question.id
-                                                            ? { textDecoration: 'underline', cursor: 'pointer' }
-                                                            : {}
-                                                    }
-                                                >
-                                                    {question.title}
-                                                </p>
-                                            </>
+                                        <td key="key" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                                            {questionsPerPage * page + index + 1}
                                         </td>
-                                        <td key="level" style={{ textAlign: 'center' }}>
+                                        <td key="name">
+                                            <Nav.Link href={`/question/show/${question.id}`} eventKey="link-2">
+                                                {question.title}
+                                            </Nav.Link>
+                                        </td>
+                                        <td key="level" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                             {levelTypes[question.level]}
                                         </td>
-                                        <td key="tags" style={{ textAlign: 'center' }}>
+                                        <td key="tags" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                             <OverlayTrigger placement="left" overlay={getPopover(question.tags)}>
                                                 <p ref={wrapper}>{`${question.tags.length} tags`}</p>
                                             </OverlayTrigger>
