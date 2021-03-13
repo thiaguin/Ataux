@@ -14,8 +14,8 @@ export class UsersController {
     }
 
     @Get('/')
-    findAll(): Promise<{ users: User[]; count: number }> {
-        return this.userService.findAndCountAll();
+    findAll(@Query() query): Promise<{ data: User[]; count: number }> {
+        return this.userService.findAndCountAll(query);
     }
 
     @Get('/existHandle')
