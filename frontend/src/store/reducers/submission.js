@@ -12,6 +12,11 @@ const initialState = {
         loading: false,
         success: false,
     },
+    get: {
+        error: null,
+        loading: false,
+        data: null,
+    },
 };
 
 const getAllSubmissionsStart = (state) => ({
@@ -44,6 +49,38 @@ const resetGetAllSubmissions = (state) => ({
     ...state,
     ...initialState,
     getAll: { ...initialState.getAll },
+});
+
+const getSubmissionByIdStart = (state) => ({
+    ...state,
+    get: {
+        ...state.get,
+        loading: true,
+    },
+});
+
+const getSubmissionByIdSuccess = (state, data) => ({
+    ...state,
+    get: {
+        ...state.get,
+        loading: false,
+        data,
+    },
+});
+
+const getSubmissionByIdFail = (state, data) => ({
+    ...state,
+    get: {
+        ...state.get,
+        loading: false,
+        error: getErrorMessage(data),
+    },
+});
+
+const resetGetSubmissionById = (state) => ({
+    ...state,
+    ...initialState,
+    get: { ...initialState.get },
 });
 
 const checkSubmissionsStart = (state) => ({
@@ -87,6 +124,14 @@ const reducer = (state = initialState, action) => {
             return getAllSubmissionsFail(state, action.error.response);
         case actionTypes.RESET_GET_ALL_SUBMISSIONS:
             return resetGetAllSubmissions(state);
+        case actionTypes.GET_SUBMISSION_BY_ID_START:
+            return getSubmissionByIdStart(state);
+        case actionTypes.GET_SUBMISSION_BY_ID_SUCCESS:
+            return getSubmissionByIdSuccess(state, action.data);
+        case actionTypes.GET_SUBMISSION_BY_ID_FAIL:
+            return getSubmissionByIdFail(state, action.error.response);
+        case actionTypes.RESET_GET_SUBMISSION_BY_ID:
+            return resetGetSubmissionById(state);
         case actionTypes.CHECK_SUBMISSIONS_START:
             return checkSubmissionsStart(state);
         case actionTypes.CHECK_SUBMISSIONS_SUCCESS:

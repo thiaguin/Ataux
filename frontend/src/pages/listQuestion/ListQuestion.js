@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, Form, Table } from 'react-bootstrap';
+import { Button, Form, Nav, Table } from 'react-bootstrap';
 import { connect, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import SpinnerButton from '../../components/spinnerButton/SpinnerButton';
@@ -15,6 +15,7 @@ const ListQuestion = (props) => {
 
     // const [classNameHover, setClassNameHover] = useState(false);
     const [popup, setPopup] = useState(null);
+    const [questionNameHover, setQuestionNameHover] = useState(null);
 
     const parentInStyle = {
         margin: '5%',
@@ -48,6 +49,10 @@ const ListQuestion = (props) => {
 
     const goBackHandler = () => {
         history.goBack();
+    };
+
+    const clickQuestionHandler = (el) => {
+        history.push(`/question/show/${el.questionId}`);
     };
 
     useEffect(() => {
@@ -146,24 +151,47 @@ const ListQuestion = (props) => {
                                 {submissions &&
                                     submissions.data.map((el, index) => (
                                         <tr key={el.id} id={el.id}>
-                                            <td key="key" style={{ textAlign: 'center' }}>
+                                            <td key="key" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                                 {index + 1}
                                             </td>
-                                            <td key="handle">{el.user.handle}</td>
-                                            <td key="question">{el.question.title}</td>
-                                            <td key="result" style={{ textAlign: 'center' }}>
+                                            <td key="handle" style={{ verticalAlign: 'middle' }}>
+                                                {el.user.handle}
+                                            </td>
+                                            <td
+                                                key="question"
+                                                onClick={() => clickQuestionHandler(el)}
+                                                onMouseEnter={() => setQuestionNameHover(el.id)}
+                                                onMouseLeave={() => setQuestionNameHover(null)}
+                                                style={
+                                                    questionNameHover === el.id
+                                                        ? {
+                                                              textDecoration: 'underline',
+                                                              cursor: 'pointer',
+                                                              verticalAlign: 'middle',
+                                                          }
+                                                        : { verticalAlign: 'middle' }
+                                                }
+                                            >
+                                                {el.question.title}
+                                            </td>
+                                            <td key="result" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                                 {el.status}
                                             </td>
-                                            <td key="time" style={{ textAlign: 'center' }}>
+                                            <td key="time" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                                 {el.time}
                                             </td>
-                                            <td key="memory" style={{ textAlign: 'center' }}>
+                                            <td key="memory" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                                 {el.memory}
                                             </td>
-                                            <td key="language" style={{ textAlign: 'center' }}>
-                                                {el.language}
+                                            <td key="language" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                                                <Nav.Link href={`/submission/show/${el.id}`} eventKey="link-2">
+                                                    {el.language}
+                                                </Nav.Link>
                                             </td>
-                                            <td key="createdTime" style={{ textAlign: 'center' }}>
+                                            <td
+                                                key="createdTime"
+                                                style={{ textAlign: 'center', verticalAlign: 'middle' }}
+                                            >
                                                 {el.createdTime}
                                             </td>
                                         </tr>
