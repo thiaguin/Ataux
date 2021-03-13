@@ -19,6 +19,8 @@ import List from './pages/list/List';
 import ListQuestion from './pages/listQuestion/ListQuestion';
 import SubmissionList from './pages/submission/SubmissionList';
 import Submission from './pages/submission/Submission';
+import UserList from './pages/user/UserList';
+import User from './pages/user/User';
 
 const App = (props) => {
     const dispatch = useDispatch();
@@ -64,6 +66,8 @@ const App = (props) => {
             <Route exact path="/class" render={(currProps) => <ClassList {...currProps} />} />
             <Route exact path="/submission/show/:submissionId" render={(currProps) => <Submission {...currProps} />} />
             <Route exact path="/submission" render={(currProps) => <SubmissionList {...currProps} />} />
+            <Route exact path="/user/:mode/:userId?" render={(currProps) => <User {...currProps} />} />
+            <Route exact path="/user" render={(currProps) => <UserList {...currProps} />} />
             <Route exact path="/" render={() => <div>Main Page Logged</div>} />
         </Switch>
     );

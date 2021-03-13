@@ -235,7 +235,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    onGetAllSubmissions: (...values) => dispatch(actions.getAllSubmsssions(...values)),
+    onGetAllSubmissions: (...values) => dispatch(actions.getAllSubmissions(...values)),
     onCheckSubmissions: (value) => dispatch(actions.checkSubmission(value)),
     onResetCheckSubmissions: () => dispatch(actions.resetCheckSubmssions()),
 });

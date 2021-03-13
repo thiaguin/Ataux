@@ -1,6 +1,5 @@
 export { register, resetRegister } from './register';
 export { recoverPassword, resetRecoverPassword } from './recoverPassword';
-export { updateUser, resetUpdateUser, checkValidMissInfo } from './user';
 export { confirmEmail, resetConfirmEmail, resendEmail, resetResendEmail } from './confirmEmail';
 export { login, resetLogin, authCheck, setRedirectPath, logout, googleLogin, refreshToken } from './login';
 export {
@@ -10,12 +9,12 @@ export {
     resetUpdateRecoverPassword,
 } from './updateRecoveredPassword';
 export {
-    getAllSubmsssions,
-    resetGetAllSubmsssions,
+    getAllSubmissions,
+    resetGetAllSubmissions,
     checkSubmission,
     resetCheckSubmssions,
-    getSubmsssionById,
-    resetGetSubmsssionById,
+    getSubmissionById,
+    resetGetSubmissionById,
 } from './submission';
 export {
     getAllClasses,
@@ -45,6 +44,17 @@ export {
     updateTag,
     resetUpdateTag,
 } from './tag';
+export {
+    updateUser,
+    resetUpdateUser,
+    checkValidMissInfo,
+    getAllUsers,
+    resetGetAllUsers,
+    getUserById,
+    resetGetUserById,
+    updatePasswordUser,
+    resetUpdatePasswordUser,
+} from './user';
 export {
     existQuestionToList,
     resetExistQuestionToList,

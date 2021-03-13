@@ -9,7 +9,7 @@ const SubmissionList = (props) => {
     const { token, submission } = props;
 
     const dispatch = useDispatch();
-    const onInitPage = useCallback((...values) => dispatch(actions.getAllSubmsssions(...values)), [dispatch]);
+    const onInitPage = useCallback((...values) => dispatch(actions.getAllSubmissions(...values)), [dispatch]);
 
     const history = useHistory();
 
@@ -96,7 +96,7 @@ const SubmissionList = (props) => {
                             <tbody>
                                 {submissions.data.map((el, index) => (
                                     <tr key={el.id} id={el.id}>
-                                        <td key="key" style={{ textAlign: 'center', justifyContent: 'middle' }}>
+                                        <td key="key" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                             {index + 1}
                                         </td>
                                         <td key="handle" style={{ verticalAlign: 'middle' }}>
@@ -168,8 +168,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    onGetAllSubmissions: (...values) => dispatch(actions.getAllSubmsssions(...values)),
-    onResetCheckSubmissions: () => dispatch(actions.resetCheckSubmssions()),
+    onGetAllSubmissions: (...values) => dispatch(actions.getAllSubmissions(...values)),
+    onResetCheckSubmissions: () => dispatch(actions.resetGetSubmissionById()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SubmissionList);

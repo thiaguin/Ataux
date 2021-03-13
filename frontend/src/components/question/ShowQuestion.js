@@ -1,5 +1,6 @@
 import React from 'react';
 import { Form, Button } from 'react-bootstrap';
+import levelTypes from '../../enums/levelTypes';
 
 const showQuestion = (props) => {
     const parentInStyle = {
@@ -37,7 +38,12 @@ const showQuestion = (props) => {
                             </div>
                             <Form.Group controlId="formLevel">
                                 <Form.Label>Dificuldade</Form.Label>
-                                <Form.Control name="level" value="Médio" readOnly type="text" />
+                                <Form.Control
+                                    name="level"
+                                    value={levelTypes[props.question.level]}
+                                    readOnly
+                                    type="text"
+                                />
                             </Form.Group>{' '}
                             <Form.Group controlId="formTags" readOnly>
                                 <Form.Label>Tags</Form.Label>
