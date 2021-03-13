@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio';
-import { HttpService, Injectable } from '@nestjs/common';
-import { getCustomRepository, getManager, Repository } from 'typeorm';
+import { HttpException, HttpService, Injectable } from '@nestjs/common';
+import { createQueryBuilder, getCustomRepository, getManager, Repository } from 'typeorm';
 import { Submission } from './submissions.entity';
 import { SubmissionRepository } from './submissions.repository';
 import { CodeforcesSubmissionDTO } from 'src/codeforces/dto/codeforces-submission.dto';
@@ -10,6 +10,10 @@ import { UserQuestionList } from 'src/userQuestionList/userQuestionList.entity';
 import { SetUserQuestionListSubmission } from './dto/setUserQuestionList-submission.dto';
 import { QuestionStatus } from 'src/enums/questionStatus.enum';
 import { QueryService } from 'src/utils/query.service';
+import { EntityToQuery } from 'src/utils/dto/entityQuery.dto';
+import { User } from 'src/users/users.entity';
+import { Question } from 'src/questions/questions.entity';
+import { NOT_FOUND } from 'src/resource/errorType.resource';
 
 @Injectable()
 export class SubmissionsService {
@@ -30,9 +34,35 @@ export class SubmissionsService {
         return getManager().getRepository(UserQuestionList);
     }
 
-    async findAll(query): Promise<Submission[]> {
-        const submissions = await this.repository.find(query);
-        return submissions;
+    getEntitiesRelation(): EntityToQuery[] {
+        return [
+            { entity: Submission, nick: 's' },
+            { entity: User, nick: 'su' },
+            { entity: Question, nick: 'sq' },
+        ];
+    }
+    async findAll(query): Promise<{ data: Submission[]; count: number }> {
+        const where = this.queryService.getQueryToFind(Submission, query);
+        const [submissions, count] = await this.repository.findAndCount({ where, relations: ['user', 'question'] });
+        return { data: submissions, count };
+    }
+
+    async findOne(id: number, query): Promise<Submission> {
+        const queryBuild = createQueryBuilder(Submission, 's');
+        const entitiesRelation = this.getEntitiesRelation();
+        const where = `s.id = '${id}' and ${this.queryService.getQueryToQueryBuilder(entitiesRelation, query)}`;
+        const submission = await queryBuild
+            .leftJoinAndMapOne('s.user', 's.user', 'su')
+            .leftJoinAndMapOne('s.question', 's.question', 'sq')
+            .addSelect('s.code')
+            .where(where)
+            .getOne();
+
+        if (!submission) {
+            throw new HttpException({ entity: 'Submission', type: NOT_FOUND }, 404);
+        }
+
+        return submission;
     }
 
     async setUserQuestionList(data: SetUserQuestionListSubmission): Promise<void> {
@@ -84,7 +114,8 @@ export class SubmissionsService {
             listId: data.listId,
         };
 
-        if (!exist && createdTime <= limitTime) {
+        const existInTesting = exist && exist.status === 'TESTING';
+        if ((!exist || existInTesting) && createdTime <= limitTime) {
             await this.setUserQuestionList(dataToSetUserQuestionList);
             const sourceCode = await this.getSourceCode(submission.contestId, submission.id);
             const newSubmission = this.repository.create({
@@ -105,18 +136,22 @@ export class SubmissionsService {
     }
 
     async getSourceCode(contestId: string, subId: string) {
-        const url = `${this.BASE_URL}/contest/${contestId}/submission/${subId}`;
-        const response = await this.httpService.get(url).toPromise();
+        try {
+            const url = `${this.BASE_URL}/contest/${contestId}/submission/${subId}`;
+            const response = await this.httpService.get(url).toPromise();
 
-        const $ = <any>cheerio.load(response.data);
-        const sourceCode = $('.program-source')[0].children[0].data;
+            const $ = <any>cheerio.load(response.data);
+            const sourceCode = $('.program-source')[0].children[0].data;
 
-        return sourceCode;
+            return sourceCode;
+        } catch (error) {
+            return null;
+        }
     }
 
-    async getUserSubmission(query) {
-        const where = this.queryService.getQueryToFind(Submission, query);
-        const submissions = await this.repository.find({ where, relations: ['user', 'question'] });
-        return submissions;
-    }
+    // async getUserSubmission(query) {
+    //     const where = this.queryService.getQueryToFind(Submission, query);
+    //     const submissions = await this.repository.find({ where, relations: ['user', 'question'] });
+    //     return submissions;
+    // }
 }

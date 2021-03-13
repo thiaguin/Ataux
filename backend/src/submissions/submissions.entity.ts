@@ -27,7 +27,7 @@ export class Submission {
     @Column()
     time: string;
 
-    @Column({ type: 'text' })
+    @Column({ type: 'text', select: false, nullable: true })
     code: string;
 
     @Column()
