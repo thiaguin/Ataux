@@ -1,52 +1,52 @@
 import * as actionTypes from './actionTypes';
 import axios from '../../axios';
 
-const getAllSubmsssionsStart = () => ({
+const getAllSubmissionsStart = () => ({
     type: actionTypes.GET_ALL_SUBMISSIONS_START,
 });
 
-const getAllSubmsssionsSucces = (data) => ({
+const getAllSubmissionsSucces = (data) => ({
     type: actionTypes.GET_ALL_SUBMISSIONS_SUCCESS,
     data,
 });
 
-const getAllSubmsssionsFail = (error) => ({
+const getAllSubmissionsFail = (error) => ({
     type: actionTypes.GET_ALL_SUBMISSIONS_FAIL,
     error,
 });
 
-export const resetGetAllSubmsssions = () => ({ type: actionTypes.RESET_GET_ALL_SUBMISSIONS });
+export const resetGetAllSubmissions = () => ({ type: actionTypes.RESET_GET_ALL_SUBMISSIONS });
 
-export const getAllSubmsssions = (query, token) => (dispatch) => {
-    dispatch(getAllSubmsssionsStart());
+export const getAllSubmissions = (query, token) => (dispatch) => {
+    dispatch(getAllSubmissionsStart());
     axios
         .get(`/submissions`, { params: query, headers: { Authorization: token } })
-        .then((response) => dispatch(getAllSubmsssionsSucces(response.data)))
-        .catch((error) => dispatch(getAllSubmsssionsFail(error)));
+        .then((response) => dispatch(getAllSubmissionsSucces(response.data)))
+        .catch((error) => dispatch(getAllSubmissionsFail(error)));
 };
 
-const getSubmsssionByIdStart = () => ({
+const getSubmissionByIdStart = () => ({
     type: actionTypes.GET_SUBMISSION_BY_ID_START,
 });
 
-const getSubmsssionByIdSucces = (data) => ({
+const getSubmissionByIdSucces = (data) => ({
     type: actionTypes.GET_SUBMISSION_BY_ID_SUCCESS,
     data,
 });
 
-const getSubmsssionByIdFail = (error) => ({
+const getSubmissionByIdFail = (error) => ({
     type: actionTypes.GET_SUBMISSION_BY_ID_FAIL,
     error,
 });
 
-export const resetGetSubmsssionById = () => ({ type: actionTypes.RESET_GET_SUBMISSION_BY_ID });
+export const resetGetSubmissionById = () => ({ type: actionTypes.RESET_GET_SUBMISSION_BY_ID });
 
-export const getSubmsssionById = (id, token) => (dispatch) => {
-    dispatch(getSubmsssionByIdStart());
+export const getSubmissionById = (id, token) => (dispatch) => {
+    dispatch(getSubmissionByIdStart());
     axios
         .get(`/submissions/${id}`, { headers: { Authorization: token } })
-        .then((response) => dispatch(getSubmsssionByIdSucces(response.data)))
-        .catch((error) => dispatch(getSubmsssionByIdFail(error)));
+        .then((response) => dispatch(getSubmissionByIdSucces(response.data)))
+        .catch((error) => dispatch(getSubmissionByIdFail(error)));
 };
 
 const checkSubmissionStart = () => ({

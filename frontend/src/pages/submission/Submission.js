@@ -141,10 +141,10 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    onGetSubmission: (...values) => dispatch(actions.getSubmsssionById(...values)),
+    onGetSubmission: (...values) => dispatch(actions.getSubmissionById(...values)),
     onCheckSubmissions: (value) => dispatch(actions.checkSubmission(value)),
     onResetCheckSubmissions: () => dispatch(actions.resetCheckSubmssions()),
-    onResetGetSubmisson: () => dispatch(actions.resetGetSubmsssionById()),
+    onResetGetSubmisson: () => dispatch(actions.resetGetSubmissionById()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Submission);
