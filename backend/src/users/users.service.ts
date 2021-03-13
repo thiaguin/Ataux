@@ -16,6 +16,8 @@ import { MailService } from 'src/utils/mail.service';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { BAD_REQUEST, NOT_FOUND, NOT_UNIQUE } from 'src/resource/errorType.resource';
 import { CodeforcesService } from 'src/codeforces/codeforces.service';
+import { PaginateService } from 'src/utils/paginate.service';
+import { QueryService } from 'src/utils/query.service';
 
 @Injectable()
 export class UsersService {
@@ -25,6 +27,8 @@ export class UsersService {
     private googleClientId: string;
     private mailService: MailService;
     private codeforceService: CodeforcesService;
+    private paginateService: PaginateService;
+    private queryService: QueryService;
 
     constructor() {
         this.repository = getCustomRepository(UserRepository);
@@ -32,6 +36,8 @@ export class UsersService {
         this.googleClient = new OAuth2Client(this.googleClientId);
         this.mailService = new MailService();
         this.codeforceService = new CodeforcesService();
+        this.paginateService = new PaginateService();
+        this.queryService = new QueryService();
     }
 
     getUserResetPasswordRepository(): Repository<UserResetPassword> {
@@ -87,9 +93,12 @@ export class UsersService {
         return user;
     }
 
-    async findAndCountAll(): Promise<{ users: User[]; count: number }> {
-        const [users, count] = await this.repository.findAndCount();
-        return { users, count };
+    async findAndCountAll(query): Promise<{ data: User[]; count: number }> {
+        const page = this.paginateService.getPage(query);
+        const where = this.queryService.getQueryToFind(User, query);
+
+        const [users, count] = await this.repository.findAndCount({ ...page, where });
+        return { data: users, count };
     }
 
     async confirmEmail(code: string): Promise<void> {
@@ -103,6 +112,7 @@ export class UsersService {
     }
 
     async update(id: number, body: UpdateUserDTO): Promise<void> {
+        //TODO Make improvements
         const user = await this.findById(id);
         delete body.password;
         await this.repository.update({ id: user.id }, body);
