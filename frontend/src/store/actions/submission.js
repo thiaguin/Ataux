@@ -18,13 +18,35 @@ const getAllSubmsssionsFail = (error) => ({
 export const resetGetAllSubmsssions = () => ({ type: actionTypes.RESET_GET_ALL_SUBMISSIONS });
 
 export const getAllSubmsssions = (query, token) => (dispatch) => {
-    // eslint-disable-next-line no-console
-    console.log('query', query);
     dispatch(getAllSubmsssionsStart());
     axios
         .get(`/submissions`, { params: query, headers: { Authorization: token } })
         .then((response) => dispatch(getAllSubmsssionsSucces(response.data)))
         .catch((error) => dispatch(getAllSubmsssionsFail(error)));
+};
+
+const getSubmsssionByIdStart = () => ({
+    type: actionTypes.GET_SUBMISSION_BY_ID_START,
+});
+
+const getSubmsssionByIdSucces = (data) => ({
+    type: actionTypes.GET_SUBMISSION_BY_ID_SUCCESS,
+    data,
+});
+
+const getSubmsssionByIdFail = (error) => ({
+    type: actionTypes.GET_SUBMISSION_BY_ID_FAIL,
+    error,
+});
+
+export const resetGetSubmsssionById = () => ({ type: actionTypes.RESET_GET_SUBMISSION_BY_ID });
+
+export const getSubmsssionById = (id, token) => (dispatch) => {
+    dispatch(getSubmsssionByIdStart());
+    axios
+        .get(`/submissions/${id}`, { headers: { Authorization: token } })
+        .then((response) => dispatch(getSubmsssionByIdSucces(response.data)))
+        .catch((error) => dispatch(getSubmsssionByIdFail(error)));
 };
 
 const checkSubmissionStart = () => ({

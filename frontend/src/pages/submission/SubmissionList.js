@@ -1,8 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Nav, Pagination, Table } from 'react-bootstrap';
 import { connect, useDispatch } from 'react-redux';
-// import { useHistory } from 'react-router-dom';
-// import SpinnerButton from '../../components/spinnerButton/SpinnerButton';
+import { useHistory } from 'react-router-dom';
 import Popup from '../../components/popup/Popup';
 import * as actions from '../../store/actions';
 
@@ -12,7 +11,8 @@ const SubmissionList = (props) => {
     const dispatch = useDispatch();
     const onInitPage = useCallback((...values) => dispatch(actions.getAllSubmsssions(...values)), [dispatch]);
 
-    // const [classNameHover, setClassNameHover] = useState(false);
+    const history = useHistory();
+
     const [popup, setPopup] = useState(null);
     const [page, setPage] = useState(0);
     const [questionNameHover, setQuestionNameHover] = useState(null);
@@ -37,46 +37,13 @@ const SubmissionList = (props) => {
     const initialPage = 0;
     const lastPage = Math.floor((submissionscount - 1) / submissionsPerPage);
 
-    // const onCheckSubmissionHandler = () => {
-    //     props.onCheckSubmissions({
-    //         token,
-    //         listId,
-    //         body: { questions: [Number(questionId)] },
-    //     });
-    // };
-
-    // const goToUrlPageHandler = (url) => {
-    //     const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
-    //     if (newWindow) newWindow.opener = null;
-    // };
-
-    // const goBackHandler = () => {
-    //     history.goBack();
-    // };
+    const clickQuestionHandler = (el) => {
+        history.push(`/question/show/${el.questionId}`);
+    };
 
     useEffect(() => {
         onInitPage({ page }, token);
     }, [onInitPage, page, token]);
-
-    // useEffect(() => {
-    //     if (submission.check.success) {
-    //         setPopup(null);
-    //         props.onResetCheckSubmissions();
-    //         props.onGetAllSubmissions({ questionId, listId }, token);
-    //     }
-    // }, [submission.check.success]);
-
-    // useEffect(() => {
-    //     if (submission.check.loading) {
-    //         setPopup(<Popup type="info" message="Isso pode demorar um pouco." />);
-    //     }
-    // }, [submission.check.loading]);
-
-    // useEffect(() => {
-    //     if (submission.check.error) {
-    //         setPopup(<Popup type="error" message={submission.check.error} onClose={props.onResetCheckSubmissions} />);
-    //     }
-    // }, [submission.check.error]);
 
     useEffect(() => {
         if (submission.getAll.error) {
@@ -103,27 +70,6 @@ const SubmissionList = (props) => {
                                 >
                                     Submissões
                                 </h3>
-                                {/* {submission.check.loading ? (
-                                    <SpinnerButton buttonVariant="secondary" style={{ width: '120px' }} />
-                                ) : (
-                                    <Button
-                                        variant="secondary"
-                                        style={{ width: '120px' }}
-                                        type="button"
-                                        onClick={onCheckSubmissionHandler}
-                                    >
-                                        Atualizar
-                                    </Button>
-                                )}
-                                <div style={{ display: 'inline-block', position: 'relative', float: 'right' }}>
-                                    <Button
-                                        variant="outline-secondary"
-                                        type="button"
-                                        onClick={() => goToUrlPageHandler(question.data.url)}
-                                    >
-                                        Ir Para o Codeforces
-                                    </Button>
-                                </div> */}
                             </div>
                         </div>
                         <Table striped bordered hover size="sm">
@@ -151,15 +97,14 @@ const SubmissionList = (props) => {
                                 {submissions.data.map((el, index) => (
                                     <tr key={el.id} id={el.id}>
                                         <td key="key" style={{ textAlign: 'center', justifyContent: 'middle' }}>
-                                            <Nav.Link href={`/submission/show/${el.id}`} eventKey="link-2">
-                                                {index + 1}
-                                            </Nav.Link>
+                                            {index + 1}
                                         </td>
                                         <td key="handle" style={{ verticalAlign: 'middle' }}>
                                             {el.user.handle}
                                         </td>
                                         <td
                                             key="question"
+                                            onClick={() => clickQuestionHandler(el)}
                                             onMouseEnter={() => setQuestionNameHover(el.id)}
                                             onMouseLeave={() => setQuestionNameHover(null)}
                                             style={
@@ -184,7 +129,9 @@ const SubmissionList = (props) => {
                                             {el.memory}
                                         </td>
                                         <td key="language" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                                            {el.language}
+                                            <Nav.Link href={`/submission/show/${el.id}`} eventKey="link-2">
+                                                {el.language}
+                                            </Nav.Link>
                                         </td>
                                         <td key="createdTime" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                             {el.createdTime}
@@ -193,29 +140,6 @@ const SubmissionList = (props) => {
                                 ))}
                             </tbody>
                         </Table>
-                        {/* <div style={{ textAlign: 'center' }}>
-                            <Form.Group
-                                style={{ width: '150px', display: 'inline-block' }}
-                                controlId="formGridGoogleButton"
-                            >
-                                <Button
-                                    style={{ minWidth: '150px' }}
-                                    variant="secondary"
-                                    type="button"
-                                    onClick={goBackHandler}
-                                >
-                                    Voltar
-                                </Button>
-                            </Form.Group>
-                            <Form.Group
-                                controlId="formGridSubmtiButton"
-                                style={{ width: '150px', display: 'inline-block', marginLeft: '15px' }}
-                            >
-                                <Button style={{ minWidth: '150px' }} variant="primary" type="submit">
-                                    Ver Usuários
-                                </Button>
-                            </Form.Group>
-                        </div> */}
                         <Pagination
                             style={{
                                 textAlign: 'center',
@@ -239,14 +163,12 @@ const SubmissionList = (props) => {
 };
 
 const mapStateToProps = (state) => ({
-    question: state.question.get,
     submission: state.submission,
     token: state.login.token,
 });
 
 const mapDispatchToProps = (dispatch) => ({
     onGetAllSubmissions: (...values) => dispatch(actions.getAllSubmsssions(...values)),
-    onCheckSubmissions: (value) => dispatch(actions.checkSubmission(value)),
     onResetCheckSubmissions: () => dispatch(actions.resetCheckSubmssions()),
 });
 
