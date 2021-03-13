@@ -1,4 +1,5 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Submission } from './submissions.entity';
 import { SubmissionsService } from './submissions.service';
 
 @Controller('submissions')
@@ -10,7 +11,12 @@ export class SubmissionsController {
     }
 
     @Get('/')
-    findAll(@Query() query) {
-        return this.submissionService.getUserSubmission(query);
+    findAll(@Query() query): Promise<{ data: Submission[]; count: number }> {
+        return this.submissionService.findAll(query);
+    }
+
+    @Get('/:id')
+    findOne(@Param() params: { id: number }, @Query() query): Promise<Submission> {
+        return this.submissionService.findOne(params.id, query);
     }
 }

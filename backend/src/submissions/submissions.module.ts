@@ -20,6 +20,7 @@ export class SubmissionsModule {
             // { path: 'lists/:id', method: RequestMethod.GET },
             // { path: 'lists/:id', method: RequestMethod.PUT },
             { path: 'submissions', method: RequestMethod.GET },
+            { path: 'submissions/:id', method: RequestMethod.GET },
         );
         consumer.apply(MemberQueryMiddleware).forRoutes(
             // { path: 'lists', method: RequestMethod.GET },
@@ -27,6 +28,7 @@ export class SubmissionsModule {
             // { path: 'lists/:id', method: RequestMethod.GET },
             // { path: 'lists/:id', method: RequestMethod.PUT },
             { path: 'submissions', method: RequestMethod.GET },
+            { path: 'submissions/:id', method: RequestMethod.GET },
         );
         // consumer
         //     .apply(AuthorizeColaboratorMiddleware)
