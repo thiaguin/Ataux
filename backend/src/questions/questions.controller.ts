@@ -27,8 +27,8 @@ export class QuestionsController {
     }
 
     @Get('/:id')
-    findById(@Param() params: { id: number }): Promise<Question> {
-        return this.questionService.findById(params.id);
+    findById(@Param() params: { id: number }, @Query() query): Promise<Question> {
+        return this.questionService.findById(params.id, query);
     }
 
     @Post('/')

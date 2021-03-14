@@ -21,7 +21,7 @@ export class Question {
     @Column({ type: 'text' })
     url: string;
 
-    @Column({ nullable: true })
+    @Column({ nullable: true, select: false })
     resolution: string;
 
     @Column()
