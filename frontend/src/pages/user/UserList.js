@@ -104,7 +104,6 @@ const UserList = (props) => {
                                         <td key="email" style={{ verticalAlign: 'middle' }}>
                                             {el.email}
                                         </td>
-
                                         <td key="name" style={{ verticalAlign: 'middle' }}>
                                             <Nav.Link href={`/user/show/${el.id}`} eventKey="link-2">
                                                 {el.name}

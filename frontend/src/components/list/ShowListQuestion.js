@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Form, Nav, Table } from 'react-bootstrap';
 import levelTypes from '../../enums/levelTypes';
+import SpinnerButton from '../spinnerButton/SpinnerButton';
 
 const showListQuestion = (props) => {
     const parentInStyle = {
@@ -15,6 +16,9 @@ const showListQuestion = (props) => {
         width: '100%',
         margin: '0',
     };
+
+    // eslint-disable-next-line no-console
+    console.log('list', props.list);
 
     return (
         <>
@@ -35,6 +39,20 @@ const showListQuestion = (props) => {
                                     {props.list.title} - Questões
                                 </h3>
                                 <div style={{ display: 'inline-block', position: 'relative', float: 'right' }}>
+                                    {props.checkSubmissionLoading ? (
+                                        <SpinnerButton
+                                            buttonVariant="secondary"
+                                            style={{ width: '100px', height: '10%' }}
+                                        />
+                                    ) : (
+                                        <Button
+                                            style={{ display: 'inline-block' }}
+                                            onClick={() => props.onCheckSubmission(props.list.questions)}
+                                            variant="secondary"
+                                        >
+                                            Atualizar
+                                        </Button>
+                                    )}
                                     <Button variant="secondary" type="button" onClick={props.goToEditPage}>
                                         Editar Lista
                                     </Button>

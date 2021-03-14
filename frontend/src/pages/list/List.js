@@ -73,6 +73,15 @@ const List = (props) => {
         setListQuestions(listQuestionsFiltered);
     };
 
+    const onCheckSubmissionHandler = (questions) => {
+        props.onCheckSubmissions({
+            token: props.token,
+            listId,
+            body: { questions: questions.map((el) => el.questionId) },
+        });
+        setPopup(<Popup type="info" message="Isso pode demorar um pouco" onClose={props.onResetCreateList} />);
+    };
+
     useEffect(() => {
         if (['edit', 'show'].includes(mode) && listId) {
             initList(listId);
@@ -149,6 +158,8 @@ const List = (props) => {
                     goToEditPage={onGoToEditPageHandler}
                     goBack={onGoBackHandler}
                     gotToListUsersPage={onChangeShowMode}
+                    onCheckSubmission={onCheckSubmissionHandler}
+                    checkSubmissionLoading={props.submission.check.loading}
                 />
             )}
             {mode === 'show' && showMode === USERS && list.get.data && list.users.data && (
@@ -183,6 +194,7 @@ const List = (props) => {
 const mapStateToProps = (state) => ({
     token: state.login.token,
     list: state.list,
+    submission: state.submission,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -195,6 +207,8 @@ const mapDispatchToProps = (dispatch) => ({
     onResetGetListUsers: () => dispatch(actions.resetGetListUsers()),
     onUpdateList: (...values) => dispatch(actions.updateList(...values)),
     onResetUpdateList: () => dispatch(actions.resetUpdateList()),
+    onCheckSubmissions: (value) => dispatch(actions.checkSubmission(value)),
+    onResetCheckSubmissions: () => dispatch(actions.resetCheckSubmssions()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(List);
