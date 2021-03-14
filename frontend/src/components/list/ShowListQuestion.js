@@ -17,9 +17,6 @@ const showListQuestion = (props) => {
         margin: '0',
     };
 
-    // eslint-disable-next-line no-console
-    console.log('list', props.list);
-
     return (
         <>
             {props.list && (
@@ -39,23 +36,26 @@ const showListQuestion = (props) => {
                                     {props.list.title} - Questões
                                 </h3>
                                 <div style={{ display: 'inline-block', position: 'relative', float: 'right' }}>
-                                    {props.checkSubmissionLoading ? (
-                                        <SpinnerButton
-                                            buttonVariant="secondary"
-                                            style={{ width: '100px', height: '10%' }}
-                                        />
-                                    ) : (
-                                        <Button
-                                            style={{ display: 'inline-block' }}
-                                            onClick={() => props.onCheckSubmission(props.list.questions)}
-                                            variant="secondary"
-                                        >
-                                            Atualizar
+                                    {props.currentUser.role === 'MEMBER' &&
+                                        (props.checkSubmissionLoading ? (
+                                            <SpinnerButton
+                                                buttonVariant="secondary"
+                                                style={{ width: '100px', height: '10%' }}
+                                            />
+                                        ) : (
+                                            <Button
+                                                style={{ display: 'inline-block' }}
+                                                onClick={() => props.onCheckSubmission(props.list.questions)}
+                                                variant="secondary"
+                                            >
+                                                Atualizar
+                                            </Button>
+                                        ))}
+                                    {props.currentUser.role !== 'MEMBER' && (
+                                        <Button variant="secondary" type="button" onClick={props.goToEditPage}>
+                                            Editar Lista
                                         </Button>
                                     )}
-                                    <Button variant="secondary" type="button" onClick={props.goToEditPage}>
-                                        Editar Lista
-                                    </Button>
                                 </div>
                             </div>
                         </div>
@@ -93,7 +93,9 @@ const showListQuestion = (props) => {
                                             key="expirationTime"
                                             style={{ textAlign: 'center', verticalAlign: 'middle' }}
                                         >
-                                            ok
+                                            {props.currentUser.role === 'MEMBER'
+                                                ? currQuestion.status
+                                                : `${currQuestion.status}/${props.usersCount}`}
                                         </td>
                                     </tr>
                                 ))}

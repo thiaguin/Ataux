@@ -21,6 +21,7 @@ import SubmissionList from './pages/submission/SubmissionList';
 import Submission from './pages/submission/Submission';
 import UserList from './pages/user/UserList';
 import User from './pages/user/User';
+import ClassAddUser from './pages/class/ClassAddUser';
 
 const App = (props) => {
     const dispatch = useDispatch();
@@ -61,6 +62,7 @@ const App = (props) => {
                 render={(currProps) => <ListQuestion {...currProps} />}
             />
             <Route exact path="/list/:mode/:listId?" render={(currProps) => <List {...currProps} />} />
+            <Route exact path="/class/:classId?/user/add" render={(currProps) => <ClassAddUser {...currProps} />} />
             <Route exact path="/class/:mode/:classId/:relation" render={(currProps) => <Class {...currProps} />} />
             <Route exact path="/class/:mode/:classId?" render={(currProps) => <Class {...currProps} />} />
             <Route exact path="/class" render={(currProps) => <ClassList {...currProps} />} />

@@ -23,6 +23,8 @@ export {
     resetCreateClass,
     getClassResume,
     resetGetClassResume,
+    addUserClass,
+    resetAddUserClass,
 } from './class';
 export {
     createQuestion,

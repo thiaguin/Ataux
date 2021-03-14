@@ -123,6 +123,7 @@ const Question = (props) => {
                     goBack={goBackHandler}
                     onSubmit={goToEditPageHandler}
                     onGoToQuestionCodePage={goToQuestionCodePage}
+                    onGoToCodeforcesPage={goToUrlPageHandler}
                     submitButton="Editar"
                 />
             )}
