@@ -72,3 +72,27 @@ export const getClassResume = (id) => (dispatch) => {
         .then((response) => dispatch(getClassResumeSucces(response.data)))
         .catch((error) => dispatch(getClassResumeFail(error)));
 };
+
+const addUserClassStart = () => ({
+    type: actionTypes.ADD_USER_CLASS_START,
+});
+
+const addUserClassSuccess = (data) => ({
+    type: actionTypes.ADD_USER_CLASS_SUCCESS,
+    data,
+});
+
+const addUserClassFail = (error) => ({
+    type: actionTypes.ADD_USER_CLASS_FAIL,
+    error,
+});
+
+export const resetAddUserClass = () => ({ type: actionTypes.RESET_ADD_USER_CLASS });
+
+export const addUserClass = ({ classId, ...body }, token) => (dispatch) => {
+    dispatch(addUserClassStart());
+    axios
+        .post(`/classes/${classId}/add/users`, body, { headers: { Authorization: token } })
+        .then((response) => dispatch(addUserClassSuccess(response.data)))
+        .catch((error) => dispatch(addUserClassFail(error)));
+};

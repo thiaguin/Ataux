@@ -83,8 +83,8 @@ const showClassUser = (props) => {
                                         <td key="handle">{data.user.handle}</td>
                                         <td key="registration">{data.user.registration}</td>
                                         {data.lists &&
-                                            data.lists.map((list) => (
-                                                <td key="handle" style={{ textAlign: 'center' }}>
+                                            data.lists.map((list, listIndex) => (
+                                                <td key={`${listIndex + 1}`} style={{ textAlign: 'center' }}>
                                                     {`${list.resume.OK || 0}/${Object.values(list.resume).reduce(
                                                         (a, b) => a + (b || 0),
                                                         0,

@@ -22,6 +22,11 @@ const initialState = {
     //     loading: false,
     //     success: null,
     // },
+    addUser: {
+        error: null,
+        loading: false,
+        success: null,
+    },
 };
 
 const sortClass = (data) => {
@@ -100,6 +105,38 @@ const resetCreateClass = (state) => ({
     create: { ...initialState.create },
 });
 
+const addUserClassStart = (state) => ({
+    ...state,
+    addUser: {
+        ...state.addUser,
+        loading: true,
+    },
+});
+
+const addUserClassSuccess = (state) => ({
+    ...state,
+    addUser: {
+        ...state.addUser,
+        loading: false,
+        success: true,
+    },
+});
+
+const addUserClassFail = (state, data) => ({
+    ...state,
+    addUser: {
+        ...state.addUser,
+        loading: false,
+        error: getErrorMessage(data),
+    },
+});
+
+const resetAddUser = (state) => ({
+    ...state,
+    ...initialState,
+    addUser: { ...initialState.addUser },
+});
+
 const getClassResumeStart = (state) => ({
     ...state,
     get: {
@@ -150,6 +187,14 @@ const reducer = (state = initialState, action) => {
             return createClassFail(state, action.error.response);
         case actionTypes.RESET_CREATE_CLASS:
             return resetCreateClass(state);
+        case actionTypes.ADD_USER_CLASS_START:
+            return addUserClassStart(state);
+        case actionTypes.ADD_USER_CLASS_SUCCESS:
+            return addUserClassSuccess(state, action.data);
+        case actionTypes.ADD_USER_CLASS_FAIL:
+            return addUserClassFail(state, action.error.response);
+        case actionTypes.RESET_ADD_USER_CLASS:
+            return resetAddUser(state);
         case actionTypes.GET_CLASS_RESUME_START:
             return getClassResumeStart(state);
         case actionTypes.GET_CLASS_RESUME_SUCCESS:

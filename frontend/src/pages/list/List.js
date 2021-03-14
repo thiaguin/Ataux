@@ -16,7 +16,7 @@ const List = (props) => {
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const initList = useCallback((param) => dispatch(actions.getListById(param)), [dispatch]);
+    const initList = useCallback((...values) => dispatch(actions.getListById(...values)), [dispatch]);
 
     const [popup, setPopup] = useState(null);
     const [showMode, setShowMode] = useState(QUESTIONS);
@@ -84,7 +84,7 @@ const List = (props) => {
 
     useEffect(() => {
         if (['edit', 'show'].includes(mode) && listId) {
-            initList(listId);
+            initList(listId, props.token);
             props.onGetListUsers(listId);
         } else if (mode !== 'create') {
             history.push('/class');
@@ -160,6 +160,8 @@ const List = (props) => {
                     gotToListUsersPage={onChangeShowMode}
                     onCheckSubmission={onCheckSubmissionHandler}
                     checkSubmissionLoading={props.submission.check.loading}
+                    currentUser={props.currentUser}
+                    usersCount={list.users.data ? list.users.data.length : 0}
                 />
             )}
             {mode === 'show' && showMode === USERS && list.get.data && list.users.data && (
@@ -195,6 +197,7 @@ const mapStateToProps = (state) => ({
     token: state.login.token,
     list: state.list,
     submission: state.submission,
+    currentUser: state.login.user,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -202,7 +205,7 @@ const mapDispatchToProps = (dispatch) => ({
     onResetExistQuestionToList: (value) => dispatch(actions.resetExistQuestionToList(value)),
     onCreateList: (...values) => dispatch(actions.createList(...values)),
     onResetCreateList: () => dispatch(actions.resetCreateList()),
-    onGetListById: (value) => dispatch(actions.getListById(value)),
+    onGetListById: (...values) => dispatch(actions.getListById(...values)),
     onGetListUsers: (value) => dispatch(actions.getListUsers(value)),
     onResetGetListUsers: () => dispatch(actions.resetGetListUsers()),
     onUpdateList: (...values) => dispatch(actions.updateList(...values)),

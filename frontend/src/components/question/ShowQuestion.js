@@ -16,6 +16,8 @@ const showQuestion = (props) => {
         margin: '7% 15% 5% 10%',
     };
 
+    const questionTags = props.question.tags || [];
+
     return (
         <>
             {props.question && (
@@ -31,7 +33,7 @@ const showQuestion = (props) => {
                                     style={{ minWidth: '15%', height: '10%' }}
                                     variant="outline-info"
                                     type="button"
-                                    onClick={() => props.goToUrlPage(props.question.url)}
+                                    onClick={() => props.onGoToCodeforcesPage(props.question.url)}
                                 >
                                     Ir
                                 </Button>
@@ -48,7 +50,7 @@ const showQuestion = (props) => {
                             <Form.Group controlId="formTags" readOnly>
                                 <Form.Label>Tags</Form.Label>
                                 <Form.Control style={{ height: '150px' }} readOnly as="select" multiple>
-                                    {props.question.tags.map((value) => (
+                                    {questionTags.map((value) => (
                                         <option key={value.tag.name}>{value.tag.name}</option>
                                     ))}
                                 </Form.Control>

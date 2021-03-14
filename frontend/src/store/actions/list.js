@@ -65,10 +65,10 @@ const getListByIdFail = (error) => ({
 
 export const resetGetListById = () => ({ type: actionTypes.RESET_GET_LIST_BY_ID });
 
-export const getListById = (id) => (dispatch) => {
+export const getListById = (id, token) => (dispatch) => {
     dispatch(getListByIdStart());
     axios
-        .get(`/lists/${id}`)
+        .get(`/lists/${id}`, { headers: { Authorization: token } })
         .then((response) => dispatch(getListByIdSucces(response.data)))
         .catch((error) => dispatch(getListByIdFail(error)));
 };
