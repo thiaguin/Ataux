@@ -6,6 +6,7 @@ import Popup from '../../components/popup/Popup';
 import CreateQuestion from '../../components/question/CreateQuestion';
 import ShowQuestion from '../../components/question/ShowQuestion';
 import EditQuestion from '../../components/question/EditQuestion';
+import QuestionCode from '../../components/question/QuestionCode';
 
 const Question = (props) => {
     const { question, tags } = props;
@@ -54,6 +55,10 @@ const Question = (props) => {
         setQuestionTags(questionsFiltered);
     };
 
+    const goToQuestionCodePage = (questionIdToShowCode) => {
+        history.push(`/question/code/${questionIdToShowCode}`);
+    };
+
     const editHandler = (values) => {
         props.onUpdateQuestion({
             tags: questionTags.map((value) => value.id),
@@ -62,8 +67,15 @@ const Question = (props) => {
         });
     };
 
+    const editCodeHandler = (code) => {
+        props.onUpdateQuestion({
+            id: questionId,
+            resolution: code,
+        });
+    };
+
     useEffect(() => {
-        if (['edit', 'show'].includes(mode) && questionId) {
+        if (['edit', 'show', 'code'].includes(mode) && questionId) {
             initQuestion(questionId);
         } else if (mode !== 'create') {
             history.push('/question');
@@ -110,6 +122,7 @@ const Question = (props) => {
                     question={question.get.data}
                     goBack={goBackHandler}
                     onSubmit={goToEditPageHandler}
+                    onGoToQuestionCodePage={goToQuestionCodePage}
                     submitButton="Editar"
                 />
             )}
@@ -124,6 +137,9 @@ const Question = (props) => {
                     submit={editHandler}
                     removeTag={removeTagHandler}
                 />
+            )}
+            {mode === 'code' && question.get.data && (
+                <QuestionCode question={question.get.data} onSaveCode={editCodeHandler} />
             )}
         </>
     );

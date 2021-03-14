@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import Popup from '../../components/popup/Popup';
 import * as actions from '../../store/actions';
+import Code from '../../components/code/Code';
 
 const Submission = (props) => {
     const { token, submission } = props;
@@ -43,9 +44,6 @@ const Submission = (props) => {
             setPopup(<Popup type="error" message={submission.get.error} onClose={props.onResetCheckSubmissions} />);
         }
     }, [submission.get.error]);
-
-    // eslint-disable-next-line no-console
-    console.log('submiddion', submission.get);
 
     return (
         <>
@@ -127,6 +125,7 @@ const Submission = (props) => {
                                     </tr>
                                 </tbody>
                             </Table>
+                            <Code content={submission.get.data.code} disabled />
                         </div>
                     </div>
                 </div>

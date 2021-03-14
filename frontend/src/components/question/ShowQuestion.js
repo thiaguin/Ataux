@@ -54,7 +54,7 @@ const showQuestion = (props) => {
                                 </Form.Control>
                             </Form.Group>
                             {/* <Form.Row style={{ textAlign: 'right' }}> */}
-                            <div style={{ textAlign: 'right' }}>
+                            <div style={{ textAlign: 'center' }}>
                                 <Form.Group
                                     style={{ width: '150px', display: 'inline-block' }}
                                     controlId="formGridGoogleButton"
@@ -69,8 +69,21 @@ const showQuestion = (props) => {
                                     </Button>
                                 </Form.Group>
                                 <Form.Group
+                                    style={{ width: '150px', display: 'inline-block', marginLeft: '10px' }}
+                                    controlId="formGridGoogleButton"
+                                >
+                                    <Button
+                                        style={{ minWidth: '150px' }}
+                                        variant="outline-secondary"
+                                        type="button"
+                                        onClick={() => props.onGoToQuestionCodePage(props.question.id)}
+                                    >
+                                        Ver Código
+                                    </Button>
+                                </Form.Group>
+                                <Form.Group
                                     controlId="formGridSubmtiButton"
-                                    style={{ width: '150px', display: 'inline-block', marginLeft: '15px' }}
+                                    style={{ width: '150px', display: 'inline-block', marginLeft: '10px' }}
                                 >
                                     <Button
                                         style={{ minWidth: '150px' }}
