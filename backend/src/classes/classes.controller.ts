@@ -44,4 +44,10 @@ export class ClassesController {
     register(@Body() body: RegisterUserDTO, @Req() req): Promise<void> {
         return this.classService.register(body, req.user);
     }
+
+    @Post('/:id/add/users')
+    @HttpCode(204)
+    addUsers(@Param() params: { id: number }, @Body() body: { email: string }): Promise<void> {
+        return this.classService.addUserByEmail(params.id, body.email);
+    }
 }

@@ -43,7 +43,11 @@ export class SubmissionsService {
     }
     async findAll(query): Promise<{ data: Submission[]; count: number }> {
         const where = this.queryService.getQueryToFind(Submission, query);
-        const [submissions, count] = await this.repository.findAndCount({ where, relations: ['user', 'question'] });
+        const [submissions, count] = await this.repository.findAndCount({
+            where,
+            relations: ['user', 'question'],
+            order: { id: 'ASC' },
+        });
         return { data: submissions, count };
     }
 

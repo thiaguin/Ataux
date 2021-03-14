@@ -25,6 +25,7 @@ export class ListModule {
             // { path: 'lists/:id', method: RequestMethod.GET },
             // { path: 'lists/:id', method: RequestMethod.PUT },
             { path: 'lists/:id/questions/submissions', method: RequestMethod.POST },
+            { path: 'lists/:id', method: RequestMethod.GET },
         );
         // consumer
         //     .apply(AuthorizeColaboratorMiddleware)
