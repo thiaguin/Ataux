@@ -27,13 +27,12 @@ import { User } from 'src/users/users.entity';
 import { Question } from 'src/questions/questions.entity';
 import { QueryService } from 'src/utils/query.service';
 import { EntityToQuery } from 'src/utils/dto/entityQuery.dto';
-import { ListResumeDTO } from './dto/resume-list.dto';
-import { Query } from 'typeorm/driver/Query';
 import { QuestionStatus } from 'src/enums/questionStatus.enum';
 import { CsvService } from 'src/utils/csv.service';
 import { Response } from 'express';
 import { BAD_REQUEST, NOT_FOUND } from 'src/resource/errorType.resource';
 import { Submission } from 'src/submissions/submissions.entity';
+import { UserRole } from 'src/enums/userRole.enum';
 
 @Injectable()
 export class ListService {
@@ -265,11 +264,50 @@ export class ListService {
     async findById(id: number): Promise<List> {
         const list = await this.repository.findOne({
             where: { id: id },
-            relations: ['class', 'questions', 'questions.question'],
+            relations: ['class', 'questions', 'questions.question', 'usersQuestions'],
         });
 
         if (!list) {
             throw new HttpException({ entity: 'List', type: NOT_FOUND }, 404);
+        }
+
+        return list;
+    }
+
+    async findOne(id: number, user: any = {}): Promise<List> {
+        const list = await this.repository.findOne({
+            where: { id: id },
+            relations: ['class', 'questions', 'questions.question', 'usersQuestions'],
+        });
+
+        if (!list) {
+            throw new HttpException({ entity: 'List', type: NOT_FOUND }, 404);
+        }
+
+        if (user?.role === UserRole.MEMBER) {
+            const userQuestions = {};
+
+            for (const userQuestion of list.usersQuestions) {
+                userQuestions[userQuestion.questionId] = userQuestion.status;
+            }
+
+            list.questions = list.questions.map((el) => ({
+                ...el,
+                status: userQuestions[el.question.id] || QuestionStatus.BLANK,
+            }));
+        } else {
+            const questionUsers = {};
+
+            for (const userQuestion of list.usersQuestions) {
+                if (userQuestion.status === QuestionStatus.OK) {
+                    questionUsers[userQuestion.questionId] = questionUsers[userQuestion.questionId] + 1 || 1;
+                }
+            }
+
+            list.questions = list.questions.map((el) => ({
+                ...el,
+                status: questionUsers[el.question.id] || 0,
+            }));
         }
 
         return list;

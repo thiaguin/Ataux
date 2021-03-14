@@ -23,8 +23,8 @@ export class ListController {
     }
 
     @Get('/:id')
-    findById(@Param() params: { id: number }): Promise<List> {
-        return this.listService.findById(params.id);
+    findById(@Param() params: { id: number }, @Req() req): Promise<List> {
+        return this.listService.findOne(params.id, req.user);
     }
 
     @Get('/:id/csv')

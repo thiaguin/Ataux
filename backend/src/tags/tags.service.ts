@@ -30,6 +30,7 @@ export class TagsService {
         const [tags, count] = await this.repository.findAndCount({
             ...page,
             where,
+            order: { id: 'ASC' },
         });
 
         return { data: tags, count };

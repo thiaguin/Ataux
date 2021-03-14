@@ -22,6 +22,7 @@ import { PaginateService } from 'src/utils/paginate.service';
 import { QueryService } from 'src/utils/query.service';
 import { QueryClassDTO } from './dto/query-class.dto';
 import { BAD_REQUEST, NOT_FOUND, NOT_UNIQUE } from 'src/resource/errorType.resource';
+import { UserRepository } from 'src/users/users.repository';
 
 @Injectable()
 export class ClassesService {
@@ -271,5 +272,33 @@ export class ClassesService {
         }
 
         throw new HttpException({ entity: 'InvalidCode', type: BAD_REQUEST }, 400);
+    }
+
+    async addUserByEmail(id: number, email: string): Promise<void> {
+        const userRepository = getCustomRepository(UserRepository);
+        const userClassRepository = getCustomRepository(UserClassRepository);
+
+        const entity = await this.repository.findOne({ where: { id } });
+
+        if (!entity) {
+            throw new HttpException({ entity: 'Class', type: NOT_FOUND }, 404);
+        }
+
+        const user = await userRepository.findOne({ where: { email } });
+
+        if (!user) {
+            throw new HttpException({ entity: 'User', type: NOT_FOUND }, 404);
+        }
+
+        const userClass = await userClassRepository.findOne({ userId: user.id, classId: entity.id });
+
+        if (!userClass) {
+            const newUserClass = userClassRepository.create({
+                userId: user.id,
+                classId: entity.id,
+            });
+
+            await userClassRepository.save(newUserClass);
+        }
     }
 }

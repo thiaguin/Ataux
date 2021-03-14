@@ -97,7 +97,7 @@ export class UsersService {
         const page = this.paginateService.getPage(query);
         const where = this.queryService.getQueryToFind(User, query);
 
-        const [users, count] = await this.repository.findAndCount({ ...page, where });
+        const [users, count] = await this.repository.findAndCount({ ...page, where, order: { id: 'ASC' } });
         return { data: users, count };
     }
 
