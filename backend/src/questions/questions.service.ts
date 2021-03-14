@@ -117,8 +117,16 @@ export class QuestionsService {
         }
     }
 
-    async findById(id: number): Promise<Question> {
-        const question = await this.findOne({ id });
+    async findById(id: number, query: { selectCode?: boolean } = {}): Promise<Question> {
+        const queryBuild = createQueryBuilder(Question, 'q');
+        const entitiesRelation = this.getEntitiesRelation();
+        const where = `q.id = '${id}' and ${this.queryService.getQueryToQueryBuilder(entitiesRelation, query)}`;
+        const question = await queryBuild
+            .leftJoinAndMapOne('q.tags', 'q.tags', 'qt')
+            .leftJoinAndMapOne('qt.tag', 'qt.tag', 't')
+            .addSelect(query.selectCode ? 's.code' : '')
+            .where(where)
+            .getOne();
 
         if (question) {
             return question;
