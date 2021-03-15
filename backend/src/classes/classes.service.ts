@@ -208,7 +208,7 @@ export class ClassesService {
         }
 
         for (const user of users) {
-            usersList[user.id] = userListDefault.map((a) => Object.assign({}, a));
+            usersList[user.userId] = userListDefault.map((a) => Object.assign({}, a));
         }
 
         for (const listKey in lists) {
@@ -220,7 +220,7 @@ export class ClassesService {
         }
 
         for (const user of users) {
-            usersResult.push({ ...user, lists: usersList[user.id] });
+            usersResult.push({ ...user, lists: usersList[user.userId] });
         }
 
         entity.users = <any>usersResult;
@@ -262,16 +262,20 @@ export class ClassesService {
             throw new HttpException({ entity: 'Class', type: NOT_FOUND }, 404);
         }
 
-        if (entity.code === body.code) {
-            const userClass = userClassRepository.create({
-                userId: user.id,
-                classId: entity.id,
-            });
+        const userClass = await userClassRepository.findOne({ classId: entity.id, userId: user.id });
 
-            await userClassRepository.save(userClass);
+        if (!userClass) {
+            if (entity.code === body.code) {
+                const newUserClass = userClassRepository.create({
+                    userId: user.id,
+                    classId: entity.id,
+                });
+
+                await userClassRepository.save(newUserClass);
+            }
+
+            throw new HttpException({ entity: 'InvalidCode', type: BAD_REQUEST }, 400);
         }
-
-        throw new HttpException({ entity: 'InvalidCode', type: BAD_REQUEST }, 400);
     }
 
     async addUserByEmail(id: number, email: string): Promise<void> {
