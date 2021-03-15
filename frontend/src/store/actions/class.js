@@ -17,10 +17,10 @@ const getAllClassesFail = (error) => ({
 
 export const resetGetAllClasses = () => ({ type: actionTypes.RESET_GET_ALL_CLASSES });
 
-export const getAllClasses = (query) => (dispatch) => {
+export const getAllClasses = (query, token) => (dispatch) => {
     dispatch(getAllClassesStart());
     axios
-        .get(`/classes`, { params: query })
+        .get(`/classes`, { params: query, headers: { Authorization: token } })
         .then((response) => dispatch(getAllClassesSuccess(response.data)))
         .catch((error) => dispatch(getAllClassesFail(error)));
 };
@@ -65,10 +65,10 @@ const getClassResumeFail = (error) => ({
 
 export const resetGetClassResume = () => ({ type: actionTypes.RESET_GET_CLASS_RESUME });
 
-export const getClassResume = (id) => (dispatch) => {
+export const getClassResume = (id, token) => (dispatch) => {
     dispatch(getClassResumeStart());
     axios
-        .get(`/classes/${id}`)
+        .get(`/classes/${id}`, { headers: { Authorization: token } })
         .then((response) => dispatch(getClassResumeSucces(response.data)))
         .catch((error) => dispatch(getClassResumeFail(error)));
 };
@@ -95,4 +95,28 @@ export const addUserClass = ({ classId, ...body }, token) => (dispatch) => {
         .post(`/classes/${classId}/add/users`, body, { headers: { Authorization: token } })
         .then((response) => dispatch(addUserClassSuccess(response.data)))
         .catch((error) => dispatch(addUserClassFail(error)));
+};
+
+const registerClassStart = () => ({
+    type: actionTypes.REGISTER_CLASS_START,
+});
+
+const registerClassSuccess = (data) => ({
+    type: actionTypes.REGISTER_CLASS_SUCCESS,
+    data,
+});
+
+const registerClassFail = (error) => ({
+    type: actionTypes.REGISTER_CLASS_FAIL,
+    error,
+});
+
+export const resetRegisterClass = () => ({ type: actionTypes.RESET_REGISTER_CLASS });
+
+export const registerClass = (body, token) => (dispatch) => {
+    dispatch(registerClassStart());
+    axios
+        .post('/classes/register', body, { headers: { Authorization: token } })
+        .then((response) => dispatch(registerClassSuccess(response.data)))
+        .catch((error) => dispatch(registerClassFail(error)));
 };

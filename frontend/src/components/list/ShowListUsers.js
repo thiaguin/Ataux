@@ -31,7 +31,7 @@ const showListUsers = (props) => {
                                         color: 'grey',
                                     }}
                                 >
-                                    {props.list.title} - Questões
+                                    {props.list.title} - Usuários
                                 </h3>
                                 <div style={{ display: 'inline-block', position: 'relative', float: 'right' }}>
                                     <Button variant="secondary" type="button" onClick={props.goToEditPage}>

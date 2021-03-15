@@ -136,6 +136,12 @@ const List = (props) => {
         }
     }, [list.update.success]);
 
+    useEffect(() => {
+        if (props.submission.check.success) {
+            window.location.reload();
+        }
+    }, [props.submission.check.success]);
+
     return (
         <>
             {popup}
