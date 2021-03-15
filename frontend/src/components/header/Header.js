@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Navbar, Nav, Button } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import * as actions from '../../store/actions';
+import Menu from '../menu/Menu';
 
 const header = (props) => {
     const { isAuth } = props;
@@ -21,9 +22,7 @@ const header = (props) => {
 
     const loggedHeader = (
         <Navbar bg="dark" variant="dark">
-            <Navbar.Brand onClick={props.onLogout} href="home">
-                ATAUX
-            </Navbar.Brand>
+            <Navbar.Brand href="home">ATAUX</Navbar.Brand>
             <Nav className="mr-auto">
                 <Nav.Link href="question">Questões</Nav.Link>
                 <Nav.Link href="class">Turmas</Nav.Link>
@@ -32,6 +31,7 @@ const header = (props) => {
                 <Nav.Link href="tag">Tags</Nav.Link>
             </Nav>
             <Nav className="mr-auto" />
+            <Menu loggedUser={props.loggedUser} onLogoutClick={props.onLogout} />
         </Navbar>
     );
 
@@ -56,6 +56,7 @@ const header = (props) => {
 
 const mapStateToProps = (state) => ({
     isAuth: !!state.login.token,
+    loggedUser: state.login.user,
 });
 
 const mapDispatchToProps = (dispatch) => ({
