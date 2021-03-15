@@ -144,7 +144,7 @@ export class QuestionsService {
             return question;
         }
 
-        throw new HttpException({ entity: 'Question', type: NOT_FOUND }, 404);
+        return await this.create({ url });
     }
 
     async generateNewQuestion(url: string): Promise<NewQuestionDTO> {

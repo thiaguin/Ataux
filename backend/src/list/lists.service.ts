@@ -288,7 +288,9 @@ export class ListService {
             const userQuestions = {};
 
             for (const userQuestion of list.usersQuestions) {
-                userQuestions[userQuestion.questionId] = userQuestion.status;
+                if (userQuestion.userId === user.id) {
+                    userQuestions[userQuestion.questionId] = userQuestion.status;
+                }
             }
 
             list.questions = list.questions.map((el) => ({
