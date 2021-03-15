@@ -87,16 +87,6 @@ const Class = (props) => {
         }
     }, [classData.create.classId]);
 
-    // eslint-disable-next-line no-console
-    console.log('here', props.submission.check.success);
-    useEffect(() => {
-        if (props.submission.check.success) {
-            // eslint-disable-next-line no-console
-            console.log('here i am');
-            history.push(`/class/show/${classId}`);
-        }
-    }, [props.submission.check.success]);
-
     return (
         <>
             {popup}
