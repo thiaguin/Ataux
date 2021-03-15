@@ -17,16 +17,6 @@ export {
     resetGetSubmissionById,
 } from './submission';
 export {
-    getAllClasses,
-    resetGetAllClasses,
-    createClass,
-    resetCreateClass,
-    getClassResume,
-    resetGetClassResume,
-    addUserClass,
-    resetAddUserClass,
-} from './class';
-export {
     createQuestion,
     resetCreateQuestion,
     getQuestionById,
@@ -57,6 +47,18 @@ export {
     updatePasswordUser,
     resetUpdatePasswordUser,
 } from './user';
+export {
+    getAllClasses,
+    resetGetAllClasses,
+    createClass,
+    resetCreateClass,
+    getClassResume,
+    resetGetClassResume,
+    addUserClass,
+    resetAddUserClass,
+    registerClass,
+    resetRegisterClass,
+} from './class';
 export {
     existQuestionToList,
     resetExistQuestionToList,

@@ -27,6 +27,11 @@ const initialState = {
         loading: false,
         success: null,
     },
+    register: {
+        error: null,
+        loading: false,
+        success: null,
+    },
 };
 
 const sortClass = (data) => {
@@ -103,6 +108,38 @@ const resetCreateClass = (state) => ({
     ...state,
     ...initialState,
     create: { ...initialState.create },
+});
+
+const registerClassStart = (state) => ({
+    ...state,
+    register: {
+        ...state.register,
+        loading: true,
+    },
+});
+
+const registerClassSuccess = (state) => ({
+    ...state,
+    register: {
+        ...state.register,
+        loading: false,
+        success: true,
+    },
+});
+
+const registerClassFail = (state, data) => ({
+    ...state,
+    register: {
+        ...state.register,
+        loading: false,
+        error: getErrorMessage(data),
+    },
+});
+
+const resetRegisterClass = (state) => ({
+    ...state,
+    ...initialState,
+    register: { ...initialState.register },
 });
 
 const addUserClassStart = (state) => ({
@@ -187,6 +224,14 @@ const reducer = (state = initialState, action) => {
             return createClassFail(state, action.error.response);
         case actionTypes.RESET_CREATE_CLASS:
             return resetCreateClass(state);
+        case actionTypes.REGISTER_CLASS_START:
+            return registerClassStart(state);
+        case actionTypes.REGISTER_CLASS_SUCCESS:
+            return registerClassSuccess(state, action.data);
+        case actionTypes.REGISTER_CLASS_FAIL:
+            return registerClassFail(state, action.error.response);
+        case actionTypes.RESET_REGISTER_CLASS:
+            return resetRegisterClass(state);
         case actionTypes.ADD_USER_CLASS_START:
             return addUserClassStart(state);
         case actionTypes.ADD_USER_CLASS_SUCCESS:

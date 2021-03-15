@@ -6,7 +6,7 @@ import * as actions from '../../store/actions';
 
 const ClassList = (props) => {
     const dispatch = useDispatch();
-    const onGetAllClasses = useCallback((value) => dispatch(actions.getAllClasses(value)), [dispatch]);
+    const onGetAllClasses = useCallback((...values) => dispatch(actions.getAllClasses(...values)), [dispatch]);
 
     const history = useHistory();
 
@@ -28,6 +28,8 @@ const ClassList = (props) => {
     };
 
     const classesCount = props.classes && props.classes.count ? props.classes.count : 0;
+
+    const location = window.location.origin.toString();
 
     const classesPerPage = 30;
     const initialPage = 0;
@@ -51,11 +53,13 @@ const ClassList = (props) => {
 
     const resetFilterHandler = () => {
         setQueryName('');
-        onGetAllClasses({});
+        onGetAllClasses({}, props.token);
     };
+    // eslint-disable-next-line no-console
+    console.log('location', location);
 
     useEffect(() => {
-        onGetAllClasses({ page, ...query, take: classesPerPage });
+        onGetAllClasses({ page, ...query, take: classesPerPage }, props.token);
     }, [onGetAllClasses, page, query]);
 
     return (
@@ -109,6 +113,16 @@ const ClassList = (props) => {
                                             />
                                         </InputGroup>
                                     </th>
+                                    {props.currentUser.role !== 'MEMBER' && (
+                                        <>
+                                            <th key="registerURL" style={{ verticalAlign: 'middle' }}>
+                                                Link para registro
+                                            </th>
+                                            <th key="code" style={{ verticalAlign: 'middle' }}>
+                                                Código de registro
+                                            </th>
+                                        </>
+                                    )}
                                 </tr>
                             </thead>
                             <tbody>
@@ -122,6 +136,17 @@ const ClassList = (props) => {
                                                 {currClass.name}
                                             </Nav.Link>
                                         </td>
+                                        {props.currentUser.role !== 'MEMBER' && (
+                                            <>
+                                                <td
+                                                    key="registerURL"
+                                                    style={{ verticalAlign: 'middle' }}
+                                                >{`${location}/class/register/${currClass.id}`}</td>
+                                                <td key="code" style={{ verticalAlign: 'middle' }}>
+                                                    {currClass.code}
+                                                </td>
+                                            </>
+                                        )}
                                     </tr>
                                 ))}
                             </tbody>
@@ -149,6 +174,8 @@ const ClassList = (props) => {
 };
 
 const mapStateToProps = (state) => ({
+    token: state.login.token,
+    currentUser: state.login.user,
     classes: state.class.getAll.data,
 });
 

@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import * as actions from '../../store/actions';
 import Popup from '../../components/popup/Popup';
 import CreateClass from '../../components/class/CreateClass';
+import RegisterClass from '../../components/class/RegisterClass';
 import ShowClassList from '../../components/class/ShowClassList';
 import ShowClassUser from '../../components/class/ShowClassUser';
 
@@ -14,7 +15,7 @@ const Class = (props) => {
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const initClass = useCallback((param) => dispatch(actions.getClassResume(param)), [dispatch]);
+    const initClass = useCallback((...values) => dispatch(actions.getClassResume(...values)), [dispatch]);
 
     const [popup, setPopup] = useState(null);
 
@@ -50,10 +51,14 @@ const Class = (props) => {
         history.push(`/list/show/${listId}`);
     };
 
+    const registerSubmitHandler = (code) => {
+        props.onRegisterClass({ classId, code }, props.token);
+    };
+
     useEffect(() => {
         if (['edit', 'show'].includes(mode) && classId) {
-            initClass(classId);
-        } else if (mode !== 'create') {
+            initClass(classId, props.token);
+        } else if (!['create', 'register'].includes(mode)) {
             history.push('/class');
         }
     }, [initClass, classId, mode]);
@@ -65,15 +70,40 @@ const Class = (props) => {
     }, [classData.create.error]);
 
     useEffect(() => {
+        if (classData.register.error) {
+            setPopup(<Popup type="error" message={classData.register.error} onClose={props.onResetRegisterClass} />);
+        }
+    }, [classData.register.error]);
+
+    useEffect(() => {
+        if (classData.register.success) {
+            history.push(`/class/show/${classId}/list`);
+        }
+    }, [classData.register.success]);
+
+    useEffect(() => {
         if (classData.create.classId) {
             history.push(`/class/show/${classData.create.classId}`);
         }
     }, [classData.create.classId]);
 
+    // eslint-disable-next-line no-console
+    console.log('here', props.submission.check.success);
+    useEffect(() => {
+        if (props.submission.check.success) {
+            // eslint-disable-next-line no-console
+            console.log('here i am');
+            history.push(`/class/show/${classId}`);
+        }
+    }, [props.submission.check.success]);
+
     return (
         <>
             {popup}
             {mode === 'create' && <CreateClass submitHandler={createHandler} loading={classData.create.loading} />}
+            {mode === 'register' && (
+                <RegisterClass submitHandler={registerSubmitHandler} loading={classData.register.loading} />
+            )}
             {mode === 'show' && relation === 'list' && classData.get.data && (
                 <ShowClassList
                     class={classData.get.data}
@@ -103,11 +133,14 @@ const Class = (props) => {
 
 const mapStateToProps = (state) => ({
     classData: state.class,
+    submission: state.submission,
     token: state.login.token,
 });
 
 const mapDispatchToProps = (dispatch) => ({
     onCreateClass: (...values) => dispatch(actions.createClass(...values)),
+    onRegisterClass: (...values) => dispatch(actions.registerClass(...values)),
+    onResetRegisterClass: () => dispatch(actions.resetRegisterClass()),
     onResetCreateClass: () => dispatch(actions.resetCreateClass()),
 });
 
