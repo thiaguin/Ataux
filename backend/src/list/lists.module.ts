@@ -1,6 +1,10 @@
 import { MiddlewareConsumer, Module, ModuleMetadata, RequestMethod } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthenticateMiddleware, AuthorizeColaboratorMiddleware } from 'src/auth/auth.middleware';
+import {
+    AuthenticateMiddleware,
+    AuthorizeColaboratorMiddleware,
+    MemberQueryMiddleware,
+} from 'src/auth/auth.middleware';
 import { CodeforcesService } from 'src/codeforces/codeforces.service';
 import { QuestionsModule } from 'src/questions/questions.module';
 import { SubmissionsController } from 'src/submissions/submissions.controller';
@@ -26,7 +30,9 @@ export class ListModule {
             // { path: 'lists/:id', method: RequestMethod.PUT },
             { path: 'lists/:id/questions/submissions', method: RequestMethod.POST },
             { path: 'lists/:id', method: RequestMethod.GET },
+            { path: 'lists/:id/users', method: RequestMethod.GET },
         );
+        consumer.apply(MemberQueryMiddleware).forRoutes({ path: 'lists/:id/users', method: RequestMethod.GET });
         // consumer
         //     .apply(AuthorizeColaboratorMiddleware)
         //     .forRoutes({ path: 'lists', method: RequestMethod.POST }, { path: 'lists/:id', method: RequestMethod.PUT });

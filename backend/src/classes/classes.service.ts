@@ -108,6 +108,7 @@ export class ClassesService {
         const columnsName = [
             'Name',
             'Handle',
+            'Matrícula',
             ...classResume.lists.map((el, index) => `List ${index + 1} - ${el.title}`),
         ];
         const rows = [];
@@ -115,7 +116,11 @@ export class ClassesService {
         const users = {};
 
         for (const user of classResume.users) {
-            users[user.user.id] = { name: user.user.name, handle: user.user.handle };
+            users[user.user.id] = {
+                name: user.user.name,
+                handle: user.user.handle,
+                registration: user.user.registration,
+            };
             usersClass[user.user.id] = {};
         }
 
@@ -142,7 +147,7 @@ export class ClassesService {
 
         for (const key in usersClass) {
             const currentUser = users[key];
-            const row = [currentUser.name, currentUser.handle];
+            const row = [currentUser.name, currentUser.handle, currentUser.registration];
             const rowToInsert = {};
 
             for (const list of classResume.lists) {
@@ -191,7 +196,7 @@ export class ClassesService {
         return entity;
     }
 
-    async findOne(id: number): Promise<Class> {
+    async findOne(id: number, loggedUser: PayloadUserDTO): Promise<Class> {
         const entity = await this.getResume(id);
 
         const { users, lists } = entity;
@@ -219,8 +224,13 @@ export class ClassesService {
             }
         }
 
-        for (const user of users) {
+        if (loggedUser.role === UserRole.MEMBER) {
+            const [user] = users.filter((el) => el.userId === loggedUser.id);
             usersResult.push({ ...user, lists: usersList[user.userId] });
+        } else {
+            for (const user of users) {
+                usersResult.push({ ...user, lists: usersList[user.userId] });
+            }
         }
 
         entity.users = <any>usersResult;
