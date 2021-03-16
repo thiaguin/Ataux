@@ -27,6 +27,11 @@ const initialState = {
         loading: false,
         success: false,
     },
+    csv: {
+        error: null,
+        loading: false,
+        success: false,
+    },
 };
 
 const existQuestionToListStart = (state) => ({
@@ -122,6 +127,37 @@ const resetGetListById = (state) => ({
     get: { ...initialState.get },
 });
 
+const getListCSVStart = (state) => ({
+    ...state,
+    csv: {
+        ...state.csv,
+        loading: true,
+    },
+});
+
+const getListCSVSuccess = (state, data) => ({
+    ...state,
+    csv: {
+        ...state.csv,
+        loading: false,
+        data,
+    },
+});
+
+const getListCSVFail = (state, data) => ({
+    ...state,
+    csv: {
+        ...state.csv,
+        loading: false,
+        error: getErrorMessage(data),
+    },
+});
+
+const resetGetListCSV = (state) => ({
+    ...state,
+    csv: { ...initialState.csv },
+});
+
 const getListUsersStart = (state) => ({
     ...state,
     users: {
@@ -210,6 +246,14 @@ const reducer = (state = initialState, action) => {
             return getListByIdFail(state, action.error.response);
         case actionTypes.RESET_GET_LIST_BY_ID:
             return resetGetListById(state);
+        case actionTypes.GET_LIST_CSV_START:
+            return getListCSVStart(state);
+        case actionTypes.GET_LIST_CSV_SUCCESS:
+            return getListCSVSuccess(state, action.data);
+        case actionTypes.GET_LIST_CSV_FAIL:
+            return getListCSVFail(state, action.error.response);
+        case actionTypes.RESET_GET_LIST_CSV:
+            return resetGetListCSV(state);
         case actionTypes.GET_LIST_USERS_START:
             return getListUsersStart(state);
         case actionTypes.GET_LIST_USERS_SUCCESS:

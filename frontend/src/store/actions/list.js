@@ -1,5 +1,6 @@
 import * as actionTypes from './actionTypes';
 import axios from '../../axios';
+import { downloadFile, getFileNameFromContentDisposition } from '../../utils/fileUtils';
 
 const existQuestionToListStart = () => ({
     type: actionTypes.EXIST_QUESTION_TO_LIST_START,
@@ -119,4 +120,35 @@ export const updateList = (id, body) => (dispatch) => {
         .put(`/lists/${id}`, body)
         .then((response) => dispatch(updateListSuccess(response.data)))
         .catch((error) => dispatch(updateListFail(error)));
+};
+
+const getListCSVStart = () => ({
+    type: actionTypes.GET_LIST_CSV_START,
+});
+
+const getListCSVSucces = (data) => ({
+    type: actionTypes.GET_LIST_CSV_SUCCESS,
+    data,
+});
+
+const getListCSVFail = (error) => ({
+    type: actionTypes.GET_LIST_CSV_FAIL,
+    error,
+});
+
+export const resetGetListCSV = () => ({ type: actionTypes.RESET_GET_LIST_CSV });
+
+export const getListCSV = (id, token) => (dispatch) => {
+    dispatch(getListCSVStart());
+    axios
+        .get(`/lists/${id}/csv`, { headers: { Authorization: token } })
+        .then((response) => {
+            downloadFile(
+                response.data,
+                'csv',
+                getFileNameFromContentDisposition(response.headers['content-disposition']),
+            );
+            dispatch(getListCSVSucces(response.data));
+        })
+        .catch((error) => dispatch(getListCSVFail(error)));
 };

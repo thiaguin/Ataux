@@ -1,7 +1,12 @@
-import React from 'react';
-import { Button, Form, Table } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Button, Form, Table, Image } from 'react-bootstrap';
+import csvImgHover from '../../assets/file-earmark-spreadsheet-fill.svg';
+import csvImg from '../../assets/file-earmark-spreadsheet.svg';
 
 const showClassUser = (props) => {
+    const [csvButtonHover, setCsvButtonHover] = useState(true);
+    const csvImgStyle = { width: '24px', borderRadius: '0.2em', textAlign: 'center' };
+
     const parentInStyle = {
         margin: '5%',
         width: '90%',
@@ -34,6 +39,16 @@ const showClassUser = (props) => {
                                     Usuários da Turma
                                 </h3>
                                 <div style={{ display: 'inline-block', position: 'relative', float: 'right' }}>
+                                    <Button
+                                        variant="outline-secondary"
+                                        style={{ marginRight: '7px' }}
+                                        type="button"
+                                        onClick={() => props.onClickCSV(props.class.id)}
+                                        onMouseEnter={() => setCsvButtonHover(!csvButtonHover)}
+                                        onMouseLeave={() => setCsvButtonHover(!csvButtonHover)}
+                                    >
+                                        <Image src={csvButtonHover ? csvImgHover : csvImg} style={csvImgStyle} />
+                                    </Button>
                                     <Button
                                         variant="secondary"
                                         type="button"
