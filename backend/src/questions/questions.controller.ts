@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query, Req } from '@nestjs/common';
 import { AddQuestionsByContestResult } from './dto/addByContest-result.dto';
 import { CheckSubmissionQuestionDTO } from './dto/checkSubmission-question.dto';
 import { CreateQuestionDTO } from './dto/create-question.dto';
@@ -27,8 +27,8 @@ export class QuestionsController {
     }
 
     @Get('/:id')
-    findById(@Param() params: { id: number }, @Query() query): Promise<Question> {
-        return this.questionService.findById(params.id, query);
+    findById(@Param() params: { id: number }, @Query() query, @Req() req): Promise<Question> {
+        return this.questionService.findById(params.id, query, req.user);
     }
 
     @Post('/')

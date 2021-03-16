@@ -33,6 +33,7 @@ import { Response } from 'express';
 import { BAD_REQUEST, NOT_FOUND } from 'src/resource/errorType.resource';
 import { Submission } from 'src/submissions/submissions.entity';
 import { UserRole } from 'src/enums/userRole.enum';
+import { Query } from 'typeorm/driver/Query';
 
 @Injectable()
 export class ListService {
@@ -116,7 +117,7 @@ export class ListService {
         return false;
     }
 
-    async getUsersList(listId: number, query): Promise<UserList[]> {
+    async getUsersList(listId: number, query: Query): Promise<UserList[]> {
         const { questions } = await this.findById(listId);
 
         const userQuestionDefault = questions.map((el) => ({

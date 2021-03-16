@@ -19,6 +19,8 @@ import { QueryService } from 'src/utils/query.service';
 import { EntityToQuery } from 'src/utils/dto/entityQuery.dto';
 import { Query } from 'typeorm/driver/Query';
 import { BAD_REQUEST, NOT_FOUND, NOT_UNIQUE } from 'src/resource/errorType.resource';
+import { PayloadUserDTO } from 'src/users/dto/payload-user.dto';
+import { UserRole } from 'src/enums/userRole.enum';
 
 @Injectable()
 export class QuestionsService {
@@ -118,14 +120,14 @@ export class QuestionsService {
         }
     }
 
-    async findById(id: number, query: any = {}): Promise<Question> {
+    async findById(id: number, query: any = {}, user: PayloadUserDTO): Promise<Question> {
         const queryBuild = createQueryBuilder(Question, 'q');
         const entitiesRelation = this.getEntitiesRelation();
         const where = `q.id = '${id}' and ${this.queryService.getQueryToQueryBuilder(entitiesRelation, query)}`;
         const question = await queryBuild
             .leftJoinAndMapMany('q.tags', 'q.tags', 'qt')
             .leftJoinAndMapOne('qt.tag', 'qt.tag', 't')
-            .addSelect(query.selectCode ? 's.code' : '')
+            .addSelect(user.role !== UserRole.MEMBER ? 'q.resolution' : '')
             .where(where)
             .getOne();
 
