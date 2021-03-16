@@ -1,5 +1,6 @@
 import * as actionTypes from './actionTypes';
 import axios from '../../axios';
+import { downloadFile, getFileNameFromContentDisposition } from '../../utils/fileUtils';
 
 const getAllClassesStart = () => ({
     type: actionTypes.GET_ALL_CLASSES_START,
@@ -119,4 +120,34 @@ export const registerClass = (body, token) => (dispatch) => {
         .post('/classes/register', body, { headers: { Authorization: token } })
         .then((response) => dispatch(registerClassSuccess(response.data)))
         .catch((error) => dispatch(registerClassFail(error)));
+};
+
+const getCSVClassStart = () => ({
+    type: actionTypes.GET_CSV_CLASS_START,
+});
+
+const getCSVClassSuccess = () => ({
+    type: actionTypes.GET_CSV_CLASS_SUCCESS,
+});
+
+const getCSVClassFail = (error) => ({
+    type: actionTypes.GET_CSV_CLASS_FAIL,
+    error,
+});
+
+export const resetGetCSVClass = () => ({ type: actionTypes.RESET_GET_CSV_CLASS });
+
+export const getCSVClass = (id, token) => (dispatch) => {
+    dispatch(getCSVClassStart());
+    axios
+        .get(`/classes/${id}/csv`, { headers: { Authorization: token } })
+        .then((response) => {
+            downloadFile(
+                response.data,
+                'csv',
+                getFileNameFromContentDisposition(response.headers['content-disposition']),
+            );
+            dispatch(getCSVClassSuccess());
+        })
+        .catch((error) => dispatch(getCSVClassFail(error)));
 };

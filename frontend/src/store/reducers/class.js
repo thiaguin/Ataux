@@ -32,6 +32,11 @@ const initialState = {
         loading: false,
         success: null,
     },
+    csv: {
+        error: null,
+        loading: false,
+        success: false,
+    },
 };
 
 const sortClass = (data) => {
@@ -206,6 +211,38 @@ const resetGetClassResume = (state) => ({
     get: { ...initialState.get },
 });
 
+const getCsvClassStart = (state) => ({
+    ...state,
+    csv: {
+        ...state.csv,
+        loading: true,
+    },
+});
+
+const getCsvClassSuccess = (state) => ({
+    ...state,
+    csv: {
+        ...state.csv,
+        loading: false,
+        success: true,
+    },
+});
+
+const getCsvClassFail = (state, data) => ({
+    ...state,
+    csv: {
+        ...state.csv,
+        loading: false,
+        error: getErrorMessage(data),
+    },
+});
+
+const resetGetCsvClass = (state) => ({
+    ...state,
+    ...initialState,
+    csv: { ...initialState.csv },
+});
+
 const reducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.GET_ALL_CLASSES_START:
@@ -248,7 +285,14 @@ const reducer = (state = initialState, action) => {
             return getClassResumeFail(state, action.error.response);
         case actionTypes.RESET_GET_CLASS_RESUME:
             return resetGetClassResume(state);
-
+        case actionTypes.GET_CSV_CLASS_START:
+            return getCsvClassStart(state);
+        case actionTypes.GET_CSV_CLASS_SUCCESS:
+            return getCsvClassSuccess(state, action.data);
+        case actionTypes.GET_CSV_CLASS_FAIL:
+            return getCsvClassFail(state, action.error.response);
+        case actionTypes.RESET_GET_CSV_CLASS:
+            return resetGetCsvClass(state);
         default:
             return { ...state };
     }

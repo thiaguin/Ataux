@@ -58,6 +58,8 @@ export {
     resetAddUserClass,
     registerClass,
     resetRegisterClass,
+    getCSVClass,
+    resetGetCSVClass,
 } from './class';
 export {
     existQuestionToList,
@@ -70,4 +72,6 @@ export {
     resetGetListUsers,
     updateList,
     resetUpdateList,
+    getListCSV,
+    resetGetListCSV,
 } from './list';

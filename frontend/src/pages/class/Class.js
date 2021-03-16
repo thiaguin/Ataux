@@ -55,6 +55,10 @@ const Class = (props) => {
         props.onRegisterClass({ classId, code }, props.token);
     };
 
+    const getCSVHandler = (id) => {
+        props.onGetClassCSV(id, token);
+    };
+
     useEffect(() => {
         if (['edit', 'show'].includes(mode) && classId) {
             initClass(classId, props.token);
@@ -87,6 +91,12 @@ const Class = (props) => {
         }
     }, [classData.create.classId]);
 
+    useEffect(() => {
+        if (classData.csv.error) {
+            setPopup(<Popup type="error" message={classData.csv.error} onClose={props.onResetGetCSVClass} />);
+        }
+    }, [classData.csv.error]);
+
     return (
         <>
             {popup}
@@ -115,11 +125,9 @@ const Class = (props) => {
                     onAddUser={goToAddUserPageHandler}
                     onClickList={goToListPage}
                     gotToClassListsPage={gotToClassListsPageHandler}
+                    onClickCSV={getCSVHandler}
                 />
             )}
-            {/* mode === 'edit' && classData.get.class && (
-                <EditTag tag={classData.get.class} goBack={goBackHandler} submit={editHandler} />
-            )} */}
         </>
     );
 };
@@ -136,6 +144,8 @@ const mapDispatchToProps = (dispatch) => ({
     onRegisterClass: (...values) => dispatch(actions.registerClass(...values)),
     onResetRegisterClass: () => dispatch(actions.resetRegisterClass()),
     onResetCreateClass: () => dispatch(actions.resetCreateClass()),
+    onGetClassCSV: (...values) => dispatch(actions.getCSVClass(...values)),
+    onResetGetCSVClass: () => dispatch(actions.resetGetCSVClass()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Class);

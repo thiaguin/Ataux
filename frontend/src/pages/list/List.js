@@ -82,6 +82,10 @@ const List = (props) => {
         setPopup(<Popup type="info" message="Isso pode demorar um pouco" onClose={props.onResetCreateList} />);
     };
 
+    const onGetCSVHandler = (id) => {
+        props.getListCSV(id, props.token);
+    };
+
     useEffect(() => {
         if (['edit', 'show'].includes(mode) && listId) {
             initList(listId, props.token);
@@ -178,6 +182,7 @@ const List = (props) => {
                     goToEditPage={onGoToEditPageHandler}
                     goBack={onGoBackHandler}
                     gotToListUsersPage={onChangeShowMode}
+                    onClickCSV={onGetCSVHandler}
                 />
             )}
             {mode === 'edit' && list.get.data && (
@@ -218,6 +223,8 @@ const mapDispatchToProps = (dispatch) => ({
     onResetUpdateList: () => dispatch(actions.resetUpdateList()),
     onCheckSubmissions: (value) => dispatch(actions.checkSubmission(value)),
     onResetCheckSubmissions: () => dispatch(actions.resetCheckSubmssions()),
+    getListCSV: (...values) => dispatch(actions.getListCSV(...values)),
+    onResetGetListCSV: () => dispatch(actions.resetGetListCSV()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(List);
