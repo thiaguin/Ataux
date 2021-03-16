@@ -51,7 +51,7 @@ const UpdatePasswordRecovered = (props) => {
 
     useEffect(() => {
         if (props.updatePasswordRecovered.exist === false) {
-            history.push('/');
+            history.push('/login');
         }
     }, [props.updatePasswordRecovered.exist]);
 

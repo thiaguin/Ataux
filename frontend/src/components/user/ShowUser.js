@@ -94,19 +94,22 @@ const showUser = (props) => {
                                         Voltar
                                     </Button>
                                 </Form.Group>
-                                <Form.Group
-                                    controlId="formGridSubmtiButton"
-                                    style={{ width: '150px', display: 'inline-block', marginLeft: '15px' }}
-                                >
-                                    <Button
-                                        style={{ minWidth: '150px' }}
-                                        variant="primary"
-                                        type="submit"
-                                        onClick={() => props.onSubmit(props.user.id)}
+                                {(props.loggedUser.role === 'ADMIN' ||
+                                    `${props.loggedUser.userId}` === `${props.user.id}`) && (
+                                    <Form.Group
+                                        controlId="formGridSubmtiButton"
+                                        style={{ width: '150px', display: 'inline-block', marginLeft: '15px' }}
                                     >
-                                        {props.submitButton}
-                                    </Button>
-                                </Form.Group>
+                                        <Button
+                                            style={{ minWidth: '150px' }}
+                                            variant="primary"
+                                            type="submit"
+                                            onClick={() => props.onSubmit(props.user.id)}
+                                        >
+                                            {props.submitButton}
+                                        </Button>
+                                    </Form.Group>
+                                )}
                             </div>
                         </Form>
                     </div>

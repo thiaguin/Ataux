@@ -85,7 +85,7 @@ const List = (props) => {
     useEffect(() => {
         if (['edit', 'show'].includes(mode) && listId) {
             initList(listId, props.token);
-            props.onGetListUsers(listId);
+            props.onGetListUsers(listId, props.token);
         } else if (mode !== 'create') {
             history.push('/class');
         }
@@ -166,7 +166,7 @@ const List = (props) => {
                     gotToListUsersPage={onChangeShowMode}
                     onCheckSubmission={onCheckSubmissionHandler}
                     checkSubmissionLoading={props.submission.check.loading}
-                    currentUser={props.currentUser}
+                    currentUser={props.loggedUser}
                     usersCount={list.users.data ? list.users.data.length : 0}
                 />
             )}
@@ -203,7 +203,7 @@ const mapStateToProps = (state) => ({
     token: state.login.token,
     list: state.list,
     submission: state.submission,
-    currentUser: state.login.user,
+    loggedUser: state.login.user,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -212,7 +212,7 @@ const mapDispatchToProps = (dispatch) => ({
     onCreateList: (...values) => dispatch(actions.createList(...values)),
     onResetCreateList: () => dispatch(actions.resetCreateList()),
     onGetListById: (...values) => dispatch(actions.getListById(...values)),
-    onGetListUsers: (value) => dispatch(actions.getListUsers(value)),
+    onGetListUsers: (...values) => dispatch(actions.getListUsers(...values)),
     onResetGetListUsers: () => dispatch(actions.resetGetListUsers()),
     onUpdateList: (...values) => dispatch(actions.updateList(...values)),
     onResetUpdateList: () => dispatch(actions.resetUpdateList()),

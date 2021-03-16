@@ -39,11 +39,13 @@ const showClassList = (props) => {
                                 >
                                     Listas de Questões da Turma
                                 </h3>
-                                <div style={{ display: 'inline-block', position: 'relative', float: 'right' }}>
-                                    <Button variant="secondary" type="button" onClick={props.onAddList}>
-                                        Adicionar Lista
-                                    </Button>
-                                </div>
+                                {props.loggedUser.role !== 'MEMBER' && (
+                                    <div style={{ display: 'inline-block', position: 'relative', float: 'right' }}>
+                                        <Button variant="secondary" type="button" onClick={props.onAddList}>
+                                            Adicionar Lista
+                                        </Button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <Table striped bordered hover size="sm">
@@ -124,7 +126,7 @@ const showClassList = (props) => {
                                     type="submit"
                                     onClick={() => props.gotToClassUsersPage(props.class.id)}
                                 >
-                                    Ver Usuários
+                                    {props.loggedUser.role === 'MEMBER' ? 'Ver Resumo' : 'Ver Usuários'}
                                 </Button>
                             </Form.Group>
                         </div>

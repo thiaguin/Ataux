@@ -9,13 +9,13 @@ import EditQuestion from '../../components/question/EditQuestion';
 import QuestionCode from '../../components/question/QuestionCode';
 
 const Question = (props) => {
-    const { question, tags } = props;
+    const { question, tags, loggedUser } = props;
     const { mode, questionId } = props.match.params;
 
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const initQuestion = useCallback((param) => dispatch(actions.getQuestionById(param)), [dispatch]);
+    const initQuestion = useCallback((...values) => dispatch(actions.getQuestionById(...values)), [dispatch]);
     const initEditPage = useCallback(() => dispatch(actions.getAllTags({ take: 'ALL' })), [dispatch]);
 
     const [popup, setPopup] = useState(null);
@@ -76,7 +76,7 @@ const Question = (props) => {
 
     useEffect(() => {
         if (['edit', 'show', 'code'].includes(mode) && questionId) {
-            initQuestion(questionId);
+            initQuestion(questionId, props.token);
         } else if (mode !== 'create') {
             history.push('/question');
         }
@@ -116,7 +116,9 @@ const Question = (props) => {
     return (
         <>
             {popup}
-            {mode === 'create' && <CreateQuestion submitHandler={createHandler} loading={question.create.loading} />}
+            {loggedUser.role !== 'MEMBER' && mode === 'create' && (
+                <CreateQuestion submitHandler={createHandler} loading={question.create.loading} />
+            )}
             {mode === 'show' && question.get.data && (
                 <ShowQuestion
                     question={question.get.data}
@@ -124,10 +126,11 @@ const Question = (props) => {
                     onSubmit={goToEditPageHandler}
                     onGoToQuestionCodePage={goToQuestionCodePage}
                     onGoToCodeforcesPage={goToUrlPageHandler}
+                    loggedUser={loggedUser}
                     submitButton="Editar"
                 />
             )}
-            {mode === 'edit' && question.get.data && (
+            {loggedUser.role !== 'MEMBER' && mode === 'edit' && question.get.data && (
                 <EditQuestion
                     question={question.get.data}
                     goToUrlPage={goToUrlPageHandler}
@@ -139,7 +142,7 @@ const Question = (props) => {
                     removeTag={removeTagHandler}
                 />
             )}
-            {mode === 'code' && question.get.data && (
+            {loggedUser.role !== 'MEMBER' && mode === 'code' && question.get.data && (
                 <QuestionCode question={question.get.data} onSaveCode={editCodeHandler} />
             )}
         </>
@@ -148,7 +151,9 @@ const Question = (props) => {
 
 const mapStateToProps = (state) => ({
     question: state.question,
+    loggedUser: state.login.user,
     tags: state.tag.getAll.data,
+    token: state.login.token,
 });
 
 const mapDispatchToProps = (dispatch) => ({

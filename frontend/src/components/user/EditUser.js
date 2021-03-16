@@ -91,11 +91,16 @@ const showUser = (props) => {
                                                 as={currUser.role === 'ADMIN' ? 'select' : 'input'}
                                                 disabled={currUser.role !== 'ADMIN'}
                                             >
-                                                {currUser.role === 'ADMIN'
-                                                    ? Object.keys(userTypes).map((role) => (
-                                                          <option key={role}>{userTypes[role]}</option>
-                                                      ))
-                                                    : null}
+                                                <>
+                                                    <option>{userTypes[values.role]}</option>
+                                                    {currUser.role === 'ADMIN'
+                                                        ? Object.keys(userTypes).map((role) => (
+                                                              <option key={role} value={role}>
+                                                                  {userTypes[role]}
+                                                              </option>
+                                                          ))
+                                                        : null}
+                                                </>
                                             </Form.Control>
                                         </Form.Group>
                                         <Form.Group as={Col} controlId="formDateURL" disabled>
@@ -145,7 +150,7 @@ const showUser = (props) => {
                                                 type="button"
                                                 onClick={() => props.onSubmit(values)}
                                             >
-                                                Editar
+                                                Salvar
                                             </Button>
                                         </Form.Group>
                                     </div>

@@ -65,7 +65,6 @@ const authSucces = (state) => {
     return {
         ...state,
         token,
-        pathToRedirect: '/',
         user: {
             userId: decoded.id,
             email: decoded.email,

@@ -89,10 +89,10 @@ const getListUsersFail = (error) => ({
 
 export const resetGetListUsers = () => ({ type: actionTypes.RESET_GET_LIST_USERS });
 
-export const getListUsers = (id) => (dispatch) => {
+export const getListUsers = (id, token) => (dispatch) => {
     dispatch(getListUsersStart());
     axios
-        .get(`/lists/${id}/users`)
+        .get(`/lists/${id}/users`, { headers: { Authorization: token } })
         .then((response) => dispatch(getListUsersSucces(response.data)))
         .catch((error) => dispatch(getListUsersFail(error)));
 };
