@@ -90,11 +90,13 @@ const ClassList = (props) => {
                                 >
                                     Resetar Filtros
                                 </Button>
-                                <div style={{ display: 'inline-block', position: 'relative', float: 'right' }}>
-                                    <Button variant="secondary" type="button" onClick={clickAddClassHandler}>
-                                        Adicionar Turma
-                                    </Button>
-                                </div>
+                                {props.loggedUser.role !== 'MEMBER' && (
+                                    <div style={{ display: 'inline-block', position: 'relative', float: 'right' }}>
+                                        <Button variant="secondary" type="button" onClick={clickAddClassHandler}>
+                                            Adicionar Turma
+                                        </Button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <Table striped bordered hover size="sm">
@@ -177,6 +179,7 @@ const mapStateToProps = (state) => ({
     token: state.login.token,
     currentUser: state.login.user,
     classes: state.class.getAll.data,
+    loggedUser: state.login.user,
 });
 
 export default connect(mapStateToProps)(ClassList);

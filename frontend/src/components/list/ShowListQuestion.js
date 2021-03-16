@@ -125,7 +125,7 @@ const showListQuestion = (props) => {
                                     type="submit"
                                     onClick={() => props.gotToListUsersPage(props.list.id)}
                                 >
-                                    Ver Usuários
+                                    {props.currentUser.role === 'MEMBER' ? 'Ver Resumo' : 'Ver Usuários'}
                                 </Button>
                             </Form.Group>
                         </div>

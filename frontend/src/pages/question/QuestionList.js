@@ -125,11 +125,13 @@ const QuestionList = (props) => {
                                 >
                                     Resetar Filtros
                                 </Button>
-                                <div style={{ display: 'inline-block', position: 'relative', float: 'right' }}>
-                                    <Button variant="secondary" type="button" onClick={clickAddQuestionHandler}>
-                                        Adicionar Questão
-                                    </Button>
-                                </div>
+                                {props.loggedUser.role !== 'MEMBER' && (
+                                    <div style={{ display: 'inline-block', position: 'relative', float: 'right' }}>
+                                        <Button variant="secondary" type="button" onClick={clickAddQuestionHandler}>
+                                            Adicionar Questão
+                                        </Button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <Table striped bordered hover size="sm">
@@ -238,6 +240,7 @@ const QuestionList = (props) => {
 const mapStateToProps = (state) => ({
     questions: state.question.getAll.questions,
     tags: state.tag.getAll.data,
+    loggedUser: state.login.user,
 });
 
 export default connect(mapStateToProps)(QuestionList);

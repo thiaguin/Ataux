@@ -4,7 +4,7 @@ import { GoogleLogin } from 'react-google-login';
 import { connect } from 'react-redux';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
-import { useHistory } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 import * as actions from '../../store/actions';
 import GoogleButton from '../../components/googleButton/GoogleButton';
 import Popup from '../../components/popup/Popup';
@@ -123,6 +123,7 @@ const Login = (props) => {
 
     return (
         <>
+            {props.token && <Redirect to="/question" />}
             {popup}
             {modal}
             {!modal && (
@@ -203,6 +204,7 @@ const Login = (props) => {
 const mapStateToProps = (state) => ({
     login: state.login,
     confirmEmail: state.confirmEmail,
+    token: state.login.token,
 });
 
 const mapDispatchToProps = (dispatch) => ({

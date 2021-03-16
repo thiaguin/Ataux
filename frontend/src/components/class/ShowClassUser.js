@@ -104,7 +104,7 @@ const showClassUser = (props) => {
                                     style={{ minWidth: '150px' }}
                                     variant="secondary"
                                     type="button"
-                                    onClick={props.goBack}
+                                    onClick={() => props.goBack(props.class.id)}
                                 >
                                     Voltar
                                 </Button>

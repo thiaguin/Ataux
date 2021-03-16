@@ -6,7 +6,7 @@ import * as actions from '../../store/actions';
 import Menu from '../menu/Menu';
 
 const header = (props) => {
-    const { isAuth } = props;
+    const { isAuth, loggedUser } = props;
 
     const history = useHistory();
 
@@ -20,24 +20,29 @@ const header = (props) => {
         history.push('/register');
     };
 
+    const onLogout = () => {
+        props.onLogout();
+        history.push('/login');
+    };
+
     const loggedHeader = (
         <Navbar bg="dark" variant="dark">
-            <Navbar.Brand href="home">ATAUX</Navbar.Brand>
+            <Navbar.Brand href="/question">ATAUX</Navbar.Brand>
             <Nav className="mr-auto">
                 <Nav.Link href="question">Questões</Nav.Link>
                 <Nav.Link href="class">Turmas</Nav.Link>
-                <Nav.Link href="user">Usuários</Nav.Link>
+                {loggedUser.role !== 'MEMBER' && <Nav.Link href="user">Usuários</Nav.Link>}
                 <Nav.Link href="submission">Submissões</Nav.Link>
-                <Nav.Link href="tag">Tags</Nav.Link>
+                {loggedUser.role !== 'MEMBER' && <Nav.Link href="tag">Tags</Nav.Link>}
             </Nav>
             <Nav className="mr-auto" />
-            <Menu loggedUser={props.loggedUser} onLogoutClick={props.onLogout} />
+            <Menu loggedUser={props.loggedUser} onLogoutClick={onLogout} />
         </Navbar>
     );
 
     const notLoggedHeader = (
         <Navbar bg="dark" variant="dark">
-            <Navbar.Brand href="home">ATAUX</Navbar.Brand>
+            <Navbar.Brand href="/question">ATAUX</Navbar.Brand>
             <Nav className="mr-auto" />
             <div>
                 <Button style={{ width: '100px' }} variant="secondary" onClick={loginOnClickHandler}>

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 import * as actions from '../../store/actions';
 // import Popup from '../../components/popup/Popup';
 import ShowUser from '../../components/user/ShowUser';
@@ -9,7 +9,7 @@ import EditPasswordUser from '../../components/user/EditPasswordUser';
 import Popup from '../../components/popup/Popup';
 
 const User = (props) => {
-    const { user, login } = props;
+    const { user, login, loggedUser } = props;
     const { mode, userId } = props.match.params;
 
     const history = useHistory();
@@ -60,6 +60,9 @@ const User = (props) => {
 
     return (
         <>
+            {mode === 'show' && loggedUser.role === 'MEMBER' && `${loggedUser.userId}` !== `${userId}` && (
+                <Redirect to="/question" />
+            )}
             {popup}
             {mode === 'show' && user.get.data && (
                 <ShowUser
@@ -67,7 +70,11 @@ const User = (props) => {
                     goBack={goBackHandler}
                     onSubmit={goToEditPageHandler}
                     submitButton="Editar"
+                    loggedUser={loggedUser}
                 />
+            )}
+            {loggedUser.role !== 'ADMIN' && `${loggedUser.id}` !== `${userId}` && (
+                <Redirect to={`/user/show/${userId}`} />
             )}
             {mode === 'edit' && user.get.data && (
                 <EditUser
@@ -91,6 +98,7 @@ const User = (props) => {
 const mapStateToProps = (state) => ({
     user: state.user,
     login: state.login,
+    loggedUser: state.login.user,
 });
 
 const mapDispatchToProps = (dispatch) => ({

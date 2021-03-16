@@ -17,7 +17,7 @@ const questionCode = (props) => {
         justifyContent: 'center',
     };
 
-    const [code, setCode] = useState(props.question.code || 'Digite aqui o código...');
+    const [code, setCode] = useState(props.question.resolution || 'Digite aqui o código...');
 
     return (
         <>

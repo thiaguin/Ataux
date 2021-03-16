@@ -9,7 +9,7 @@ import ShowClassList from '../../components/class/ShowClassList';
 import ShowClassUser from '../../components/class/ShowClassUser';
 
 const Class = (props) => {
-    const { token, classData } = props;
+    const { token, classData, loggedUser } = props;
     const { mode, classId, relation } = props.match.params;
 
     const history = useHistory();
@@ -90,7 +90,9 @@ const Class = (props) => {
     return (
         <>
             {popup}
-            {mode === 'create' && <CreateClass submitHandler={createHandler} loading={classData.create.loading} />}
+            {loggedUser.role !== 'MEMBER' && mode === 'create' && (
+                <CreateClass submitHandler={createHandler} loading={classData.create.loading} />
+            )}
             {mode === 'register' && (
                 <RegisterClass submitHandler={registerSubmitHandler} loading={classData.register.loading} />
             )}
@@ -102,12 +104,13 @@ const Class = (props) => {
                     onAddList={goToAddListPageHandler}
                     onClickList={goToListPage}
                     gotToClassUsersPage={gotToClassUsersPageHandler}
+                    loggedUser={loggedUser}
                 />
             )}
             {mode === 'show' && relation === 'user' && classData.get.data && (
                 <ShowClassUser
                     class={classData.get.data}
-                    goBack={goToClassPageHandler}
+                    goBack={gotToClassListsPageHandler}
                     gotToEditPage={goToEditPageHandler}
                     onAddUser={goToAddUserPageHandler}
                     onClickList={goToListPage}
@@ -125,6 +128,7 @@ const mapStateToProps = (state) => ({
     classData: state.class,
     submission: state.submission,
     token: state.login.token,
+    loggedUser: state.login.user,
 });
 
 const mapDispatchToProps = (dispatch) => ({

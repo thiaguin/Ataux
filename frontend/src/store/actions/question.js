@@ -41,10 +41,10 @@ const getQuestionByIdFail = (error) => ({
 
 export const resetGetQuestionById = () => ({ type: actionTypes.RESET_GET_QUESTION_BY_ID });
 
-export const getQuestionById = (id) => (dispatch) => {
+export const getQuestionById = (id, token) => (dispatch) => {
     dispatch(getQuestionByIdStart());
     axios
-        .get(`/questions/${id}`)
+        .get(`/questions/${id}`, { headers: { Authorization: token } })
         .then((response) => dispatch(getQuestionByIdSucces(response.data)))
         .catch((error) => dispatch(getQuestionByIdFail(error)));
 };

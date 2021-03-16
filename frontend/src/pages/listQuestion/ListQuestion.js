@@ -11,7 +11,7 @@ const ListQuestion = (props) => {
     const { listId, questionId } = props.match.params;
 
     const dispatch = useDispatch();
-    const onInitPage = useCallback((value) => dispatch(actions.getQuestionById(value)), [dispatch]);
+    const onInitPage = useCallback((...values) => dispatch(actions.getQuestionById(...values)), [dispatch]);
 
     // const [classNameHover, setClassNameHover] = useState(false);
     const [popup, setPopup] = useState(null);
@@ -57,7 +57,7 @@ const ListQuestion = (props) => {
 
     useEffect(() => {
         if (questionId) {
-            onInitPage(questionId);
+            onInitPage(questionId, token);
             // eslint-disable-next-line no-console
             console.log({ questionId, listId });
             props.onGetAllSubmissions({ questionId, listId }, token);
