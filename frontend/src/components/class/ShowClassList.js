@@ -41,7 +41,19 @@ const showClassList = (props) => {
                                 </h3>
                                 {props.loggedUser.role !== 'MEMBER' && (
                                     <div style={{ display: 'inline-block', position: 'relative', float: 'right' }}>
-                                        <Button variant="secondary" type="button" onClick={props.onAddList}>
+                                        <Button
+                                            style={{ marginRight: '6px' }}
+                                            variant="outline-secondary"
+                                            type="button"
+                                            onClick={() => props.goToEditClass(props.class.id)}
+                                        >
+                                            Editar Turma
+                                        </Button>
+                                        <Button
+                                            variant="secondary"
+                                            type="button"
+                                            onClick={() => props.onAddList(props.class.id)}
+                                        >
                                             Adicionar Lista
                                         </Button>
                                     </div>

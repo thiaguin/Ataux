@@ -17,11 +17,16 @@ const initialState = {
         loading: false,
         data: null,
     },
-    // update: {
-    //     error: null,
-    //     loading: false,
-    //     success: null,
-    // },
+    update: {
+        error: null,
+        loading: false,
+        success: null,
+    },
+    remove: {
+        error: null,
+        loading: false,
+        success: null,
+    },
     addUser: {
         error: null,
         loading: false,
@@ -243,6 +248,70 @@ const resetGetCsvClass = (state) => ({
     csv: { ...initialState.csv },
 });
 
+const updateClassStart = (state) => ({
+    ...state,
+    update: {
+        ...state.update,
+        loading: true,
+    },
+});
+
+const updateClassSuccess = (state) => ({
+    ...state,
+    update: {
+        ...state.update,
+        loading: false,
+        success: true,
+    },
+});
+
+const updateClassFail = (state, data) => ({
+    ...state,
+    update: {
+        ...state.update,
+        loading: false,
+        error: getErrorMessage(data),
+    },
+});
+
+const resetUpdateClass = (state) => ({
+    ...state,
+    ...initialState,
+    update: { ...initialState.update },
+});
+
+const removeClassStart = (state) => ({
+    ...state,
+    remove: {
+        ...state.remove,
+        loading: true,
+    },
+});
+
+const removeClassSuccess = (state) => ({
+    ...state,
+    remove: {
+        ...state.remove,
+        loading: false,
+        success: true,
+    },
+});
+
+const removeClassFail = (state, data) => ({
+    ...state,
+    remove: {
+        ...state.remove,
+        loading: false,
+        error: getErrorMessage(data),
+    },
+});
+
+const resetRemoveClass = (state) => ({
+    ...state,
+    ...initialState,
+    remove: { ...initialState.remove },
+});
+
 const reducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.GET_ALL_CLASSES_START:
@@ -285,10 +354,26 @@ const reducer = (state = initialState, action) => {
             return getClassResumeFail(state, action.error.response);
         case actionTypes.RESET_GET_CLASS_RESUME:
             return resetGetClassResume(state);
+        case actionTypes.UPDATE_CLASS_START:
+            return updateClassStart(state);
+        case actionTypes.UPDATE_CLASS_SUCCESS:
+            return updateClassSuccess(state, action.data);
+        case actionTypes.UPDATE_CLASS_FAIL:
+            return updateClassFail(state, action.error.response);
+        case actionTypes.RESET_UPDATE_CLASS:
+            return resetUpdateClass(state);
+        case actionTypes.REMOVE_CLASS_START:
+            return removeClassStart(state);
+        case actionTypes.REMOVE_CLASS_SUCCESS:
+            return removeClassSuccess(state, action.data);
+        case actionTypes.REMOVE_CLASS_FAIL:
+            return removeClassFail(state, action.error.response);
+        case actionTypes.RESET_REMOVE_CLASS:
+            return resetRemoveClass(state);
         case actionTypes.GET_CSV_CLASS_START:
             return getCsvClassStart(state);
         case actionTypes.GET_CSV_CLASS_SUCCESS:
-            return getCsvClassSuccess(state, action.data);
+            return getCsvClassSuccess(state);
         case actionTypes.GET_CSV_CLASS_FAIL:
             return getCsvClassFail(state, action.error.response);
         case actionTypes.RESET_GET_CSV_CLASS:

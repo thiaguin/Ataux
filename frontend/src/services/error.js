@@ -15,6 +15,8 @@ const getUnauthorizedMessageError = (entity) => entitiesTypes[entity];
 
 const getGoogleUserMessageError = () => errorTypes.GOOGLE_USER.label;
 
+const getServiceUnvaliableMessageError = () => errorTypes.SERVICE_UNVALIABLE.label;
+
 const getToManyRequestMessageError = () => errorTypes.TO_MANY_REQUEST.label;
 
 export const getErrorMessage = (response) => {
@@ -44,6 +46,8 @@ export const getErrorMessage = (response) => {
             return getGoogleUserMessageError();
         case errorTypes.TO_MANY_REQUEST.value:
             return getToManyRequestMessageError();
+        case errorTypes.SERVICE_UNVALIABLE.value:
+            return getServiceUnvaliableMessageError();
         default:
             return getInternalServerError();
     }

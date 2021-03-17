@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Modal } from 'react-bootstrap';
 
 const modal = (props) => (
-    <Modal.Dialog>
+    <Modal show onHide={props.secondaryButtonOnClick}>
         <Modal.Header>
             <Modal.Title>{props.title}</Modal.Title>
         </Modal.Header>
@@ -24,7 +24,7 @@ const modal = (props) => (
                 {props.primaryButton}
             </Button>
         </Modal.Footer>
-    </Modal.Dialog>
+    </Modal>
 );
 
 export default modal;

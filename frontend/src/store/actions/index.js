@@ -60,6 +60,10 @@ export {
     resetRegisterClass,
     getCSVClass,
     resetGetCSVClass,
+    updateClass,
+    resetUpdateClass,
+    removeClass,
+    resetRemoveClass,
 } from './class';
 export {
     existQuestionToList,
