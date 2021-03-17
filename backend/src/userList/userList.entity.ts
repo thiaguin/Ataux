@@ -17,10 +17,10 @@ export class UserList {
     @Column()
     listId: number;
 
-    @ManyToOne(() => List, (list) => list.users)
+    @ManyToOne(() => List, (list) => list.users, { onDelete: 'CASCADE' })
     list: List;
 
-    @ManyToOne(() => User, (user) => user.lists)
+    @ManyToOne(() => User, (user) => user.lists, { onDelete: 'CASCADE' })
     user: User;
 
     @OneToMany(() => UserQuestionList, (userQuestionList) => userQuestionList.userList)

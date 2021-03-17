@@ -29,7 +29,7 @@ export class List {
     @Column({ nullable: true, type: 'timestamp with time zone' })
     expirationTime: string;
 
-    @ManyToOne(() => Class, (entity) => entity.lists)
+    @ManyToOne(() => Class, (entity) => entity.lists, { onDelete: 'CASCADE' })
     class: Class;
 
     @OneToMany(() => ListQuestion, (listQuestions) => listQuestions.list)
