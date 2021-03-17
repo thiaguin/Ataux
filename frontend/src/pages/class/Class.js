@@ -7,10 +7,13 @@ import CreateClass from '../../components/class/CreateClass';
 import RegisterClass from '../../components/class/RegisterClass';
 import ShowClassList from '../../components/class/ShowClassList';
 import ShowClassUser from '../../components/class/ShowClassUser';
+import EditClass from '../../components/class/EditClass';
 
 const Class = (props) => {
     const { token, classData, loggedUser } = props;
     const { mode, classId, relation } = props.match.params;
+
+    const location = window.location.origin.toString();
 
     const history = useHistory();
     const dispatch = useDispatch();
@@ -31,8 +34,8 @@ const Class = (props) => {
         history.push('/class');
     };
 
-    const goToAddListPageHandler = () => {
-        history.push(`/list/create`);
+    const goToAddListPageHandler = (id) => {
+        history.push(`/class/${id}/list/create`);
     };
 
     const goToAddUserPageHandler = (id) => {
@@ -51,12 +54,28 @@ const Class = (props) => {
         history.push(`/list/show/${listId}`);
     };
 
+    const goToEditPage = (id) => {
+        history.push(`/class/edit/${id}`);
+    };
+
+    const goBackHandler = () => {
+        history.goBack();
+    };
+
     const registerSubmitHandler = (code) => {
         props.onRegisterClass({ classId, code }, props.token);
     };
 
     const getCSVHandler = (id) => {
         props.onGetClassCSV(id, token);
+    };
+
+    const updateClassHandler = (id, { name, code }) => {
+        props.onUpdateClass({ classId: id, name, code }, props.token);
+    };
+
+    const removeClassHandler = (id) => {
+        props.onRemoveClass(id, props.token);
     };
 
     useEffect(() => {
@@ -86,8 +105,22 @@ const Class = (props) => {
     }, [classData.register.success]);
 
     useEffect(() => {
+        if (classData.update.success) {
+            props.onResetUpdateClass();
+            history.push(`/class/show/${classId}/list`);
+        }
+    }, [classData.update.success]);
+
+    useEffect(() => {
+        if (classData.remove.success) {
+            props.onResetRemoveClass();
+            history.push('/class');
+        }
+    }, [classData.remove.success]);
+
+    useEffect(() => {
         if (classData.create.classId) {
-            history.push(`/class/show/${classData.create.classId}`);
+            history.push(`/class/show/${classData.create.classId}/list`);
         }
     }, [classData.create.classId]);
 
@@ -96,6 +129,18 @@ const Class = (props) => {
             setPopup(<Popup type="error" message={classData.csv.error} onClose={props.onResetGetCSVClass} />);
         }
     }, [classData.csv.error]);
+
+    useEffect(() => {
+        if (classData.update.error) {
+            setPopup(<Popup type="error" message={classData.update.error} onClose={props.onResetUpdateClass} />);
+        }
+    }, [classData.update.error]);
+
+    useEffect(() => {
+        if (classData.remove.error) {
+            setPopup(<Popup type="error" message={classData.remove.error} onClose={props.onResetRemoveClass} />);
+        }
+    }, [classData.remove.error]);
 
     return (
         <>
@@ -115,6 +160,7 @@ const Class = (props) => {
                     onClickList={goToListPage}
                     gotToClassUsersPage={gotToClassUsersPageHandler}
                     loggedUser={loggedUser}
+                    goToEditClass={goToEditPage}
                 />
             )}
             {mode === 'show' && relation === 'user' && classData.get.data && (
@@ -126,6 +172,16 @@ const Class = (props) => {
                     onClickList={goToListPage}
                     gotToClassListsPage={gotToClassListsPageHandler}
                     onClickCSV={getCSVHandler}
+                />
+            )}
+            {mode === 'edit' && classData.get.data && (
+                <EditClass
+                    loggedUser={loggedUser}
+                    location={location}
+                    classData={classData.get.data}
+                    onGoBack={goBackHandler}
+                    onSave={updateClassHandler}
+                    onRemove={removeClassHandler}
                 />
             )}
         </>
@@ -146,6 +202,10 @@ const mapDispatchToProps = (dispatch) => ({
     onResetCreateClass: () => dispatch(actions.resetCreateClass()),
     onGetClassCSV: (...values) => dispatch(actions.getCSVClass(...values)),
     onResetGetCSVClass: () => dispatch(actions.resetGetCSVClass()),
+    onUpdateClass: (...values) => dispatch(actions.updateClass(...values)),
+    onResetUpdateClass: () => dispatch(actions.resetUpdateClass()),
+    onRemoveClass: (...values) => dispatch(actions.removeClass(...values)),
+    onResetRemoveClass: () => dispatch(actions.resetRemoveClass()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Class);

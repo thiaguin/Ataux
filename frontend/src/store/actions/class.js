@@ -151,3 +151,51 @@ export const getCSVClass = (id, token) => (dispatch) => {
         })
         .catch((error) => dispatch(getCSVClassFail(error)));
 };
+
+const updateClassStart = () => ({
+    type: actionTypes.UPDATE_CLASS_START,
+});
+
+const updateClassSucces = (data) => ({
+    type: actionTypes.UPDATE_CLASS_SUCCESS,
+    data,
+});
+
+const updateClassFail = (error) => ({
+    type: actionTypes.UPDATE_CLASS_FAIL,
+    error,
+});
+
+export const resetUpdateClass = () => ({ type: actionTypes.RESET_UPDATE_CLASS });
+
+export const updateClass = ({ classId, ...body }, token) => (dispatch) => {
+    dispatch(updateClassStart());
+    axios
+        .put(`/classes/${classId}`, body, { headers: { Authorization: token } })
+        .then((response) => dispatch(updateClassSucces(response.data)))
+        .catch((error) => dispatch(updateClassFail(error)));
+};
+
+const removeClassStart = () => ({
+    type: actionTypes.REMOVE_CLASS_START,
+});
+
+const removeClassSucces = (data) => ({
+    type: actionTypes.REMOVE_CLASS_SUCCESS,
+    data,
+});
+
+const removeClassFail = (error) => ({
+    type: actionTypes.REMOVE_CLASS_FAIL,
+    error,
+});
+
+export const resetRemoveClass = () => ({ type: actionTypes.RESET_REMOVE_CLASS });
+
+export const removeClass = (classId, token) => (dispatch) => {
+    dispatch(removeClassStart());
+    axios
+        .delete(`/classes/${classId}`, { headers: { Authorization: token } })
+        .then((response) => dispatch(removeClassSucces(response.data)))
+        .catch((error) => dispatch(removeClassFail(error)));
+};

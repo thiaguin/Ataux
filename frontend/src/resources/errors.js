@@ -10,4 +10,8 @@ export const errors = {
         value: 'TO_MANY_REQUEST',
         label: 'Seriço temporariamente indisponível. Tente novamente em instantes.',
     },
+    SERVICE_UNVALIABLE: {
+        value: 'SERVICE_UNVALIABLE',
+        label: 'Seriço temporariamente indisponível. Tente novamente depois.',
+    },
 };
