@@ -26,12 +26,12 @@ export class UserQuestionList {
     @Column()
     status: string;
 
-    @ManyToOne(() => List, (list) => list.usersQuestions)
+    @ManyToOne(() => List, (list) => list.usersQuestions, { onDelete: 'CASCADE' })
     list: List;
 
-    @ManyToOne(() => Question, (question) => question.lists)
+    @ManyToOne(() => Question, (question) => question.lists, { onDelete: 'CASCADE' })
     question: Question;
 
-    @ManyToOne(() => UserList, (userList) => userList.questions)
+    @ManyToOne(() => UserList, (userList) => userList.questions, { onDelete: 'CASCADE' })
     userList: UserList;
 }

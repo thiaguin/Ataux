@@ -17,9 +17,9 @@ export class UserClass {
     // @Column({ type: 'enum', enum: UserRole })
     // role: UserRole;
 
-    @ManyToOne(() => Class, (entity) => entity.users)
+    @ManyToOne(() => Class, (entity) => entity.users, { onDelete: 'CASCADE' })
     class: Class;
 
-    @ManyToOne(() => User, (entity) => entity.classes)
+    @ManyToOne(() => User, (entity) => entity.classes, { onDelete: 'CASCADE' })
     user: User;
 }

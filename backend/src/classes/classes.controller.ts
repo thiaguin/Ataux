@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Param, Post, Query, Req, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query, Req, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { Class } from './classes.entity';
 import { ClassesService } from './classes.service';
@@ -49,5 +49,15 @@ export class ClassesController {
     @HttpCode(204)
     addUsers(@Param() params: { id: number }, @Body() body: { email: string }): Promise<void> {
         return this.classService.addUserByEmail(params.id, body.email);
+    }
+
+    @Put('/:id')
+    update(@Param() params: { id: number }, @Body() body): Promise<void> {
+        return this.classService.update(params.id, body);
+    }
+
+    @Delete('/:id')
+    remove(@Param() params: { id: number }): Promise<void> {
+        return this.classService.remove(params.id);
     }
 }

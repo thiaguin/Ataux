@@ -23,6 +23,7 @@ import { QueryService } from 'src/utils/query.service';
 import { QueryClassDTO } from './dto/query-class.dto';
 import { BAD_REQUEST, NOT_FOUND, NOT_UNIQUE } from 'src/resource/errorType.resource';
 import { UserRepository } from 'src/users/users.repository';
+import { UpdateClassDTO } from './dto/update-class.dto';
 
 @Injectable()
 export class ClassesService {
@@ -314,5 +315,25 @@ export class ClassesService {
 
             await userClassRepository.save(newUserClass);
         }
+    }
+
+    async update(id: number, body: UpdateClassDTO): Promise<void> {
+        const entity = await this.repository.findOne({ id });
+
+        if (!entity) {
+            throw new HttpException({ entity: 'Class', type: NOT_FOUND }, 404);
+        }
+
+        await this.repository.update({ id }, body);
+    }
+
+    async remove(id: number): Promise<void> {
+        const entity = await this.repository.findOne({ id });
+
+        if (!entity) {
+            throw new HttpException({ entity: 'Class', type: NOT_FOUND }, 404);
+        }
+
+        await this.repository.remove(entity);
     }
 }
