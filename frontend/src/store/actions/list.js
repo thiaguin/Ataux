@@ -42,10 +42,10 @@ const createListFail = (error) => ({
 
 export const resetCreateList = () => ({ type: actionTypes.RESET_CREATE_LIST });
 
-export const createList = (body) => (dispatch) => {
+export const createList = (body, token) => (dispatch) => {
     dispatch(createListStart());
     axios
-        .post('/lists', body)
+        .post('/lists', body, { headers: { Authorization: token } })
         .then((response) => dispatch(createListSuccess(response.data)))
         .catch((error) => dispatch(createListFail(error)));
 };
@@ -114,10 +114,10 @@ const updateListFail = (error) => ({
 
 export const resetUpdateList = () => ({ type: actionTypes.RESET_UPDATE_LIST });
 
-export const updateList = (id, body) => (dispatch) => {
+export const updateList = (id, body, token) => (dispatch) => {
     dispatch(updateListStart());
     axios
-        .put(`/lists/${id}`, body)
+        .put(`/lists/${id}`, body, { headers: { Authorization: token } })
         .then((response) => dispatch(updateListSuccess(response.data)))
         .catch((error) => dispatch(updateListFail(error)));
 };

@@ -17,10 +17,10 @@ const getAllTagsFail = (error) => ({
 
 export const resetGetAllTags = () => ({ type: actionTypes.RESET_GET_ALL_TAGS });
 
-export const getAllTags = (query) => (dispatch) => {
+export const getAllTags = (query, token) => (dispatch) => {
     dispatch(getAllTagsStart());
     axios
-        .get(`/tags`, { params: query })
+        .get(`/tags`, { params: query, headers: { Authorization: token } })
         .then((response) => dispatch(getAllTagsSucces(response.data)))
         .catch((error) => dispatch(getAllTagsFail(error)));
 };
@@ -41,10 +41,10 @@ const createTagFail = (error) => ({
 
 export const resetCreateTag = () => ({ type: actionTypes.RESET_CREATE_TAG });
 
-export const createTag = (body) => (dispatch) => {
+export const createTag = (body, token) => (dispatch) => {
     dispatch(createTagStart());
     axios
-        .post('/tags', body)
+        .post('/tags', body, { headers: { Authorization: token } })
         .then((response) => dispatch(createTagSucces(response.data)))
         .catch((error) => dispatch(createTagFail(error)));
 };
@@ -65,10 +65,10 @@ const getTagByIdFail = (error) => ({
 
 export const resetGetTagById = () => ({ type: actionTypes.RESET_GET_TAG_BY_ID });
 
-export const getTagById = (id) => (dispatch) => {
+export const getTagById = (id, token) => (dispatch) => {
     dispatch(getTagByIdStart());
     axios
-        .get(`/tags/${id}`)
+        .get(`/tags/${id}`, { headers: { Authorization: token } })
         .then((response) => dispatch(getTagByIdSucces(response.data)))
         .catch((error) => dispatch(getTagByIdFail(error)));
 };
@@ -88,10 +88,10 @@ const updateTagFail = (error) => ({
 
 export const resetUpdateTag = () => ({ type: actionTypes.RESET_UPDATE_TAG });
 
-export const updateTag = ({ id, ...body }) => (dispatch) => {
+export const updateTag = ({ id, token, ...body }) => (dispatch) => {
     dispatch(updateTagStart());
     axios
-        .put(`/tags/${id}`, body)
+        .put(`/tags/${id}`, body, { headers: { Authorization: token } })
         .then(() => dispatch(updateTagSucces()))
         .catch((error) => dispatch(updateTagFail(error)));
 };

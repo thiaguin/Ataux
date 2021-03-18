@@ -8,8 +8,8 @@ import Popover from '../../components/popover/Popover';
 
 const QuestionList = (props) => {
     const dispatch = useDispatch();
-    const onGetAllQuestions = useCallback((value) => dispatch(actions.getAllQuestions(value)), [dispatch]);
-    const onGetAllTags = useCallback(() => dispatch(actions.getAllTags({ take: 'ALL' })), [dispatch]);
+    const onGetAllQuestions = useCallback((...values) => dispatch(actions.getAllQuestions(...values)), [dispatch]);
+    const onGetAllTags = useCallback(() => dispatch(actions.getAllTags({ take: 'ALL' }, props.token)), [dispatch]);
 
     const wrapper = React.createRef();
     const history = useHistory();
@@ -70,11 +70,11 @@ const QuestionList = (props) => {
         setQueryTag('');
         setQueryLevel('');
         setQueryName('');
-        onGetAllQuestions({});
+        onGetAllQuestions({}, props.token);
     };
 
     useEffect(() => {
-        onGetAllQuestions({ page, ...query, take: questionsPerPage });
+        onGetAllQuestions({ page, ...query, take: questionsPerPage }, props.token);
     }, [onGetAllQuestions, page, query]);
 
     useEffect(() => {
@@ -225,6 +225,7 @@ const mapStateToProps = (state) => ({
     questions: state.question.getAll.questions,
     tags: state.tag.getAll.data,
     loggedUser: state.login.user,
+    token: state.login.token,
 });
 
 export default connect(mapStateToProps)(QuestionList);
