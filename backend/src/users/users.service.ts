@@ -14,10 +14,11 @@ import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcryptjs';
 import { MailService } from 'src/utils/mail.service';
 import { UpdateUserDTO } from './dto/update-user.dto';
-import { BAD_REQUEST, NOT_FOUND, NOT_UNIQUE } from 'src/resource/errorType.resource';
+import { BAD_REQUEST, FORBIDDEN, NOT_FOUND, NOT_UNIQUE } from 'src/resource/errorType.resource';
 import { CodeforcesService } from 'src/codeforces/codeforces.service';
 import { PaginateService } from 'src/utils/paginate.service';
 import { QueryService } from 'src/utils/query.service';
+import { PayloadUserDTO } from './dto/payload-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -254,5 +255,17 @@ export class UsersService {
         const userClass = await userClassRepository.create(body);
         await userClassRepository.save(userClass);
         return userClass;
+    }
+
+    async remove(id: number, loggedUser: PayloadUserDTO): Promise<void> {
+        if (loggedUser.id === id) throw new HttpException({ entity: 'User', type: FORBIDDEN }, 403);
+
+        const user = await this.repository.findOne({ where: { id } });
+
+        if (!user) {
+            throw new HttpException({ entity: 'User', type: NOT_FOUND }, 404);
+        }
+
+        this.repository.remove(user);
     }
 }

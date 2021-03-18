@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Query, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query, Req } from '@nestjs/common';
 import { CreateUserClassDTO } from 'src/usersClasses/dto/create-user-class.dto';
 import { UserClass } from 'src/usersClasses/usersClasses.entity';
 import { CreateUserDTO } from './dto/create-user.dto';
@@ -76,5 +76,11 @@ export class UsersController {
     @Put('/:id')
     update(@Param() params: { id: number }, @Body() body: CreateUserDTO): Promise<void> {
         return this.userService.update(params.id, body);
+    }
+
+    @Delete('/:id')
+    @HttpCode(204)
+    remove(@Param() params: { id: number }, @Req() req) {
+        return this.userService.remove(params.id, req.user);
     }
 }

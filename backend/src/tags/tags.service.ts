@@ -90,4 +90,14 @@ export class TagsService {
 
         await this.repository.update({ id }, body);
     }
+
+    async remove(id: number): Promise<void> {
+        const tag = await this.repository.findOne({ where: { id } });
+
+        if (!tag) {
+            throw new HttpException({ entity: 'Tag', type: NOT_FOUND }, 404);
+        }
+
+        this.repository.remove(tag);
+    }
 }

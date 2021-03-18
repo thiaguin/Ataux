@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Param, Post, Put, Query, Req, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query, Req, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { UserList } from 'src/userList/userList.entity';
 import { AddQuestionListDTO } from './dto/addQuestion-list.dto';
@@ -61,5 +61,11 @@ export class ListController {
     @HttpCode(204)
     update(@Param() params: { id: number }, @Body() body: UpdateListDTO): Promise<void> {
         return this.listService.update(params, body);
+    }
+
+    @Delete('/:id')
+    @HttpCode(204)
+    remove(@Param() params: { id: number }) {
+        return this.listService.remove(params.id);
     }
 }
