@@ -39,6 +39,10 @@ const User = (props) => {
         history.push(`/user/updatePassword/${userId}`);
     };
 
+    const removeUserHandle = (id) => {
+        props.onRemoveUser(id, props.token);
+    };
+
     useEffect(() => {
         if (['edit', 'show', 'updatePassword'].includes(mode) && userId) {
             initUser(userId);
@@ -57,6 +61,19 @@ const User = (props) => {
             setPopup(<Popup type="error" message={user.update.error} onClose={props.onResetCreateTag} />);
         }
     }, [user.update.error]);
+
+    useEffect(() => {
+        if (user.remove.success) {
+            props.onReseteRemoveUser();
+            history.push('/user');
+        }
+    }, [user.remove.success]);
+
+    useEffect(() => {
+        if (user.remove.error) {
+            setPopup(<Popup type="error" message={user.remove.error} onClose={props.onReseteRemoveUser} />);
+        }
+    }, [user.remove.error]);
 
     return (
         <>
@@ -82,6 +99,7 @@ const User = (props) => {
                     onClickEditPassword={goToEditPasswordPageHandler}
                     onSubmit={editHandler}
                     currUser={login.user}
+                    onRemove={removeUserHandle}
                 />
             )}
             {mode === 'updatePassword' && user.get.data && (
@@ -99,6 +117,7 @@ const mapStateToProps = (state) => ({
     user: state.user,
     login: state.login,
     loggedUser: state.login.user,
+    token: state.login.token,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -106,6 +125,8 @@ const mapDispatchToProps = (dispatch) => ({
     onResetUpdateUser: () => dispatch(actions.resetUpdateUser()),
     onUpdateUserPassword: (value) => dispatch(actions.updatePasswordUser(value)),
     onResetUpdateUserPassword: () => dispatch(actions.resetUpdatePasswordUser()),
+    onRemoveUser: (...values) => dispatch(actions.removeUser(...values)),
+    onReseteRemoveUser: () => dispatch(actions.resetRemoveUser()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(User);

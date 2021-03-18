@@ -95,3 +95,26 @@ export const updateTag = ({ id, ...body }) => (dispatch) => {
         .then(() => dispatch(updateTagSucces()))
         .catch((error) => dispatch(updateTagFail(error)));
 };
+
+const removeTagStart = () => ({
+    type: actionTypes.REMOVE_TAG_START,
+});
+
+const removeTagSucces = () => ({
+    type: actionTypes.REMOVE_TAG_SUCCESS,
+});
+
+const removeTagFail = (error) => ({
+    type: actionTypes.REMOVE_TAG_FAIL,
+    error,
+});
+
+export const resetRemoveTag = () => ({ type: actionTypes.RESET_REMOVE_TAG });
+
+export const removeTag = (id, token) => (dispatch) => {
+    dispatch(removeTagStart());
+    axios
+        .delete(`/tags/${id}`, { headers: { Authorization: token } })
+        .then(() => dispatch(removeTagSucces()))
+        .catch((error) => dispatch(removeTagFail(error)));
+};

@@ -22,6 +22,11 @@ const initialState = {
         error: null,
         success: null,
     },
+    remove: {
+        loading: false,
+        error: null,
+        success: null,
+    },
 };
 
 const updateUserStart = (state) => ({
@@ -154,6 +159,39 @@ const resetGetUserById = (state) => ({
     get: { ...initialState.get },
 });
 
+const removeUserStart = (state) => ({
+    ...state,
+    remove: {
+        ...state.remove,
+        loading: true,
+    },
+});
+
+const removeUserSucess = (state) => ({
+    ...state,
+    remove: {
+        ...state.remove,
+        loading: false,
+        success: true,
+        error: null,
+    },
+});
+
+const removeUserFail = (state, data) => ({
+    ...state,
+    remove: {
+        ...state.remove,
+        loading: false,
+        success: null,
+        error: getErrorMessage(data),
+    },
+});
+
+const resetRemoveUser = (state) => ({
+    ...state,
+    remove: { ...initialState.remove },
+});
+
 const reducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.UPDATE_USER_START:
@@ -188,6 +226,15 @@ const reducer = (state = initialState, action) => {
             return getUserByIdFail(state, action.error.response);
         case actionTypes.RESET_GET_USER_BY_ID:
             return resetGetUserById(state);
+        case actionTypes.REMOVE_USER_START:
+            return removeUserStart(state);
+        case actionTypes.REMOVE_USER_SUCCESS:
+            return removeUserSucess(state);
+        case actionTypes.REMOVE_USER_FAIL:
+            return removeUserFail(state, action.error.response);
+        case actionTypes.RESET_REMOVE_USER:
+            return resetRemoveUser(state);
+
         default:
             return { ...state };
     }

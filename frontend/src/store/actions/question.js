@@ -95,3 +95,26 @@ export const getAllQuestions = (query) => (dispatch) => {
         .then((response) => dispatch(getAllQuestionsSucces(response.data)))
         .catch((error) => dispatch(getAllQuestionsFail(error)));
 };
+
+const removeQuestionStart = () => ({
+    type: actionTypes.REMOVE_QUESTION_START,
+});
+
+const removeQuestionSucces = () => ({
+    type: actionTypes.REMOVE_QUESTION_SUCCESS,
+});
+
+const removeQuestionFail = (error) => ({
+    type: actionTypes.REMOVE_QUESTION_FAIL,
+    error,
+});
+
+export const resetRemoveQuestion = () => ({ type: actionTypes.RESET_REMOVE_QUESTION });
+
+export const removeQuestion = (id, token) => (dispatch) => {
+    dispatch(removeQuestionStart());
+    axios
+        .delete(`/questions/${id}`, { headers: { Authorization: token } })
+        .then(() => dispatch(removeQuestionSucces()))
+        .catch((error) => dispatch(removeQuestionFail(error)));
+};

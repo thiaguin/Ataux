@@ -5,6 +5,7 @@ import * as Yup from 'yup';
 import SpinnerButton from '../spinnerButton/SpinnerButton';
 import trashSVG from '../../assets/trash.svg';
 import whiteTrashSVG from '../../assets/trash-white.svg';
+import Modal from '../modal/Modal';
 
 const editList = (props) => {
     const today = new Date();
@@ -33,6 +34,7 @@ const editList = (props) => {
     };
 
     const [trashHover, setTrashHover] = useState(false);
+    const [showModal, setShowModal] = useState(false);
     const expirationTime = new Date(props.list.expirationTime);
     const hours = expirationTime.getHours();
     const minutes = expirationTime.getMinutes();
@@ -43,6 +45,16 @@ const editList = (props) => {
 
     return (
         <>
+            {showModal && (
+                <Modal
+                    title="Remover turma"
+                    body="Você tem certeza que quer remover essa lista?"
+                    primaryButtonOnClick={() => props.onRemove(props.list.id)}
+                    primaryButton="Remover"
+                    secondaryButton="Voltar"
+                    secondaryButtonOnClick={() => setShowModal(false)}
+                />
+            )}
             {props.list && (
                 <Formik
                     validationSchema={schema}
@@ -166,7 +178,7 @@ const editList = (props) => {
                                             </Button>
                                         )}
                                     </div>
-                                    <div style={{ textAlign: 'right' }}>
+                                    <div style={{ textAlign: 'center' }}>
                                         <Form.Group
                                             style={{ width: '150px', display: 'inline-block' }}
                                             controlId="formGridGoogleButton"
@@ -181,7 +193,20 @@ const editList = (props) => {
                                             </Button>
                                         </Form.Group>
                                         <Form.Group
-                                            style={{ width: '150px', display: 'inline-block', marginLeft: '15px' }}
+                                            style={{ width: '150px', display: 'inline-block', marginLeft: '5px' }}
+                                            controlId="formGridGoogleButton"
+                                        >
+                                            <Button
+                                                style={{ minWidth: '150px' }}
+                                                variant="outline-danger"
+                                                type="button"
+                                                onClick={() => setShowModal(true)}
+                                            >
+                                                Remover
+                                            </Button>
+                                        </Form.Group>
+                                        <Form.Group
+                                            style={{ width: '150px', display: 'inline-block', marginLeft: '5px' }}
                                             controlId="formGridSubmtiButton"
                                         >
                                             {props.loading ? (

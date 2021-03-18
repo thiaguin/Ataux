@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, connect } from 'react-redux';
-import { Table, InputGroup, FormControl, OverlayTrigger, Popover, Button, Pagination, Nav } from 'react-bootstrap';
+import { Table, InputGroup, FormControl, OverlayTrigger, Button, Pagination, Nav } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import * as actions from '../../store/actions';
 import levelTypes from '../../enums/levelTypes';
+import Popover from '../../components/popover/Popover';
 
 const QuestionList = (props) => {
     const dispatch = useDispatch();
@@ -13,7 +14,6 @@ const QuestionList = (props) => {
     const wrapper = React.createRef();
     const history = useHistory();
 
-    // const [questionNameHover, setQuestionNameHover] = useState(false);
     const [queryName, setQueryName] = useState('');
     const [queryLevel, setQueryLevel] = useState('');
     const [queryTag, setQueryTag] = useState('');
@@ -38,22 +38,6 @@ const QuestionList = (props) => {
     const questionsPerPage = 30;
     const initialPage = 0;
     const lastPage = Math.floor((questionsCount - 1) / questionsPerPage);
-
-    const getPopover = (tags = []) => {
-        const tagsNames = tags.map((value) => (
-            <div key={value.tag[0].name}>
-                {value.tag[0].name}
-                <br />
-            </div>
-        ));
-
-        const popover = (
-            <Popover style={{ backgroundColor: '#f5eee0' }} id="key">
-                <Popover.Content>{tagsNames} </Popover.Content>
-            </Popover>
-        );
-        return tags.length > 0 ? popover : null;
-    };
 
     const clickAddQuestionHandler = () => {
         history.push('/question/create');
@@ -207,7 +191,7 @@ const QuestionList = (props) => {
                                             {levelTypes[question.level]}
                                         </td>
                                         <td key="tags" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                                            <OverlayTrigger placement="left" overlay={getPopover(question.tags)}>
+                                            <OverlayTrigger placement="left" overlay={<Popover tags={question.tags} />}>
                                                 <p ref={wrapper}>{`${question.tags.length} tags`}</p>
                                             </OverlayTrigger>
                                         </td>

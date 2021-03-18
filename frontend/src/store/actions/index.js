@@ -25,6 +25,8 @@ export {
     resetUpdateQuestion,
     getAllQuestions,
     resetGetAllQuestions,
+    removeQuestion,
+    resetRemoveQuestion,
 } from './question';
 export {
     getAllTags,
@@ -35,6 +37,8 @@ export {
     resetCreateTag,
     updateTag,
     resetUpdateTag,
+    removeTag,
+    resetRemoveTag,
 } from './tag';
 export {
     updateUser,
@@ -46,6 +50,8 @@ export {
     resetGetUserById,
     updatePasswordUser,
     resetUpdatePasswordUser,
+    removeUser,
+    resetRemoveUser,
 } from './user';
 export {
     getAllClasses,
@@ -78,4 +84,6 @@ export {
     resetUpdateList,
     getListCSV,
     resetGetListCSV,
+    removeList,
+    resetRemoveList,
 } from './list';
