@@ -278,6 +278,6 @@ export class QuestionsService {
             throw new HttpException({ entity: 'Question', type: NOT_FOUND }, 404);
         }
 
-        this.repository.delete(id);
+        this.repository.remove(question);
     }
 }

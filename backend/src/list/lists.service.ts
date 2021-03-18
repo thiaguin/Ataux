@@ -396,4 +396,14 @@ export class ListService {
             }
         }
     }
+
+    async remove(id: number): Promise<void> {
+        const list = await this.repository.findOne({ where: { id } });
+
+        if (!list) {
+            throw new HttpException({ entity: 'List', type: NOT_FOUND }, 404);
+        }
+
+        this.repository.remove(list);
+    }
 }
