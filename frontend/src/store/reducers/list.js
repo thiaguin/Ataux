@@ -27,6 +27,11 @@ const initialState = {
         loading: false,
         success: false,
     },
+    remove: {
+        error: null,
+        loading: false,
+        success: false,
+    },
     csv: {
         error: null,
         loading: false,
@@ -220,6 +225,37 @@ const resetUpdateList = (state) => ({
     update: { ...initialState.update },
 });
 
+const removeListStart = (state) => ({
+    ...state,
+    remove: {
+        ...state.remove,
+        loading: true,
+    },
+});
+
+const removeListSuccess = (state) => ({
+    ...state,
+    remove: {
+        ...state.remove,
+        loading: false,
+        success: true,
+    },
+});
+
+const removeListFail = (state, data) => ({
+    ...state,
+    remove: {
+        ...state.remove,
+        loading: false,
+        error: getErrorMessage(data),
+    },
+});
+
+const resetRemoveList = (state) => ({
+    ...state,
+    remove: { ...initialState.remove },
+});
+
 const reducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.EXIST_QUESTION_TO_LIST_START:
@@ -270,6 +306,14 @@ const reducer = (state = initialState, action) => {
             return updateListFail(state, action.error.response);
         case actionTypes.RESET_UPDATE_LIST:
             return resetUpdateList(state);
+        case actionTypes.REMOVE_LIST_START:
+            return removeListStart(state);
+        case actionTypes.REMOVE_LIST_SUCCESS:
+            return removeListSuccess(state);
+        case actionTypes.REMOVE_LIST_FAIL:
+            return removeListFail(state, action.error.response);
+        case actionTypes.RESET_REMOVE_LIST:
+            return resetRemoveList(state);
         default:
             return { ...state };
     }

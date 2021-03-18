@@ -34,6 +34,10 @@ const Tag = (props) => {
         history.push('/tag');
     };
 
+    const removeTagHandler = (id) => {
+        props.onRemoveTag(id, props.token);
+    };
+
     const editHandler = (values) => {
         props.onUpdateTag({
             id: tagId,
@@ -68,6 +72,19 @@ const Tag = (props) => {
         }
     }, [tag.update.success]);
 
+    useEffect(() => {
+        if (tag.remove.success) {
+            props.onReseteRemoveTag();
+            history.push('/tag');
+        }
+    }, [tag.remove.success]);
+
+    useEffect(() => {
+        if (tag.remove.error) {
+            setPopup(<Popup type="error" message={tag.remove.error} onClose={props.onReseteRemoveTag} />);
+        }
+    }, [tag.remove.error]);
+
     return (
         <>
             {popup}
@@ -76,7 +93,7 @@ const Tag = (props) => {
                 <ShowTag tag={tag.get.tag} goBack={goToListPageHandler} gotToEditPage={goToEditPageHandler} />
             )}
             {mode === 'edit' && tag.get.tag && (
-                <EditTag tag={tag.get.tag} goBack={goBackHandler} submit={editHandler} />
+                <EditTag tag={tag.get.tag} goBack={goBackHandler} submit={editHandler} onRemove={removeTagHandler} />
             )}
         </>
     );
@@ -84,6 +101,7 @@ const Tag = (props) => {
 
 const mapStateToProps = (state) => ({
     tag: state.tag,
+    token: state.login.token,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -91,6 +109,8 @@ const mapDispatchToProps = (dispatch) => ({
     onUpdateTag: (values) => dispatch(actions.updateTag(values)),
     onResetCreateTag: () => dispatch(actions.resetCreateTag()),
     onResetUpdateTag: () => dispatch(actions.resetUpdateTag()),
+    onRemoveTag: (...values) => dispatch(actions.removeTag(...values)),
+    onReseteRemoveTag: () => dispatch(actions.resetRemoveTag()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Tag);

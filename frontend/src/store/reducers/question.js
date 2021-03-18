@@ -17,6 +17,11 @@ const initialState = {
         loading: false,
         success: null,
     },
+    remove: {
+        error: null,
+        loading: false,
+        success: null,
+    },
     getAll: {
         error: null,
         loading: false,
@@ -153,6 +158,38 @@ const resetUpdateQuestion = (state) => ({
     update: { ...initialState.update },
 });
 
+const removeQuestionStart = (state) => ({
+    ...state,
+    remove: {
+        ...state.remove,
+        loading: true,
+    },
+});
+
+const removeQuestionSuccess = (state) => ({
+    ...state,
+    remove: {
+        ...state.remove,
+        loading: false,
+        success: true,
+    },
+});
+
+const removeQuestionFail = (state, data) => ({
+    ...state,
+    remove: {
+        ...state.remove,
+        loading: false,
+        error: getErrorMessage(data),
+    },
+});
+
+const resetRemoveQuestion = (state) => ({
+    ...state,
+    ...initialState,
+    remove: { ...initialState.remove },
+});
+
 const reducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.CREATE_QUESTION_START:
@@ -187,6 +224,14 @@ const reducer = (state = initialState, action) => {
             return updateQuestionFail(state, action.error.response);
         case actionTypes.RESET_UPDATE_QUESTION:
             return resetUpdateQuestion(state);
+        case actionTypes.REMOVE_QUESTION_START:
+            return removeQuestionStart(state);
+        case actionTypes.REMOVE_QUESTION_SUCCESS:
+            return removeQuestionSuccess(state, action.data);
+        case actionTypes.REMOVE_QUESTION_FAIL:
+            return removeQuestionFail(state, action.error.response);
+        case actionTypes.RESET_REMOVE_QUESTION:
+            return resetRemoveQuestion(state);
         default:
             return { ...state };
     }

@@ -55,8 +55,6 @@ const ClassList = (props) => {
         setQueryName('');
         onGetAllClasses({}, props.token);
     };
-    // eslint-disable-next-line no-console
-    console.log('location', location);
 
     useEffect(() => {
         onGetAllClasses({ page, ...query, take: classesPerPage }, props.token);

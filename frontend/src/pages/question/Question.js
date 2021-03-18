@@ -59,6 +59,9 @@ const Question = (props) => {
         history.push(`/question/code/${questionIdToShowCode}`);
     };
 
+    const removeQuestionHandler = (id) => {
+        props.onRemoveQuestion(id, props.token);
+    };
     const editHandler = (values) => {
         props.onUpdateQuestion({
             tags: questionTags.map((value) => value.id),
@@ -113,6 +116,19 @@ const Question = (props) => {
         }
     }, [question.update.success]);
 
+    useEffect(() => {
+        if (question.remove.success) {
+            props.onResetRemoveQuestion();
+            history.push('/question');
+        }
+    }, [question.remove.success]);
+
+    useEffect(() => {
+        if (question.remove.error) {
+            setPopup(<Popup type="error" message={question.remove.error} onClose={props.onResetRemoveQuestion} />);
+        }
+    }, [question.remove.error]);
+
     return (
         <>
             {popup}
@@ -140,6 +156,7 @@ const Question = (props) => {
                     addQuestionTag={addTagHandler}
                     submit={editHandler}
                     removeTag={removeTagHandler}
+                    onRemove={removeQuestionHandler}
                 />
             )}
             {loggedUser.role !== 'MEMBER' && mode === 'code' && question.get.data && (
@@ -158,9 +175,11 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
     onCreateQuestion: (values) => dispatch(actions.createQuestion(values)),
-    onUpdateQuestion: (values) => dispatch(actions.updateQuestion(values)),
     onResetCreateQuestion: () => dispatch(actions.resetCreateQuestion()),
+    onUpdateQuestion: (values) => dispatch(actions.updateQuestion(values)),
     onResetUpdateQuestion: () => dispatch(actions.resetUpdateQuestion()),
+    onRemoveQuestion: (...values) => dispatch(actions.removeQuestion(...values)),
+    onResetRemoveQuestion: () => dispatch(actions.resetRemoveQuestion()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Question);

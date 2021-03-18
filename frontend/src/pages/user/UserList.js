@@ -52,8 +52,6 @@ const UserList = (props) => {
         }
     }, [user.getAll.error]);
 
-    // eslint-disable-next-line no-console
-    console.log('users', users);
     return (
         <>
             {popup}

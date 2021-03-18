@@ -104,3 +104,27 @@ export const updatePasswordUser = ({ userId, ...body }) => (dispatch) => {
         .then((response) => dispatch(updatePasswordUserSucces(response.data)))
         .catch((error) => dispatch(updatePasswordUserFail(error)));
 };
+
+const removeUserStart = () => ({
+    type: actionTypes.REMOVE_USER_START,
+});
+
+const removeUserSucces = (data) => ({
+    type: actionTypes.REMOVE_USER_SUCCESS,
+    data,
+});
+
+const removeUserFail = (error) => ({
+    type: actionTypes.REMOVE_USER_FAIL,
+    error,
+});
+
+export const resetRemoveUser = () => ({ type: actionTypes.RESET_REMOVE_USER });
+
+export const removeUser = (id, token) => (dispatch) => {
+    dispatch(removeUserStart());
+    axios
+        .delete(`/users/${id}`, { headers: { Authorization: token } })
+        .then((response) => dispatch(removeUserSucces(response.data)))
+        .catch((error) => dispatch(removeUserFail(error)));
+};

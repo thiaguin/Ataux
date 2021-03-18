@@ -22,6 +22,11 @@ const initialState = {
         loading: false,
         success: null,
     },
+    remove: {
+        error: null,
+        loading: false,
+        success: null,
+    },
 };
 
 const getAllTagsStart = (state) => ({
@@ -153,6 +158,38 @@ const resetUpdateTag = (state) => ({
     update: { ...initialState.update },
 });
 
+const removeTagStart = (state) => ({
+    ...state,
+    remove: {
+        ...state.remove,
+        loading: true,
+    },
+});
+
+const removeTagSuccess = (state) => ({
+    ...state,
+    remove: {
+        ...state.remove,
+        loading: false,
+        success: true,
+    },
+});
+
+const removeTagFail = (state, data) => ({
+    ...state,
+    remove: {
+        ...state.remove,
+        loading: false,
+        error: getErrorMessage(data),
+    },
+});
+
+const resetRemoveTag = (state) => ({
+    ...state,
+    ...initialState,
+    remove: { ...initialState.remove },
+});
+
 const reducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.GET_ALL_TAGS_START:
@@ -187,6 +224,14 @@ const reducer = (state = initialState, action) => {
             return updateTagFail(state, action.error.response);
         case actionTypes.RESET_UPDATE_TAG:
             return resetUpdateTag(state);
+        case actionTypes.REMOVE_TAG_START:
+            return removeTagStart(state);
+        case actionTypes.REMOVE_TAG_SUCCESS:
+            return removeTagSuccess(state, action.data);
+        case actionTypes.REMOVE_TAG_FAIL:
+            return removeTagFail(state, action.error.response);
+        case actionTypes.RESET_REMOVE_TAG:
+            return resetRemoveTag(state);
         default:
             return { ...state };
     }

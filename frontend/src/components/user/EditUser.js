@@ -1,9 +1,12 @@
+import React, { useState } from 'react';
 import { Formik } from 'formik';
-import React from 'react';
 import { Form, Button, Col } from 'react-bootstrap';
 import userTypes from '../../enums/userTypes';
+import Modal from '../modal/Modal';
 
 const showUser = (props) => {
+    const [showModal, setShowModal] = useState(false);
+
     const parentInStyle = {
         margin: '5% 25%',
         width: '50%',
@@ -21,6 +24,16 @@ const showUser = (props) => {
 
     return (
         <>
+            {showModal && (
+                <Modal
+                    title="Remover turma"
+                    body="Você tem certeza que quer remover esse usuário?"
+                    primaryButtonOnClick={() => props.onRemove(props.user.id)}
+                    primaryButton="Remover"
+                    secondaryButton="Voltar"
+                    secondaryButtonOnClick={() => setShowModal(false)}
+                />
+            )}
             {user && (
                 <Formik
                     initialValues={{
@@ -140,9 +153,24 @@ const showUser = (props) => {
                                                 </Button>
                                             </Form.Group>
                                         )}
+                                        {props.currUser.role === 'ADMIN' && (
+                                            <Form.Group
+                                                style={{ width: '150px', display: 'inline-block', marginLeft: '5px' }}
+                                                controlId="formGridGoogleButton"
+                                            >
+                                                <Button
+                                                    style={{ minWidth: '150px' }}
+                                                    variant="outline-danger"
+                                                    type="button"
+                                                    onClick={() => setShowModal(true)}
+                                                >
+                                                    Remover
+                                                </Button>
+                                            </Form.Group>
+                                        )}
                                         <Form.Group
                                             controlId="formGridSubmtiButton"
-                                            style={{ width: '150px', display: 'inline-block', marginLeft: '15px' }}
+                                            style={{ width: '150px', display: 'inline-block', marginLeft: '5px' }}
                                         >
                                             <Button
                                                 style={{ minWidth: '150px' }}

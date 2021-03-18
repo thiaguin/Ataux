@@ -4,9 +4,11 @@ import { Formik } from 'formik';
 import levelTypes from '../../enums/levelTypes';
 import trashSVG from '../../assets/trash.svg';
 import whiteTrashSVG from '../../assets/trash-white.svg';
+import Modal from '../modal/Modal';
 
 const editQuestion = (props) => {
     const [trashHover, setTrashHover] = useState(false);
+    const [showModal, setShowModal] = useState(false);
 
     const parentInStyle = {
         margin: '5% 25%',
@@ -22,112 +24,123 @@ const editQuestion = (props) => {
     };
 
     return (
-        <Formik initialValues={{ level: props.question.level, newTagId: '', tags: [] }}>
-            {({ handleSubmit, handleChange, values, isValid }) => (
-                <div style={parentInStyle}>
-                    <div style={childInStyle}>
-                        <Form noValidate onSubmit={handleSubmit}>
-                            <div style={{ textAlign: 'justify' }}>
-                                <Form.Group style={{ width: '83%', display: 'inline-block' }} controlId="formTitle">
-                                    <Form.Label>Título</Form.Label>
-                                    <Form.Control
-                                        name="title"
-                                        value={props.question.title}
-                                        readOnly
-                                        disabled
-                                        type="text"
-                                    />
-                                </Form.Group>{' '}
-                                <Button
-                                    style={{ minWidth: '15%', height: '10%' }}
-                                    variant="outline-info"
-                                    type="button"
-                                    onClick={() => props.goToUrlPage(props.question.url)}
-                                >
-                                    Ir
-                                </Button>
-                            </div>
-                            <Form.Group controlId="formLevel">
-                                <Form.Label>Dificuldade</Form.Label>
-                                <Form.Control
-                                    name="level"
-                                    onChange={handleChange}
-                                    value={values.level}
-                                    readOnly
-                                    as="select"
-                                >
-                                    {Object.keys(levelTypes).map((level) => (
-                                        <option key={level} value={level}>
-                                            {levelTypes[level]}
-                                        </option>
-                                    ))}
-                                </Form.Control>
-                            </Form.Group>{' '}
-                            <Form.Group controlId="formTags" readOnly>
-                                <div style={{ marginBottom: '10px' }}>
-                                    <Form.Label>Tags</Form.Label>
-                                    <div
-                                        onMouseEnter={() => setTrashHover(!trashHover)}
-                                        onMouseLeave={() => setTrashHover(!trashHover)}
-                                        style={{ display: 'inline-block', position: 'relative', float: 'right' }}
+        <>
+            {showModal && (
+                <Modal
+                    title="Remover turma"
+                    body="Você tem certeza que quer remover essa questão?"
+                    primaryButtonOnClick={() => props.onRemove(props.question.id)}
+                    primaryButton="Remover"
+                    secondaryButton="Voltar"
+                    secondaryButtonOnClick={() => setShowModal(false)}
+                />
+            )}
+            <Formik initialValues={{ level: props.question.level, newTagId: '', tags: [] }}>
+                {({ handleSubmit, handleChange, values, isValid }) => (
+                    <div style={parentInStyle}>
+                        <div style={childInStyle}>
+                            <Form noValidate onSubmit={handleSubmit}>
+                                <div style={{ textAlign: 'justify' }}>
+                                    <Form.Group style={{ width: '83%', display: 'inline-block' }} controlId="formTitle">
+                                        <Form.Label>Título</Form.Label>
+                                        <Form.Control
+                                            name="title"
+                                            value={props.question.title}
+                                            readOnly
+                                            disabled
+                                            type="text"
+                                        />
+                                    </Form.Group>{' '}
+                                    <Button
+                                        style={{ minWidth: '15%', height: '10%' }}
+                                        variant="outline-info"
+                                        type="button"
+                                        onClick={() => props.goToUrlPage(props.question.url)}
                                     >
-                                        <Button
-                                            style={{ padding: '4px 7px' }}
-                                            variant="outline-danger"
-                                            type="button"
-                                            onClick={() => props.removeTag(values.tags)}
-                                        >
-                                            <Image
-                                                style={{ fill: 'green', position: 'relative', padding: '0' }}
-                                                src={trashHover ? whiteTrashSVG : trashSVG}
-                                            />
-                                        </Button>
-                                    </div>
+                                        Ir
+                                    </Button>
                                 </div>
-                                <Form.Control
-                                    name="tags"
-                                    style={{ height: '150px' }}
-                                    onChange={handleChange}
-                                    as="select"
-                                    multiple
-                                >
-                                    {props.questionTags.map((value) => (
-                                        <option key={value.name} value={value.id}>
-                                            {value.name}
-                                        </option>
-                                    ))}
-                                </Form.Control>
-                            </Form.Group>
-                            <div style={{ textAlign: 'justify', marginBottom: '20px' }}>
-                                <Form.Group style={{ width: '74%', display: 'inline-block' }} controlId="formTitle">
-                                    <Form.Label>Adicionar Tag</Form.Label>
+                                <Form.Group controlId="formLevel">
+                                    <Form.Label>Dificuldade</Form.Label>
                                     <Form.Control
-                                        name="newTagId"
+                                        name="level"
                                         onChange={handleChange}
+                                        value={values.level}
                                         readOnly
-                                        type="text"
                                         as="select"
-                                        defaultValue=""
                                     >
-                                        <option style={{ display: 'none' }}> </option>
-                                        {props.tags.map((tag) => (
-                                            <option key={tag.id} value={tag.id}>
-                                                {tag.name}
+                                        {Object.keys(levelTypes).map((level) => (
+                                            <option key={level} value={level}>
+                                                {levelTypes[level]}
                                             </option>
                                         ))}
                                     </Form.Control>
-                                </Form.Group>{' '}
-                                <Button
-                                    style={{ minWidth: '20%', height: '10%' }}
-                                    variant="outline-info"
-                                    type="button"
-                                    disabled={!values.newTagId}
-                                    onClick={() => props.addQuestionTag(values.newTagId)}
-                                >
-                                    Adicionar Tag
-                                </Button>
-                            </div>
-                            {/* <Form.Text
+                                </Form.Group>
+                                <Form.Group controlId="formTags" readOnly>
+                                    <div style={{ marginBottom: '10px' }}>
+                                        <Form.Label>Tags</Form.Label>
+                                        <div
+                                            onMouseEnter={() => setTrashHover(!trashHover)}
+                                            onMouseLeave={() => setTrashHover(!trashHover)}
+                                            style={{ display: 'inline-block', position: 'relative', float: 'right' }}
+                                        >
+                                            <Button
+                                                style={{ padding: '4px 7px' }}
+                                                variant="outline-danger"
+                                                type="button"
+                                                onClick={() => props.removeTag(values.tags)}
+                                            >
+                                                <Image
+                                                    style={{ fill: 'green', position: 'relative', padding: '0' }}
+                                                    src={trashHover ? whiteTrashSVG : trashSVG}
+                                                />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                    <Form.Control
+                                        name="tags"
+                                        style={{ height: '150px' }}
+                                        onChange={handleChange}
+                                        as="select"
+                                        multiple
+                                    >
+                                        {props.questionTags.map((value) => (
+                                            <option key={value.name} value={value.id}>
+                                                {value.name}
+                                            </option>
+                                        ))}
+                                    </Form.Control>
+                                </Form.Group>
+                                <div style={{ textAlign: 'justify', marginBottom: '20px' }}>
+                                    <Form.Group style={{ width: '74%', display: 'inline-block' }} controlId="formTitle">
+                                        <Form.Label>Adicionar Tag</Form.Label>
+                                        <Form.Control
+                                            name="newTagId"
+                                            onChange={handleChange}
+                                            readOnly
+                                            type="text"
+                                            as="select"
+                                            defaultValue=""
+                                        >
+                                            <option style={{ display: 'none' }}> </option>
+                                            {props.tags.map((tag) => (
+                                                <option key={tag.id} value={tag.id}>
+                                                    {tag.name}
+                                                </option>
+                                            ))}
+                                        </Form.Control>
+                                    </Form.Group>{' '}
+                                    <Button
+                                        style={{ minWidth: '20%', height: '10%' }}
+                                        variant="outline-info"
+                                        type="button"
+                                        disabled={!values.newTagId}
+                                        onClick={() => props.addQuestionTag(values.newTagId)}
+                                    >
+                                        Adicionar Tag
+                                    </Button>
+                                </div>
+                                {/* <Form.Text
                                 // onClick={recoverPasswordClickHandler}
                                 // onMouseEnter={recoverPasswordHoverHandler}
                                 // onMouseLeave={recoverPasswordHoverHandler}
@@ -137,40 +150,54 @@ const editQuestion = (props) => {
                             >
                                 Editar solução padrão
                             </Form.Text> */}
-                            <div style={{ textAlign: 'right' }}>
-                                <Form.Group
-                                    style={{ width: '150px', display: 'inline-block' }}
-                                    controlId="formGridGoogleButton"
-                                >
-                                    <Button
-                                        style={{ minWidth: '150px' }}
-                                        variant="secondary"
-                                        type="button"
-                                        onClick={props.goBack}
+                                <div style={{ textAlign: 'center' }}>
+                                    <Form.Group
+                                        style={{ width: '150px', display: 'inline-block' }}
+                                        controlId="formGridGoogleButton"
                                     >
-                                        Voltar
-                                    </Button>
-                                </Form.Group>
-                                <Form.Group
-                                    controlId="formGridSubmtiButton"
-                                    style={{ width: '150px', display: 'inline-block', marginLeft: '15px' }}
-                                >
-                                    <Button
-                                        style={{ minWidth: '150px' }}
-                                        variant="primary"
-                                        type="submit"
-                                        disabled={!isValid}
-                                        onClick={() => props.submit(values)}
+                                        <Button
+                                            style={{ minWidth: '150px' }}
+                                            variant="secondary"
+                                            type="button"
+                                            onClick={props.goBack}
+                                        >
+                                            Voltar
+                                        </Button>
+                                    </Form.Group>
+                                    <Form.Group
+                                        style={{ width: '150px', display: 'inline-block', marginLeft: '5px' }}
+                                        controlId="formGridGoogleButton"
                                     >
-                                        Salvar
-                                    </Button>
-                                </Form.Group>
-                            </div>
-                        </Form>
+                                        <Button
+                                            style={{ minWidth: '150px' }}
+                                            variant="outline-danger"
+                                            type="button"
+                                            onClick={() => setShowModal(true)}
+                                        >
+                                            Remover
+                                        </Button>
+                                    </Form.Group>
+                                    <Form.Group
+                                        controlId="formGridSubmtiButton"
+                                        style={{ width: '150px', display: 'inline-block', marginLeft: '5px' }}
+                                    >
+                                        <Button
+                                            style={{ minWidth: '150px' }}
+                                            variant="primary"
+                                            type="submit"
+                                            disabled={!isValid}
+                                            onClick={() => props.submit(values)}
+                                        >
+                                            Salvar
+                                        </Button>
+                                    </Form.Group>
+                                </div>
+                            </Form>
+                        </div>
                     </div>
-                </div>
-            )}
-        </Formik>
+                )}
+            </Formik>
+        </>
     );
 };
 

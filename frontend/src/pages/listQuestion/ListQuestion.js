@@ -58,8 +58,6 @@ const ListQuestion = (props) => {
     useEffect(() => {
         if (questionId) {
             onInitPage(questionId, token);
-            // eslint-disable-next-line no-console
-            console.log({ questionId, listId });
             props.onGetAllSubmissions({ questionId, listId }, token);
         }
     }, [onInitPage, listId, questionId]);

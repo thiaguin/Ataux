@@ -18,10 +18,10 @@ const existQuestionToListFail = (error) => ({
 
 export const resetExistQuestionToList = () => ({ type: actionTypes.RESET_EXIST_QUESTION_TO_LIST });
 
-export const existQuestionToList = (url) => (dispatch) => {
+export const existQuestionToList = (url, token) => (dispatch) => {
     dispatch(existQuestionToListStart());
     axios
-        .get('/questions/url', { params: { url } })
+        .get('/questions/url', { params: { url }, headers: { Authorization: token } })
         .then((response) => dispatch(existQuestionToListSucces(response.data)))
         .catch((error) => dispatch(existQuestionToListFail(error)));
 };
@@ -151,4 +151,28 @@ export const getListCSV = (id, token) => (dispatch) => {
             dispatch(getListCSVSucces(response.data));
         })
         .catch((error) => dispatch(getListCSVFail(error)));
+};
+
+const removeListStart = () => ({
+    type: actionTypes.REMOVE_LIST_START,
+});
+
+const removeListSuccess = (data) => ({
+    type: actionTypes.REMOVE_LIST_SUCCESS,
+    data,
+});
+
+const removeListFail = (error) => ({
+    type: actionTypes.REMOVE_LIST_FAIL,
+    error,
+});
+
+export const resetRemoveList = () => ({ type: actionTypes.RESET_REMOVE_LIST });
+
+export const removeList = (id, token) => (dispatch) => {
+    dispatch(removeListStart());
+    axios
+        .delete(`/lists/${id}`, { headers: { Authorization: token } })
+        .then((response) => dispatch(removeListSuccess(response.data)))
+        .catch((error) => dispatch(removeListFail(error)));
 };

@@ -57,7 +57,7 @@ const List = (props) => {
     };
 
     const onAddQuestionToListHandler = (url) => {
-        props.onExistQuestionToList(url);
+        props.onExistQuestionToList(url, props.token);
     };
 
     const onGoBackHandler = () => {
@@ -71,6 +71,10 @@ const List = (props) => {
     const onRemoveQuestionHandler = (values) => {
         const listQuestionsFiltered = listQuestions.filter((value) => !values.includes(`${value.id}`));
         setListQuestions(listQuestionsFiltered);
+    };
+
+    const removeListHandler = (id) => {
+        props.onRemoveList(id, props.token);
     };
 
     const onCheckSubmissionHandler = (questions) => {
@@ -141,6 +145,19 @@ const List = (props) => {
     }, [list.update.success]);
 
     useEffect(() => {
+        if (list.remove.success) {
+            props.onResetRemoveList();
+            history.push('/class');
+        }
+    }, [list.remove.success]);
+
+    useEffect(() => {
+        if (list.remove.error) {
+            setPopup(<Popup type="error" message={list.remove.error} onClose={props.onResetRemoveList} />);
+        }
+    }, [list.remove.error]);
+
+    useEffect(() => {
         if (props.submission.check.success) {
             window.location.reload();
         }
@@ -197,6 +214,7 @@ const List = (props) => {
                     newQuestionURL={newQuestionURL}
                     removeQuestion={onRemoveQuestionHandler}
                     goBack={onGoBackHandler}
+                    onRemove={removeListHandler}
                     onNewQuestionURLChange={(value) => setNewQuestionURL(value.target.value)}
                 />
             )}
@@ -212,7 +230,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    onExistQuestionToList: (value) => dispatch(actions.existQuestionToList(value)),
+    onExistQuestionToList: (...values) => dispatch(actions.existQuestionToList(...values)),
     onResetExistQuestionToList: (value) => dispatch(actions.resetExistQuestionToList(value)),
     onCreateList: (...values) => dispatch(actions.createList(...values)),
     onResetCreateList: () => dispatch(actions.resetCreateList()),
@@ -225,6 +243,8 @@ const mapDispatchToProps = (dispatch) => ({
     onResetCheckSubmissions: () => dispatch(actions.resetCheckSubmssions()),
     getListCSV: (...values) => dispatch(actions.getListCSV(...values)),
     onResetGetListCSV: () => dispatch(actions.resetGetListCSV()),
+    onRemoveList: (...values) => dispatch(actions.removeList(...values)),
+    onResetRemoveList: () => dispatch(actions.resetRemoveList()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(List);
