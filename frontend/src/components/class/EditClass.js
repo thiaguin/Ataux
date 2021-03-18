@@ -76,7 +76,7 @@ const showUser = (props) => {
                                         />
                                     </Form.Group>
 
-                                    <div style={{ textAlign: 'center' }}>
+                                    <div style={{ textAlign: props.loggedUser.role === 'ADMIN' ? 'center' : 'right' }}>
                                         <Form.Group
                                             style={{ width: '150px', display: 'inline-block' }}
                                             controlId="formGridGoogleButton"
@@ -90,19 +90,21 @@ const showUser = (props) => {
                                                 Voltar
                                             </Button>
                                         </Form.Group>
-                                        <Form.Group
-                                            style={{ width: '150px', display: 'inline-block', marginLeft: '5px' }}
-                                            controlId="formGridGoogleButton"
-                                        >
-                                            <Button
-                                                style={{ minWidth: '150px' }}
-                                                variant="outline-danger"
-                                                type="button"
-                                                onClick={() => setShowModal(true)}
+                                        {props.loggedUser.role === 'ADMIN' && (
+                                            <Form.Group
+                                                style={{ width: '150px', display: 'inline-block', marginLeft: '5px' }}
+                                                controlId="formGridGoogleButton"
                                             >
-                                                Remover
-                                            </Button>
-                                        </Form.Group>
+                                                <Button
+                                                    style={{ minWidth: '150px' }}
+                                                    variant="outline-danger"
+                                                    type="button"
+                                                    onClick={() => setShowModal(true)}
+                                                >
+                                                    Remover
+                                                </Button>
+                                            </Form.Group>
+                                        )}
                                         <Form.Group
                                             controlId="formGridSubmtiButton"
                                             style={{ width: '150px', display: 'inline-block', marginLeft: '5px' }}
