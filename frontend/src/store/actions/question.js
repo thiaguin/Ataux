@@ -17,10 +17,10 @@ const createQuestionFail = (error) => ({
 
 export const resetCreateQuestion = () => ({ type: actionTypes.RESET_CREATE_QUESTION });
 
-export const createQuestion = (body) => (dispatch) => {
+export const createQuestion = (body, token) => (dispatch) => {
     dispatch(createQuestionStart());
     axios
-        .post('/questions/contest', body)
+        .post('/questions/contest', body, { headers: { Authorization: token } })
         .then((response) => dispatch(createQuestionSucces(response.data)))
         .catch((error) => dispatch(createQuestionFail(error)));
 };
@@ -64,10 +64,10 @@ const updateQuestionFail = (error) => ({
 
 export const resetUpdateQuestion = () => ({ type: actionTypes.RESET_UPDATE_QUESTION });
 
-export const updateQuestion = ({ id, ...body }) => (dispatch) => {
+export const updateQuestion = ({ id, token, ...body }) => (dispatch) => {
     dispatch(updateQuestionStart());
     axios
-        .put(`/questions/${id}`, body)
+        .put(`/questions/${id}`, body, { headers: { Authorization: token } })
         .then(() => dispatch(updateQuestionSucces()))
         .catch((error) => dispatch(updateQuestionFail(error)));
 };
@@ -88,10 +88,10 @@ const getAllQuestionsFail = (error) => ({
 
 export const resetGetAllQuestions = () => ({ type: actionTypes.RESET_GET_ALL_QUESTIONS });
 
-export const getAllQuestions = (query) => (dispatch) => {
+export const getAllQuestions = (query, token) => (dispatch) => {
     dispatch(getAllQuestionsStart());
     axios
-        .get(`/questions`, { params: query })
+        .get(`/questions`, { params: query, headers: { Authorization: token } })
         .then((response) => dispatch(getAllQuestionsSucces(response.data)))
         .catch((error) => dispatch(getAllQuestionsFail(error)));
 };

@@ -19,7 +19,7 @@ const Tag = (props) => {
     const [popup, setPopup] = useState(null);
 
     const createHandler = (values) => {
-        props.onCreateTag(values);
+        props.onCreateTag(values, props.token);
     };
 
     const goToEditPageHandler = (tagIdToEdit) => {
@@ -41,6 +41,7 @@ const Tag = (props) => {
     const editHandler = (values) => {
         props.onUpdateTag({
             id: tagId,
+            token: props.token,
             name: values.name,
         });
     };
@@ -105,9 +106,9 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    onCreateTag: (values) => dispatch(actions.createTag(values)),
-    onUpdateTag: (values) => dispatch(actions.updateTag(values)),
+    onCreateTag: (...values) => dispatch(actions.createTag(...values)),
     onResetCreateTag: () => dispatch(actions.resetCreateTag()),
+    onUpdateTag: (...values) => dispatch(actions.updateTag(...values)),
     onResetUpdateTag: () => dispatch(actions.resetUpdateTag()),
     onRemoveTag: (...values) => dispatch(actions.removeTag(...values)),
     onReseteRemoveTag: () => dispatch(actions.resetRemoveTag()),

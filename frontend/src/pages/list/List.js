@@ -39,21 +39,28 @@ const List = (props) => {
     };
 
     const onEditHandler = (listToEdit, values) => {
-        props.onUpdateList(listToEdit.id, {
-            classId: listToEdit.classId,
-            expirationTime: getExpirationTime(values).toISOString(),
-            title: values.title,
-            questions: values.questions.map((question) => question.id),
-        });
+        props.onUpdateList(
+            listToEdit.id,
+            {
+                classId: listToEdit.classId,
+                expirationTime: getExpirationTime(values).toISOString(),
+                title: values.title,
+                questions: values.questions.map((question) => question.id),
+            },
+            props.token,
+        );
     };
 
     const onCreateHandler = (values) => {
-        props.onCreateList({
-            classId,
-            expirationTime: getExpirationTime(values).toISOString(),
-            title: values.title,
-            questions: values.questions.map((question) => question.id),
-        });
+        props.onCreateList(
+            {
+                classId,
+                expirationTime: getExpirationTime(values).toISOString(),
+                title: values.title,
+                questions: values.questions.map((question) => question.id),
+            },
+            props.token,
+        );
     };
 
     const onAddQuestionToListHandler = (url) => {

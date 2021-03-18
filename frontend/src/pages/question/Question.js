@@ -16,12 +16,12 @@ const Question = (props) => {
     const dispatch = useDispatch();
 
     const initQuestion = useCallback((...values) => dispatch(actions.getQuestionById(...values)), [dispatch]);
-    const initEditPage = useCallback(() => dispatch(actions.getAllTags({ take: 'ALL' })), [dispatch]);
+    const initEditPage = useCallback(() => dispatch(actions.getAllTags({ take: 'ALL' }, props.token)), [dispatch]);
 
     const [popup, setPopup] = useState(null);
 
     const createHandler = (values) => {
-        props.onCreateQuestion(values);
+        props.onCreateQuestion(values, props.token);
     };
 
     const goToUrlPageHandler = (url) => {
@@ -66,6 +66,7 @@ const Question = (props) => {
         props.onUpdateQuestion({
             tags: questionTags.map((value) => value.id),
             id: questionId,
+            token: props.token,
             level: values.level,
         });
     };
@@ -174,7 +175,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    onCreateQuestion: (values) => dispatch(actions.createQuestion(values)),
+    onCreateQuestion: (...values) => dispatch(actions.createQuestion(...values)),
     onResetCreateQuestion: () => dispatch(actions.resetCreateQuestion()),
     onUpdateQuestion: (values) => dispatch(actions.updateQuestion(values)),
     onResetUpdateQuestion: () => dispatch(actions.resetUpdateQuestion()),

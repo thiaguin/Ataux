@@ -6,7 +6,7 @@ import * as actions from '../../store/actions';
 
 const TagList = (props) => {
     const dispatch = useDispatch();
-    const onGetAllTags = useCallback((value) => dispatch(actions.getAllTags(value)), [dispatch]);
+    const onGetAllTags = useCallback((...values) => dispatch(actions.getAllTags(...values)), [dispatch]);
 
     const history = useHistory();
 
@@ -51,11 +51,11 @@ const TagList = (props) => {
 
     const resetFilterHandler = () => {
         setQueryName('');
-        onGetAllTags({});
+        onGetAllTags({}, props.token);
     };
 
     useEffect(() => {
-        onGetAllTags({ page, ...query, take: tagsPerPage });
+        onGetAllTags({ page, ...query, take: tagsPerPage }, props.token);
     }, [onGetAllTags, page, query]);
 
     return (
@@ -150,6 +150,7 @@ const TagList = (props) => {
 
 const mapStateToProps = (state) => ({
     tags: state.tag.getAll.data,
+    token: state.login.token,
 });
 
 export default connect(mapStateToProps)(TagList);
