@@ -91,6 +91,23 @@ export class QuestionsService {
         ];
     }
 
+    getLevelByRating(rating?: number): QuestionLevel {
+        if (!rating) return QuestionLevel.MEDIUM;
+
+        switch (true) {
+            case rating <= 1000:
+                return QuestionLevel.VERY_EASY;
+            case rating <= 1500:
+                return QuestionLevel.EASY;
+            case rating <= 2200:
+                return QuestionLevel.MEDIUM;
+            case rating <= 3000:
+                return QuestionLevel.HARD;
+            default:
+                return QuestionLevel.VERY_HARD;
+        }
+    }
+
     async findAndCountAll(query: QueryQuestionDTO): Promise<FindAllQuestionDTO> {
         const page = this.paginateService.getPage(query);
         const queryBuild = createQueryBuilder(Question, 'q');
@@ -164,8 +181,7 @@ export class QuestionsService {
             url: url,
             contestId: contestId,
             problemId: problemId,
-            // TODO: Calculate level
-            level: QuestionLevel.MEDIUM,
+            level: this.getLevelByRating(problem.rating),
             title: problem.name,
             tags: problem.tags,
         };
@@ -182,8 +198,7 @@ export class QuestionsService {
                     url: `https://codeforces.com/contest/${contestId}/problem/${question.index}`,
                     contestId: contestId,
                     problemId: question.index,
-                    // TODO: Calculate level
-                    level: QuestionLevel.MEDIUM,
+                    level: this.getLevelByRating(question.rating),
                     title: question.name,
                     tags: question.tags,
                 };
