@@ -172,6 +172,7 @@ const Class = (props) => {
                     onClickList={goToListPage}
                     gotToClassListsPage={gotToClassListsPageHandler}
                     onClickCSV={getCSVHandler}
+                    loggedUser={loggedUser}
                 />
             )}
             {mode === 'edit' && classData.get.data && (
