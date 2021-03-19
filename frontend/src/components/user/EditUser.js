@@ -4,7 +4,7 @@ import { Form, Button, Col } from 'react-bootstrap';
 import userTypes from '../../enums/userTypes';
 import Modal from '../modal/Modal';
 
-const showUser = (props) => {
+const editUser = (props) => {
     const [showModal, setShowModal] = useState(false);
 
     const parentInStyle = {
@@ -94,28 +94,39 @@ const showUser = (props) => {
                                         </Form.Group>
                                     </Form.Row>
                                     <Form.Row>
-                                        <Form.Group as={Col} controlId="formDateURL" disabled>
-                                            <Form.Label>Tipo</Form.Label>
-                                            <Form.Control
-                                                name="role"
-                                                value={userTypes[values.role]}
-                                                onChange={handleChange}
-                                                type="text"
-                                                as={currUser.role === 'ADMIN' ? 'select' : 'input'}
-                                                disabled={currUser.role !== 'ADMIN'}
-                                            >
-                                                <>
-                                                    <option>{userTypes[values.role]}</option>
-                                                    {currUser.role === 'ADMIN'
-                                                        ? Object.keys(userTypes).map((role) => (
-                                                              <option key={role} value={role}>
-                                                                  {userTypes[role]}
-                                                              </option>
-                                                          ))
-                                                        : null}
-                                                </>
-                                            </Form.Control>
-                                        </Form.Group>
+                                        {currUser.role === 'ADMIN' && (
+                                            <Form.Group as={Col} controlId="formDateURL" disabled>
+                                                <Form.Label>Tipo</Form.Label>
+                                                <Form.Control
+                                                    name="role"
+                                                    value={userTypes[values.role]}
+                                                    onChange={handleChange}
+                                                    type="text"
+                                                    as="select"
+                                                >
+                                                    <>
+                                                        <option>{userTypes[values.role]}</option>?
+                                                        {Object.keys(userTypes).map((role) => (
+                                                            <option key={role} value={role}>
+                                                                {userTypes[role]}
+                                                            </option>
+                                                        ))}
+                                                    </>
+                                                </Form.Control>
+                                            </Form.Group>
+                                        )}
+                                        {currUser.role !== 'ADMIN' && (
+                                            <Form.Group as={Col} controlId="formDateURL" disabled>
+                                                <Form.Label>Tipo</Form.Label>
+                                                <Form.Control
+                                                    name="role"
+                                                    value={userTypes[values.role]}
+                                                    onChange={handleChange}
+                                                    type="text"
+                                                    as="input"
+                                                />
+                                            </Form.Group>
+                                        )}
                                         <Form.Group as={Col} controlId="formDateURL" disabled>
                                             <Form.Label>Criado Em</Form.Label>
                                             <Form.Control
@@ -192,4 +203,4 @@ const showUser = (props) => {
     );
 };
 
-export default showUser;
+export default editUser;

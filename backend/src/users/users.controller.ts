@@ -74,8 +74,8 @@ export class UsersController {
     }
 
     @Put('/:id')
-    update(@Param() params: { id: number }, @Body() body: CreateUserDTO): Promise<void> {
-        return this.userService.update(params.id, body);
+    update(@Param() params: { id: number }, @Body() body: CreateUserDTO, @Req() req): Promise<void> {
+        return this.userService.updateUser(params.id, body, req.user);
     }
 
     @Delete('/:id')

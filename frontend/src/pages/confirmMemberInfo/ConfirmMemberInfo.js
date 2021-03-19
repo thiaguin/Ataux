@@ -34,7 +34,7 @@ const ConfirmInfoPage = (props) => {
     };
 
     const submitHandler = (values) => {
-        props.onCheckValidMissInfo({ ...values, userId: login.userId });
+        props.onCheckValidMissInfo({ ...values, token: login.token, userId: login.userId });
     };
 
     useEffect(() => {
@@ -119,7 +119,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    onCheckValidMissInfo: (value) => dispatch(actions.checkValidMissInfo(value)),
+    onCheckValidMissInfo: (...values) => dispatch(actions.checkValidMissInfo(...values)),
     onResetUpdateUser: () => dispatch(actions.resetUpdateUser()),
     onRefreshToken: (value) => dispatch(actions.refreshToken(value)),
 });

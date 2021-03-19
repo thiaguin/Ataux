@@ -1,6 +1,11 @@
 import { MiddlewareConsumer, Module, ModuleMetadata, RequestMethod } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthenticateMiddleware, MemberQueryMiddleware } from 'src/auth/auth.middleware';
+import {
+    AdminValidationMiddleware,
+    AuthenticateMiddleware,
+    MemberQueryMiddleware,
+    PrivilegedRolesValidationMiddleware,
+} from 'src/auth/auth.middleware';
 import { ListModule } from 'src/list/lists.module';
 import { ClassesController } from './classes.controller';
 import { Class } from './classes.entity';
@@ -23,6 +28,19 @@ export class ClassesModule {
                 { path: '/classes', method: RequestMethod.GET },
                 { path: '/classes/:id', method: RequestMethod.GET },
                 { path: '/classes/register', method: RequestMethod.POST },
+                { path: '/classes/:id/csv', method: RequestMethod.GET },
+                { path: '/classes/:id/add/users', method: RequestMethod.POST },
+                { path: '/classes/:id', method: RequestMethod.PUT },
+                { path: '/classes/:id', method: RequestMethod.DELETE },
+            );
+        consumer
+            .apply(PrivilegedRolesValidationMiddleware)
+            .forRoutes(
+                { path: '/classes', method: RequestMethod.POST },
+                { path: '/classes/:id/csv', method: RequestMethod.GET },
+                { path: '/classes/:id/add/users', method: RequestMethod.POST },
+                { path: '/classes/:id', method: RequestMethod.PUT },
+                { path: '/classes/:id', method: RequestMethod.DELETE },
             );
         consumer.apply(MemberQueryMiddleware).forRoutes({ path: '/classes', method: RequestMethod.GET });
     }

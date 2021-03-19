@@ -14,7 +14,7 @@ const Tag = (props) => {
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const initTag = useCallback((param) => dispatch(actions.getTagById(param)), [dispatch]);
+    const initTag = useCallback((...values) => dispatch(actions.getTagById(...values)), [dispatch]);
 
     const [popup, setPopup] = useState(null);
 
@@ -48,7 +48,7 @@ const Tag = (props) => {
 
     useEffect(() => {
         if (['edit', 'show'].includes(mode) && tagId) {
-            initTag(tagId);
+            initTag(tagId, props.token);
         } else if (mode !== 'create') {
             history.push('/tag');
         }

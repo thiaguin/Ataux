@@ -17,18 +17,18 @@ const updateUserFail = (error) => ({
 
 export const resetUpdateUser = () => ({ type: actionTypes.RESET_UPDATE_USER });
 
-export const updateUser = ({ userId, ...body }) => (dispatch) => {
+export const updateUser = ({ userId, token, ...body }) => (dispatch) => {
     dispatch(updateUserStart());
     axios
-        .put(`/users/${userId}`, body)
+        .put(`/users/${userId}`, body, { headers: { Authorization: token } })
         .then((response) => dispatch(updateUserSucces(response.data)))
         .catch((error) => dispatch(updateUserFail(error)));
 };
 
-export const checkValidMissInfo = (query) => (dispatch) => {
+export const checkValidMissInfo = (query, token) => (dispatch) => {
     dispatch(updateUserStart());
     axios
-        .get(`/users/existHandle`, { params: { handle: query.handle } })
+        .get(`/users/existHandle`, { params: { handle: query.handle }, headers: { Authorization: token } })
         .then(() => dispatch(updateUser(query)))
         .catch((error) => dispatch(updateUserFail(error)));
 };
@@ -49,10 +49,10 @@ const getAllUsersFail = (error) => ({
 
 export const resetGetAllUsers = () => ({ type: actionTypes.RESET_GET_ALL_USERS });
 
-export const getAllUsers = (query = {}) => (dispatch) => {
+export const getAllUsers = (query = {}, token) => (dispatch) => {
     dispatch(getAllUsersStart());
     axios
-        .get(`/users`, { params: query })
+        .get(`/users`, { params: query, headers: { Authorization: token } })
         .then((response) => dispatch(getAllUsersSucces(response.data)))
         .catch((error) => dispatch(getAllUsersFail(error)));
 };
@@ -73,10 +73,10 @@ const getUserByIdFail = (error) => ({
 
 export const resetGetUserById = () => ({ type: actionTypes.RESET_GET_USER_BY_ID });
 
-export const getUserById = (id) => (dispatch) => {
+export const getUserById = (id, token) => (dispatch) => {
     dispatch(getUserByIdStart());
     axios
-        .get(`/users/${id}`)
+        .get(`/users/${id}`, { headers: { Authorization: token } })
         .then((response) => dispatch(getUserByIdSucces(response.data)))
         .catch((error) => dispatch(getUserByIdFail(error)));
 };
@@ -97,10 +97,10 @@ const updatePasswordUserFail = (error) => ({
 
 export const resetUpdatePasswordUser = () => ({ type: actionTypes.RESET_UPDATE_USER_PASSWORD });
 
-export const updatePasswordUser = ({ userId, ...body }) => (dispatch) => {
+export const updatePasswordUser = ({ userId, token, ...body }) => (dispatch) => {
     dispatch(updatePasswordUserStart());
     axios
-        .put(`/users/${userId}/resetPassword`, body)
+        .put(`/users/${userId}/resetPassword`, body, { headers: { Authorization: token } })
         .then((response) => dispatch(updatePasswordUserSucces(response.data)))
         .catch((error) => dispatch(updatePasswordUserFail(error)));
 };

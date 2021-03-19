@@ -38,21 +38,23 @@ const showListUsers = (props) => {
                                 >
                                     {props.list.title} - Usuários
                                 </h3>
-                                <div style={{ display: 'inline-block', position: 'relative', float: 'right' }}>
-                                    <Button
-                                        variant="outline-secondary"
-                                        style={{ marginRight: '7px' }}
-                                        type="button"
-                                        onClick={() => props.onClickCSV(props.list.id)}
-                                        onMouseEnter={() => setCsvButtonHover(!csvButtonHover)}
-                                        onMouseLeave={() => setCsvButtonHover(!csvButtonHover)}
-                                    >
-                                        <Image src={csvButtonHover ? csvImgHover : csvImg} style={csvImgStyle} />
-                                    </Button>
-                                    <Button variant="secondary" type="button" onClick={props.goToEditPage}>
-                                        Editar Lista
-                                    </Button>
-                                </div>
+                                {props.loggedUser.role !== 'MEMBER' && (
+                                    <div style={{ display: 'inline-block', position: 'relative', float: 'right' }}>
+                                        <Button
+                                            variant="outline-secondary"
+                                            style={{ marginRight: '7px' }}
+                                            type="button"
+                                            onClick={() => props.onClickCSV(props.list.id)}
+                                            onMouseEnter={() => setCsvButtonHover(!csvButtonHover)}
+                                            onMouseLeave={() => setCsvButtonHover(!csvButtonHover)}
+                                        >
+                                            <Image src={csvButtonHover ? csvImgHover : csvImg} style={csvImgStyle} />
+                                        </Button>
+                                        <Button variant="secondary" type="button" onClick={props.goToEditPage}>
+                                            Editar Lista
+                                        </Button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <Table striped bordered hover size="sm">

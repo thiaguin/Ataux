@@ -15,12 +15,12 @@ const User = (props) => {
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const initUser = useCallback((param) => dispatch(actions.getUserById(param)), [dispatch]);
+    const initUser = useCallback((...values) => dispatch(actions.getUserById(...values)), [dispatch]);
 
     const [popup, setPopup] = useState(null);
 
-    const goToEditPageHandler = (userIdToEdit) => {
-        history.push(`/user/edit/${userIdToEdit}`);
+    const goToEditPageHandler = (id) => {
+        history.push(`/user/edit/${id}`);
     };
 
     const goBackHandler = () => {
@@ -28,11 +28,11 @@ const User = (props) => {
     };
 
     const editHandler = (values) => {
-        props.onUpdateUser({ ...values, userId });
+        props.onUpdateUser({ ...values, userId, token: props.token });
     };
 
     const editPasswordHandler = ({ currentPassword, newPassword }) => {
-        props.onUpdateUserPassword({ currentPassword, newPassword, userId });
+        props.onUpdateUserPassword({ currentPassword, newPassword, userId, token: props.token });
     };
 
     const goToEditPasswordPageHandler = () => {
@@ -45,7 +45,7 @@ const User = (props) => {
 
     useEffect(() => {
         if (['edit', 'show', 'updatePassword'].includes(mode) && userId) {
-            initUser(userId);
+            initUser(userId, props.token);
         }
     }, [initUser, userId, mode]);
 
@@ -121,9 +121,9 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    onUpdateUser: (value) => dispatch(actions.updateUser(value)),
+    onUpdateUser: (...values) => dispatch(actions.updateUser(...values)),
     onResetUpdateUser: () => dispatch(actions.resetUpdateUser()),
-    onUpdateUserPassword: (value) => dispatch(actions.updatePasswordUser(value)),
+    onUpdateUserPassword: (...values) => dispatch(actions.updatePasswordUser(...values)),
     onResetUpdateUserPassword: () => dispatch(actions.resetUpdatePasswordUser()),
     onRemoveUser: (...values) => dispatch(actions.removeUser(...values)),
     onReseteRemoveUser: () => dispatch(actions.resetRemoveUser()),
