@@ -72,13 +72,14 @@ const showListUsers = (props) => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {props.users.map((el, index) => (
-                                    <tr key={el.user.id} id={el.id}>
-                                        <td key="key" style={{ textAlign: 'center' }}>
-                                            {index + 1}
-                                        </td>
-                                        <td key="name">
-                                            {/* <>
+                                {props.users &&
+                                    props.users.map((el, index) => (
+                                        <tr key={el.user.id} id={el.id}>
+                                            <td key="key" style={{ textAlign: 'center' }}>
+                                                {index + 1}
+                                            </td>
+                                            <td key="name">
+                                                {/* <>
                                                 <p
                                                     onClick={() =>
                                                         props.onClickQuestion(props.list.id, currQuestion.id)
@@ -91,22 +92,25 @@ const showListUsers = (props) => {
                                                             : {}
                                                     }
                                                 > */}
-                                            {el.user.name}
-                                            {/* </p>
+                                                {el.user.name}
+                                                {/* </p>
                                             </> */}
-                                        </td>
-                                        <td key="handle" style={{ textAlign: 'center' }}>
-                                            {el.user.handle}
-                                        </td>
-                                        {el.questions.map((question) => (
-                                            <td key={question.questionId} style={{ textAlign: 'center' }}>{`${
-                                                question.status === 'BLANK' ? '' : resultTypes[question.status]
-                                            } (${question.count})`}</td>
-                                        ))}
-                                    </tr>
-                                ))}
+                                            </td>
+                                            <td key="handle" style={{ textAlign: 'center' }}>
+                                                {el.user.handle}
+                                            </td>
+                                            {el.questions.map((question) => (
+                                                <td key={question.questionId} style={{ textAlign: 'center' }}>{`${
+                                                    question.status === 'BLANK' ? '' : resultTypes[question.status]
+                                                } (${question.count})`}</td>
+                                            ))}
+                                        </tr>
+                                    ))}
                             </tbody>
                         </Table>
+                        {!props.users || props.users.length === 0 ? (
+                            <p style={{ textAlign: 'center' }}>Não foi encontrado nenhum usuário para essa lista</p>
+                        ) : null}
                         <div style={{ textAlign: 'center' }}>
                             <Form.Group
                                 style={{ width: '150px', display: 'inline-block' }}

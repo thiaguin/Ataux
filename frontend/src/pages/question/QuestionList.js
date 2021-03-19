@@ -37,7 +37,7 @@ const QuestionList = (props) => {
 
     const questionsPerPage = 30;
     const initialPage = 0;
-    const lastPage = Math.floor((questionsCount - 1) / questionsPerPage);
+    const lastPage = questionsCount ? Math.floor((questionsCount - 1) / questionsPerPage) : 0;
 
     const clickAddQuestionHandler = () => {
         history.push('/question/create');
@@ -199,6 +199,9 @@ const QuestionList = (props) => {
                                 ))}
                             </tbody>
                         </Table>
+                        {props.questions.count === 0 && (
+                            <p style={{ textAlign: 'center' }}>Não foi encontrado nenhuma questão</p>
+                        )}
                         <Pagination
                             style={{
                                 textAlign: 'center',

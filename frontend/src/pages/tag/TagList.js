@@ -31,11 +31,9 @@ const TagList = (props) => {
 
     const tagsPerPage = 30;
     const initialPage = 0;
-    const lastPage = Math.floor((tagsCount - 1) / tagsPerPage);
+    const lastPage = tagsCount > 0 ? Math.floor((tagsCount - 1) / tagsPerPage) : 0;
 
     const clickAddTagHandler = () => {
-        // eslint-disable-next-line no-console
-        console.log('clicou');
         props.onResetCreateTag();
         history.push('/tag/create');
     };
@@ -129,6 +127,9 @@ const TagList = (props) => {
                                 ))}
                             </tbody>
                         </Table>
+                        {props.tags.count === 0 && (
+                            <p style={{ textAlign: 'center' }}>Não foi encontrado nenhuma tag</p>
+                        )}
                         <Pagination
                             style={{
                                 textAlign: 'center',

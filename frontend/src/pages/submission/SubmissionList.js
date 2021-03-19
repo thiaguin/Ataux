@@ -35,7 +35,7 @@ const SubmissionList = (props) => {
 
     const submissionsPerPage = 30;
     const initialPage = 0;
-    const lastPage = Math.floor((submissionscount - 1) / submissionsPerPage);
+    const lastPage = submissionscount > 0 ? Math.floor((submissionscount - 1) / submissionsPerPage) : 0;
 
     const clickQuestionHandler = (el) => {
         history.push(`/question/show/${el.questionId}`);
@@ -140,6 +140,9 @@ const SubmissionList = (props) => {
                                 ))}
                             </tbody>
                         </Table>
+                        {submissions.count === 0 && (
+                            <p style={{ textAlign: 'center' }}>Não foi encontrado nenhuma submissão</p>
+                        )}
                         <Pagination
                             style={{
                                 textAlign: 'center',

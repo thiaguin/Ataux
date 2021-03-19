@@ -36,7 +36,7 @@ const UserList = (props) => {
 
     const usersPerPage = 30;
     const initialPage = 0;
-    const lastPage = Math.floor((usersCount - 1) / usersPerPage);
+    const lastPage = usersCount ? Math.floor((usersCount - 1) / usersPerPage) : 0;
 
     // const clickQuestionHandler = (el) => {
     //     history.push(`/question/show/${el.questionId}`);
@@ -123,6 +123,7 @@ const UserList = (props) => {
                                 ))}
                             </tbody>
                         </Table>
+                        {users.count === 0 && <p style={{ textAlign: 'center' }}>Não foi encontrado nenhum usuário</p>}
                         <Pagination
                             style={{
                                 textAlign: 'center',
