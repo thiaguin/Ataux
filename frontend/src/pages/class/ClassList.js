@@ -33,7 +33,7 @@ const ClassList = (props) => {
 
     const classesPerPage = 30;
     const initialPage = 0;
-    const lastPage = Math.floor((classesCount - 1) / classesPerPage);
+    const lastPage = classesCount ? Math.floor((classesCount - 1) / classesPerPage) : 0;
 
     const clickAddClassHandler = () => {
         history.push('/class/create');
@@ -151,6 +151,9 @@ const ClassList = (props) => {
                                 ))}
                             </tbody>
                         </Table>
+                        {props.classes.count === 0 && (
+                            <p style={{ textAlign: 'center' }}>Não foi encontrado nenhuma turma</p>
+                        )}
                         <Pagination
                             style={{
                                 textAlign: 'center',

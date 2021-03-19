@@ -114,6 +114,9 @@ const showClassList = (props) => {
                                 ))}
                             </tbody>
                         </Table>
+                        {props.class.lists.length === 0 && (
+                            <p style={{ textAlign: 'center' }}>Não foi encontrado nenhuma lista para essa turma</p>
+                        )}
                         <div style={{ textAlign: 'center' }}>
                             <Form.Group
                                 style={{ width: '150px', display: 'inline-block' }}

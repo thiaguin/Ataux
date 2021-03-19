@@ -112,6 +112,9 @@ const showClassUser = (props) => {
                                 ))}
                             </tbody>
                         </Table>
+                        {props.class.users.length === 0 && (
+                            <p style={{ textAlign: 'center' }}>Não foi encontrado nenhum usuário para essa turma</p>
+                        )}
                         <div style={{ textAlign: 'center' }}>
                             <Form.Group
                                 style={{ width: '150px', display: 'inline-block' }}

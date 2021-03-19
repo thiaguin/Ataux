@@ -102,6 +102,9 @@ const showListQuestion = (props) => {
                                 ))}
                             </tbody>
                         </Table>
+                        {props.list.questions.length === 0 && (
+                            <p style={{ textAlign: 'center' }}>Não foi encontrado nenhuma questão para essa lista</p>
+                        )}
                         <div style={{ textAlign: 'center' }}>
                             <Form.Group
                                 style={{ width: '150px', display: 'inline-block' }}
