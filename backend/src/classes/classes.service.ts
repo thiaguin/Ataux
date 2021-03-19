@@ -107,14 +107,16 @@ export class ClassesService {
     async getToCSV(id: number, res: Response) {
         const classResume = await this.getResume(id);
         const columnsName = [
-            'Name',
+            'Nome',
             'Handle',
             'Matrícula',
             ...classResume.lists.map((el, index) => `List ${index + 1} - ${el.title}`),
+            'Média',
         ];
         const rows = [];
         const usersClass = {};
         const users = {};
+        const listCount = classResume.lists.length;
 
         for (const user of classResume.users) {
             users[user.user.id] = {
@@ -151,13 +153,18 @@ export class ClassesService {
             const row = [currentUser.name, currentUser.handle, currentUser.registration];
             const rowToInsert = {};
 
+            let sumList = 0;
+
             for (const list of classResume.lists) {
                 row.push(usersClass[key][list.id].grade);
+                sumList += usersClass[key][list.id].grade;
             }
 
             for (const index in columnsName) {
                 rowToInsert[columnsName[index]] = row[index];
             }
+
+            rowToInsert['Média'] = (sumList / listCount).toFixed(2);
 
             rows.push(rowToInsert);
         }

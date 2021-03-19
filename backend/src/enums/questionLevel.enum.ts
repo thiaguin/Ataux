@@ -1,7 +1,7 @@
 export enum QuestionLevel {
-    VERY_EASY = 'Muito Fácil',
+    VERY_EASY = 'VERY_EASY',
     EASY = 'EASY',
     MEDIUM = 'MEDIUM',
     HARD = 'HARD',
-    VERY_HARD = 'Muito Difícil',
+    VERY_HARD = 'VERY_HARD',
 }

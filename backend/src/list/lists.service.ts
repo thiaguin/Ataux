@@ -90,7 +90,7 @@ export class ListService {
                 }
             }
 
-            value.grade = maxGrade > 0 ? ((userWeight * 100) / maxGrade).toFixed(2) : '0';
+            value.grade = maxGrade > 0 ? ((userWeight * 10) / maxGrade).toFixed(2) : '0';
         }
 
         return list;
@@ -133,12 +133,14 @@ export class ListService {
             relations: ['user', 'questions', 'questions.question'],
         });
 
-        const users = userList.map((el) => {
-            return {
-                ...el,
-                questions: this.getUserQuestions(el.questions, userQuestionDefault),
-            };
-        });
+        const users = userList
+            .filter((el) => el.user.role === UserRole.MEMBER)
+            .map((el) => {
+                return {
+                    ...el,
+                    questions: this.getUserQuestions(el.questions, userQuestionDefault),
+                };
+            });
 
         return <any>users;
     }
@@ -155,6 +157,7 @@ export class ListService {
 
     async getToCSV(id: number, res: Response) {
         const listResume = await this.getResume(id, {});
+        const listResumeUsers = listResume.users.filter((el) => el.user[0].role === UserRole.MEMBER);
         const columnsName = [
             'Name',
             'Handle',
@@ -168,7 +171,7 @@ export class ListService {
 
         const rows = [];
 
-        for (const user of listResume.users) {
+        for (const user of listResumeUsers) {
             const questionsSubmmited = {};
             const [currentUser] = <any>user.user;
 
