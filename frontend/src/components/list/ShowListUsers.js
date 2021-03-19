@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button, Form, Image, Table } from 'react-bootstrap';
 import csvImgHover from '../../assets/file-earmark-spreadsheet-fill.svg';
 import csvImg from '../../assets/file-earmark-spreadsheet.svg';
+import resultTypes from '../../enums/resultTypes';
 
 const showListUsers = (props) => {
     const [csvButtonHover, setCsvButtonHover] = useState(true);
@@ -98,9 +99,9 @@ const showListUsers = (props) => {
                                             {el.user.handle}
                                         </td>
                                         {el.questions.map((question) => (
-                                            <td
-                                                key={question.questionId}
-                                            >{`${question.status} (${question.count})`}</td>
+                                            <td key={question.questionId} style={{ textAlign: 'center' }}>{`${
+                                                question.status === 'BLANK' ? '' : resultTypes[question.status]
+                                            } (${question.count})`}</td>
                                         ))}
                                     </tr>
                                 ))}

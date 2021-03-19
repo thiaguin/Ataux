@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, Form, Nav, Table } from 'react-bootstrap';
 import levelTypes from '../../enums/levelTypes';
 import SpinnerButton from '../spinnerButton/SpinnerButton';
+import resultTypes from '../../enums/resultTypes';
 
 const showListQuestion = (props) => {
     const parentInStyle = {
@@ -94,7 +95,7 @@ const showListQuestion = (props) => {
                                             style={{ textAlign: 'center', verticalAlign: 'middle' }}
                                         >
                                             {props.currentUser.role === 'MEMBER'
-                                                ? currQuestion.status
+                                                ? resultTypes[currQuestion.status]
                                                 : `${currQuestion.status}/${props.usersCount}`}
                                         </td>
                                     </tr>
