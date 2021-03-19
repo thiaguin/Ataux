@@ -14,24 +14,17 @@ const metadata: ModuleMetadata = {
 @Module(metadata)
 export class SubmissionsModule {
     public configure(consumer: MiddlewareConsumer) {
-        consumer.apply(AuthenticateMiddleware).forRoutes(
-            // { path: 'lists', method: RequestMethod.GET },
-            // { path: 'lists', method: RequestMethod.POST },
-            // { path: 'lists/:id', method: RequestMethod.GET },
-            // { path: 'lists/:id', method: RequestMethod.PUT },
-            { path: 'submissions', method: RequestMethod.GET },
-            { path: 'submissions/:id', method: RequestMethod.GET },
-        );
-        consumer.apply(MemberQueryMiddleware).forRoutes(
-            // { path: 'lists', method: RequestMethod.GET },
-            // { path: 'lists', method: RequestMethod.POST },
-            // { path: 'lists/:id', method: RequestMethod.GET },
-            // { path: 'lists/:id', method: RequestMethod.PUT },
-            { path: 'submissions', method: RequestMethod.GET },
-            { path: 'submissions/:id', method: RequestMethod.GET },
-        );
-        // consumer
-        //     .apply(AuthorizeColaboratorMiddleware)
-        //     .forRoutes({ path: 'lists', method: RequestMethod.POST }, { path: 'lists/:id', method: RequestMethod.PUT });
+        consumer
+            .apply(AuthenticateMiddleware)
+            .forRoutes(
+                { path: 'submissions', method: RequestMethod.GET },
+                { path: 'submissions/:id', method: RequestMethod.GET },
+            );
+        consumer
+            .apply(MemberQueryMiddleware)
+            .forRoutes(
+                { path: 'submissions', method: RequestMethod.GET },
+                { path: 'submissions/:id', method: RequestMethod.GET },
+            );
     }
 }

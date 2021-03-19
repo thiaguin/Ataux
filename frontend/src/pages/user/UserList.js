@@ -43,7 +43,7 @@ const UserList = (props) => {
     // };
 
     useEffect(() => {
-        onInitPage({ page });
+        onInitPage({ page }, props.token);
     }, [onInitPage, page]);
 
     useEffect(() => {
@@ -147,6 +147,7 @@ const UserList = (props) => {
 
 const mapStateToProps = (state) => ({
     user: state.user,
+    token: state.login.token,
 });
 
 const mapDispatchToProps = (dispatch) => ({

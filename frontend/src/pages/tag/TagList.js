@@ -34,6 +34,9 @@ const TagList = (props) => {
     const lastPage = Math.floor((tagsCount - 1) / tagsPerPage);
 
     const clickAddTagHandler = () => {
+        // eslint-disable-next-line no-console
+        console.log('clicou');
+        props.onResetCreateTag();
         history.push('/tag/create');
     };
 
@@ -153,4 +156,8 @@ const mapStateToProps = (state) => ({
     token: state.login.token,
 });
 
-export default connect(mapStateToProps)(TagList);
+const mapDispatchToProps = (dispatch) => ({
+    onResetCreateTag: () => dispatch(actions.resetCreateTag()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(TagList);

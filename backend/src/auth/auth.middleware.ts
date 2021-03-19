@@ -71,3 +71,36 @@ export class MemberQueryMiddleware implements NestMiddleware {
         next();
     }
 }
+
+@Injectable()
+class RoleValidationMiddleware implements NestMiddleware {
+    private alloweds: string[];
+
+    constructor(alloweds: string[]) {
+        this.alloweds = alloweds;
+    }
+
+    async use(req: Request, res: Response, next: () => void): Promise<void> {
+        const loggedUser = <PayloadUserDTO>req.user;
+
+        if (!this.alloweds.includes(loggedUser.role)) {
+            throw new HttpException({ enity: 'User', type: FORBIDDEN }, 403);
+        }
+
+        next();
+    }
+}
+
+@Injectable()
+export class AdminValidationMiddleware extends RoleValidationMiddleware {
+    constructor() {
+        super([UserRole.ADMIN]);
+    }
+}
+
+@Injectable()
+export class PrivilegedRolesValidationMiddleware extends RoleValidationMiddleware {
+    constructor() {
+        super([UserRole.ADMIN, UserRole.COLABORATOR]);
+    }
+}

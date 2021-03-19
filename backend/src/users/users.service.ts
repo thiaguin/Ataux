@@ -19,6 +19,7 @@ import { CodeforcesService } from 'src/codeforces/codeforces.service';
 import { PaginateService } from 'src/utils/paginate.service';
 import { QueryService } from 'src/utils/query.service';
 import { PayloadUserDTO } from './dto/payload-user.dto';
+import { UserRole } from 'src/enums/userRole.enum';
 
 @Injectable()
 export class UsersService {
@@ -113,10 +114,17 @@ export class UsersService {
     }
 
     async update(id: number, body: UpdateUserDTO): Promise<void> {
-        //TODO Make improvements
         const user = await this.findById(id);
         delete body.password;
         await this.repository.update({ id: user.id }, body);
+    }
+
+    async updateUser(id: number, body: UpdateUserDTO, loggedUser: PayloadUserDTO): Promise<void> {
+        if (loggedUser.role !== UserRole.ADMIN && `${id}` !== `${loggedUser.id}`) {
+            throw new HttpException({ entity: 'User', type: FORBIDDEN }, 403);
+        }
+
+        await this.update(id, body);
     }
 
     async create(body: CreateUserDTO): Promise<User> {

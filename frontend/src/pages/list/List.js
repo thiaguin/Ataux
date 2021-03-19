@@ -207,6 +207,7 @@ const List = (props) => {
                     goBack={onGoBackHandler}
                     gotToListUsersPage={onChangeShowMode}
                     onClickCSV={onGetCSVHandler}
+                    loggedUser={props.loggedUser}
                 />
             )}
             {mode === 'edit' && list.get.data && (
