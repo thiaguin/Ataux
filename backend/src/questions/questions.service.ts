@@ -18,6 +18,9 @@ import { PaginateService } from 'src/utils/paginate.service';
 import { QueryService } from 'src/utils/query.service';
 import { EntityToQuery } from 'src/utils/dto/entityQuery.dto';
 import { Query } from 'typeorm/driver/Query';
+import { BAD_REQUEST, NOT_FOUND, NOT_UNIQUE } from 'src/resource/errorType.resource';
+import { PayloadUserDTO } from 'src/users/dto/payload-user.dto';
+import { UserRole } from 'src/enums/userRole.enum';
 
 @Injectable()
 export class QuestionsService {
@@ -56,7 +59,7 @@ export class QuestionsService {
             }
         }
 
-        throw new HttpException('BAD_REQUEST', 400);
+        throw new HttpException({ entity: 'CodeforcesUrl', type: BAD_REQUEST }, 400);
     }
 
     getContestByURL(url: string): string {
@@ -88,11 +91,28 @@ export class QuestionsService {
         ];
     }
 
+    getLevelByRating(rating?: number): QuestionLevel {
+        if (!rating) return QuestionLevel.MEDIUM;
+
+        switch (true) {
+            case rating <= 1000:
+                return QuestionLevel.VERY_EASY;
+            case rating <= 1500:
+                return QuestionLevel.EASY;
+            case rating <= 2200:
+                return QuestionLevel.MEDIUM;
+            case rating <= 3000:
+                return QuestionLevel.HARD;
+            default:
+                return QuestionLevel.VERY_HARD;
+        }
+    }
+
     async findAndCountAll(query: QueryQuestionDTO): Promise<FindAllQuestionDTO> {
         const page = this.paginateService.getPage(query);
         const queryBuild = createQueryBuilder(Question, 'q');
         const entitiesRelation = this.getEntitiesRelation();
-        const where = this.queryService.getQuery(entitiesRelation, <Query>query);
+        const where = this.queryService.getQueryToQueryBuilder(entitiesRelation, <Query>query);
 
         const [questions, count] = await queryBuild
             .leftJoinAndMapMany('q.tags', 'q.tags', 'qt')
@@ -100,6 +120,7 @@ export class QuestionsService {
             .where(where)
             .take(page.take)
             .skip(page.skip)
+            .orderBy('q.id')
             .getManyAndCount();
 
         return { data: questions, count };
@@ -108,6 +129,7 @@ export class QuestionsService {
     async findOne(query: QueryQuestionDTO): Promise<Question> {
         const question = await this.repository.findOne({
             where: query,
+            relations: ['tags', 'tags.tag'],
         });
 
         if (question) {
@@ -115,14 +137,22 @@ export class QuestionsService {
         }
     }
 
-    async findById(id: number): Promise<Question> {
-        const question = await this.findOne({ id });
+    async findById(id: number, query: any = {}, user: PayloadUserDTO): Promise<Question> {
+        const queryBuild = createQueryBuilder(Question, 'q');
+        const entitiesRelation = this.getEntitiesRelation();
+        const where = `q.id = '${id}' and ${this.queryService.getQueryToQueryBuilder(entitiesRelation, query)}`;
+        const question = await queryBuild
+            .leftJoinAndMapMany('q.tags', 'q.tags', 'qt')
+            .leftJoinAndMapOne('qt.tag', 'qt.tag', 't')
+            .addSelect(user.role !== UserRole.MEMBER ? 'q.resolution' : '')
+            .where(where)
+            .getOne();
 
         if (question) {
             return question;
         }
 
-        throw new HttpException('NOT_FOUND', 404);
+        throw new HttpException({ entity: 'Question', type: NOT_FOUND }, 404);
     }
 
     async findByURL(url: string): Promise<Question> {
@@ -133,7 +163,7 @@ export class QuestionsService {
             return question;
         }
 
-        throw new HttpException('NOT_FOUND', 404);
+        return await this.create({ url });
     }
 
     async generateNewQuestion(url: string): Promise<NewQuestionDTO> {
@@ -144,41 +174,60 @@ export class QuestionsService {
         const question = await this.findOne({ contestId, problemId });
 
         if (question) {
-            throw new HttpException('NotUnique', 409);
+            throw new HttpException({ entity: 'Question', type: NOT_UNIQUE }, 409);
         }
 
         return {
             url: url,
             contestId: contestId,
             problemId: problemId,
-            // TODO: Calculate level
-            level: QuestionLevel.MEDIUM,
+            level: this.getLevelByRating(problem.rating),
             title: problem.name,
             tags: problem.tags,
         };
     }
 
     async addContestQuestions(url: string): Promise<AddQuestionsByContestResult> {
-        const contestId = await this.getContestByURL(url);
+        const { contestId, problemId } = this.getInfoByURL(url);
         const contest = await this.codeforcesService.getContest(contestId);
-        const result = { SUCCESS: [], ERROR: [] };
+        const result: AddQuestionsByContestResult = { resume: { SUCCESS: [], ERROR: [] } };
 
         for (const question of contest.problems) {
             try {
-                const problemId = question.index;
                 const newQuestion = {
-                    url: `https://codeforces.com/contest/${contestId}/problem/${problemId}`,
+                    url: `https://codeforces.com/contest/${contestId}/problem/${question.index}`,
                     contestId: contestId,
-                    problemId: problemId,
-                    // TODO: Calculate level
-                    level: QuestionLevel.MEDIUM,
+                    problemId: question.index,
+                    level: this.getLevelByRating(question.rating),
                     title: question.name,
                     tags: question.tags,
                 };
-                await this.createQuestion(newQuestion);
-                result.SUCCESS.push(question.index);
+
+                const currQuestion = await this.repository.findOne({ where: { contestId, problemId: question.index } });
+                const notUniqueError = { entity: 'Question', type: NOT_UNIQUE };
+                if (currQuestion) {
+                    result.resume.ERROR.push({ questionId: question.index, error: notUniqueError });
+                    if (currQuestion.problemId === problemId) {
+                        result.question = { questionId: `${currQuestion.id}`, error: notUniqueError };
+                    }
+                } else {
+                    const questionCreated = await this.createQuestion(newQuestion);
+                    if (questionCreated.problemId === problemId)
+                        result.question = { questionId: `${questionCreated.id}` };
+                    result.resume.SUCCESS.push(question.index);
+                }
             } catch (error) {
-                result.ERROR.push(question.index);
+                result.resume.ERROR.push({
+                    questionId: question.index,
+                    error: { entity: 'Question', type: error.message },
+                });
+
+                if (question.index === problemId) {
+                    result.question = {
+                        questionId: null,
+                        error: { entity: 'Question', type: error.message },
+                    };
+                }
             }
         }
 
@@ -210,30 +259,40 @@ export class QuestionsService {
             return entity;
         });
     }
+
     async create(body: CreateQuestionDTO): Promise<Question> {
         const question = await this.generateNewQuestion(body?.url);
         return this.createQuestion(question);
     }
 
     async update(id: number, body: UpdateQuestionDTO): Promise<void> {
+        const { tags, ...questionBody } = body;
+        const questionTags = tags || [];
         const question = await this.repository.findOne({
             where: { id },
         });
 
         if (!question) {
-            throw new HttpException('NOT_FOUND', 404);
+            throw new HttpException({ entity: 'Question', type: NOT_FOUND }, 404);
         }
 
-        await this.repository.update({ id }, body);
+        return await getManager().transaction(async (transaction) => {
+            await transaction.update(Question, { id }, questionBody);
+            await transaction.delete(QuestionTag, { questionId: id });
+            const newQuestionTags = questionTags.map((tagId) => {
+                return transaction.create(QuestionTag, { questionId: id, tagId: tagId });
+            });
+            await transaction.save(newQuestionTags);
+        });
     }
 
     async remove(id: number): Promise<void> {
         const question = await this.repository.findOne({ where: { id } });
 
         if (!question) {
-            throw new HttpException('NOT_FOUND', 404);
+            throw new HttpException({ entity: 'Question', type: NOT_FOUND }, 404);
         }
 
-        this.repository.delete(id);
+        this.repository.remove(question);
     }
 }

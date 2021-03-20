@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import * as yup from 'yup';
+import * as Yup from 'yup';
 import { Formik } from 'formik';
 import { Form, Button, Toast } from 'react-bootstrap';
 import { connect } from 'react-redux';
@@ -13,15 +13,15 @@ const RecoverPassword = (props) => {
 
     const history = useHistory();
 
-    const schema = yup.object().shape({
-        email: yup.string().email().required(),
+    const schema = Yup.object().shape({
+        email: Yup.string().email().required(),
     });
 
     const parentInStyle = {
         margin: '10% 25%',
         width: '50%',
         justifyContent: 'center',
-        border: '3px solid silver',
+        border: '3px solid lightgrey',
         borderRadius: '0.2em',
     };
 
@@ -57,8 +57,7 @@ const RecoverPassword = (props) => {
 
     useEffect(() => {
         if (props.data.error) {
-            setPopup(<Popup type="error" message={props.data.error} />);
-            props.onResetRecoverPassword();
+            setPopup(<Popup type="error" message={props.data.error} onClose={props.onResetRecoverPassword} />);
         }
     }, [props.data.error]);
 
@@ -69,7 +68,7 @@ const RecoverPassword = (props) => {
                     <div style={parentInStyle}>
                         <div style={childInStyle}>
                             <Form onSubmit={handleSubmit}>
-                                <Form.Group controlId="formBasicEmail" onSubmit={() => submitHandler(values)}>
+                                <Form.Group controlId="formEmail" onSubmit={() => submitHandler(values)}>
                                     <Form.Label>Email</Form.Label>
                                     <Form.Control
                                         name="email"

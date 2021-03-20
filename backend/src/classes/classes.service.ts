@@ -2,7 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PayloadUserDTO } from 'src/users/dto/payload-user.dto';
 import { UserClass } from 'src/usersClasses/usersClasses.entity';
-import { getCustomRepository, getManager, Repository } from 'typeorm';
+import { createQueryBuilder, getCustomRepository, getManager, Repository } from 'typeorm';
 import { Class } from './classes.entity';
 import { ClassRepository } from './classes.repository';
 import { CreateClassDTO } from './dto/create-class.dto';
@@ -14,6 +14,16 @@ import { QuestionStatus } from 'src/enums/questionStatus.enum';
 import { UserResumeClass } from './dto/userResume-class.dto';
 import { CsvService } from 'src/utils/csv.service';
 import { Response } from 'express';
+import { EntityToQuery } from 'src/utils/dto/entityQuery.dto';
+import { List } from 'src/list/lists.entity';
+import { User } from 'src/users/users.entity';
+import { Query } from 'typeorm/driver/Query';
+import { PaginateService } from 'src/utils/paginate.service';
+import { QueryService } from 'src/utils/query.service';
+import { QueryClassDTO } from './dto/query-class.dto';
+import { BAD_REQUEST, NOT_FOUND, NOT_UNIQUE } from 'src/resource/errorType.resource';
+import { UserRepository } from 'src/users/users.repository';
+import { UpdateClassDTO } from './dto/update-class.dto';
 
 @Injectable()
 export class ClassesService {
@@ -21,10 +31,13 @@ export class ClassesService {
     private repository: Repository<Class>;
     private listService: ListService;
     private csvService: CsvService;
-
+    private paginateService: PaginateService;
+    private queryService: QueryService;
     constructor() {
         this.listService = new ListService();
         this.csvService = new CsvService();
+        this.paginateService = new PaginateService();
+        this.queryService = new QueryService();
         this.repository = getCustomRepository(ClassRepository);
     }
 
@@ -42,13 +55,28 @@ export class ClassesService {
         return result.join('');
     }
 
+    private getEntitiesRelation(): EntityToQuery[] {
+        return [
+            { entity: Class, nick: 'c' },
+            { entity: List, nick: 'cl' },
+            { entity: UserClass, nick: 'cu' },
+            { entity: User, nick: 'cuu' },
+        ];
+    }
+
     async getResume(id: number): Promise<Class> {
         const entity = await this.findById(id);
+        const classUsers = entity.users.filter((user) => user.user.role === UserRole.MEMBER);
         const listResumes = [];
 
         for (const list of entity.lists) {
             const listResume = await this.listService.getResume(list.id, {});
+            const membersListResume = listResume.users.filter((userList) => {
+                const [currUser] = <any>userList.user;
+                return currUser.role === UserRole.MEMBER;
+            });
 
+            listResume.users = membersListResume;
             const usersResume = [];
 
             for (const user of listResume.users) {
@@ -73,22 +101,29 @@ export class ClassesService {
             listResumes.push({ ...listResume, users: usersResume });
         }
 
-        return { ...entity, lists: listResumes };
+        return <any>{ ...entity, lists: listResumes, users: classUsers };
     }
 
     async getToCSV(id: number, res: Response) {
         const classResume = await this.getResume(id);
         const columnsName = [
-            'Name',
+            'Nome',
             'Handle',
+            'Matrícula',
             ...classResume.lists.map((el, index) => `List ${index + 1} - ${el.title}`),
+            'Média',
         ];
         const rows = [];
         const usersClass = {};
         const users = {};
+        const listCount = classResume.lists.length;
 
         for (const user of classResume.users) {
-            users[user.user.id] = { name: user.user.name, handle: user.user.handle };
+            users[user.user.id] = {
+                name: user.user.name,
+                handle: user.user.handle,
+                registration: user.user.registration,
+            };
             usersClass[user.user.id] = {};
         }
 
@@ -115,16 +150,21 @@ export class ClassesService {
 
         for (const key in usersClass) {
             const currentUser = users[key];
-            const row = [currentUser.name, currentUser.handle];
+            const row = [currentUser.name, currentUser.handle, currentUser.registration];
             const rowToInsert = {};
+
+            let sumList = 0;
 
             for (const list of classResume.lists) {
                 row.push(usersClass[key][list.id].grade);
+                sumList += usersClass[key][list.id].grade;
             }
 
             for (const index in columnsName) {
                 rowToInsert[columnsName[index]] = row[index];
             }
+
+            rowToInsert['Média'] = (sumList / listCount).toFixed(2);
 
             rows.push(rowToInsert);
         }
@@ -133,9 +173,22 @@ export class ClassesService {
         const result = [columnsName, ...rows.sort((a, b) => (a[comparator] > b[comparator] ? 1 : -1))];
         return this.csvService.getCSV(result, classResume.name, res);
     }
-    async findAndCountAll(): Promise<{ classes: Class[]; count: number }> {
-        const [classes, count] = await this.repository.findAndCount();
-        return { classes, count };
+    async findAndCountAll(query: QueryClassDTO): Promise<{ data: Class[]; count: number }> {
+        const page = this.paginateService.getPage(query);
+        const queryBuild = createQueryBuilder(Class, 'c');
+        const entitiesRelation = this.getEntitiesRelation();
+        const where = this.queryService.getQueryToQueryBuilder(entitiesRelation, <Query>query);
+
+        const [classes, count] = await queryBuild
+            .leftJoin('c.lists', 'cl')
+            .leftJoin('c.users', 'cu')
+            .leftJoin('cu.user', 'cuu')
+            .where(where)
+            .take(page.take)
+            .skip(page.skip)
+            .getManyAndCount();
+
+        return { data: classes, count };
     }
 
     async findById(id: number): Promise<Class> {
@@ -145,30 +198,75 @@ export class ClassesService {
         });
 
         if (!entity) {
-            throw new HttpException('NOT_FOUND', 404);
+            throw new HttpException({ entity: 'Class', type: NOT_FOUND }, 404);
         }
+
+        return entity;
+    }
+
+    async findOne(id: number, loggedUser: PayloadUserDTO): Promise<Class> {
+        const entity = await this.getResume(id);
+
+        const { users, lists } = entity;
+
+        const usersResult = [];
+        const usersList = {};
+        const userListDefault = [];
+
+        for (const list of lists) {
+            userListDefault.push({
+                resume: { [QuestionStatus.BLANK]: list.questions.length },
+                grade: 0,
+            });
+        }
+
+        for (const user of users) {
+            usersList[user.userId] = userListDefault.map((a) => Object.assign({}, a));
+        }
+
+        for (const listKey in lists) {
+            const list = lists[listKey];
+            for (const userList of list.users) {
+                const [user] = <any>userList.user;
+                usersList[user.id][listKey] = userList.questions;
+            }
+        }
+
+        if (loggedUser.role === UserRole.MEMBER) {
+            const [user] = users.filter((el) => el.userId === loggedUser.id);
+            usersResult.push({ ...user, lists: usersList[user.userId] });
+        } else {
+            for (const user of users) {
+                usersResult.push({ ...user, lists: usersList[user.userId] });
+            }
+        }
+
+        entity.users = <any>usersResult;
 
         return entity;
     }
 
     async create(body: CreateClassDTO, user: PayloadUserDTO): Promise<Class> {
         return await getManager().transaction(async (transactionManager) => {
-            const entity = transactionManager.create(Class, {
+            const entity = await transactionManager.findOne(Class, { where: { name: body.name } });
+
+            if (entity) throw new HttpException({ entity: 'Class', type: NOT_UNIQUE }, 409);
+
+            const newEntity = transactionManager.create(Class, {
                 ...body,
                 code: this.generateCode(),
             });
 
-            await transactionManager.save(entity);
+            await transactionManager.save(newEntity);
 
             const userClass = transactionManager.create(UserClass, {
                 userId: user.id,
-                classId: entity.id,
-                role: UserRole.ADMIN,
+                classId: newEntity.id,
             });
 
             await transactionManager.save(userClass);
 
-            return entity;
+            return newEntity;
         });
     }
 
@@ -179,19 +277,70 @@ export class ClassesService {
         });
 
         if (!entity) {
-            throw new HttpException('NOT_FOUND', 404);
+            throw new HttpException({ entity: 'Class', type: NOT_FOUND }, 404);
         }
 
-        if (entity.code === body.code) {
-            const userClass = userClassRepository.create({
+        const userClass = await userClassRepository.findOne({ classId: entity.id, userId: user.id });
+
+        if (!userClass) {
+            if (entity.code === body.code) {
+                const newUserClass = userClassRepository.create({
+                    userId: user.id,
+                    classId: entity.id,
+                });
+
+                await userClassRepository.save(newUserClass);
+            }
+
+            throw new HttpException({ entity: 'InvalidCode', type: BAD_REQUEST }, 400);
+        }
+    }
+
+    async addUserByEmail(id: number, email: string): Promise<void> {
+        const userRepository = getCustomRepository(UserRepository);
+        const userClassRepository = getCustomRepository(UserClassRepository);
+
+        const entity = await this.repository.findOne({ where: { id } });
+
+        if (!entity) {
+            throw new HttpException({ entity: 'Class', type: NOT_FOUND }, 404);
+        }
+
+        const user = await userRepository.findOne({ where: { email } });
+
+        if (!user) {
+            throw new HttpException({ entity: 'User', type: NOT_FOUND }, 404);
+        }
+
+        const userClass = await userClassRepository.findOne({ userId: user.id, classId: entity.id });
+
+        if (!userClass) {
+            const newUserClass = userClassRepository.create({
                 userId: user.id,
                 classId: entity.id,
-                role: UserRole.MEMBER,
             });
 
-            await userClassRepository.save(userClass);
+            await userClassRepository.save(newUserClass);
+        }
+    }
+
+    async update(id: number, body: UpdateClassDTO): Promise<void> {
+        const entity = await this.repository.findOne({ id });
+
+        if (!entity) {
+            throw new HttpException({ entity: 'Class', type: NOT_FOUND }, 404);
         }
 
-        throw new HttpException('CodeInvalidToEntity', 400);
+        await this.repository.update({ id }, body);
+    }
+
+    async remove(id: number): Promise<void> {
+        const entity = await this.repository.findOne({ id });
+
+        if (!entity) {
+            throw new HttpException({ entity: 'Class', type: NOT_FOUND }, 404);
+        }
+
+        await this.repository.remove(entity);
     }
 }

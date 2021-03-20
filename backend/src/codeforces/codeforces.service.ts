@@ -1,5 +1,5 @@
 import { HttpException, HttpService, Injectable } from '@nestjs/common';
-import { NOT_FOUND } from 'src/resource/errorType.resource';
+import { BAD_REQUEST, NOT_FOUND, SERVICE_UNVALIABLE, TO_MANY_REQUEST } from 'src/resource/errorType.resource';
 import { CodeforcesContestDTO } from './dto/codeforces-contest.dto';
 import { CodeforcesProblemDTO } from './dto/codeforces-problem.dto';
 
@@ -20,7 +20,7 @@ export class CodeforcesService {
             }
         }
 
-        throw new HttpException('NOT_FOUND', 404);
+        throw new HttpException({ entity: 'CodeforcesQuestion', type: NOT_FOUND }, 404);
     }
 
     async getContest(contestId: string, count = 3): Promise<CodeforcesContestDTO> {
@@ -42,9 +42,9 @@ export class CodeforcesService {
             }
             const comment = error?.response?.data?.comment;
             const statusError = comment && comment.includes('not found') ? 404 : 400;
-            const messageError = statusError === 404 ? 'NOT_FOUND' : 'BAD_REQUEST';
+            const typeError = statusError === 404 ? NOT_FOUND : BAD_REQUEST;
 
-            throw new HttpException(messageError, statusError);
+            throw new HttpException({ entity: 'CodeforcesContest', type: typeError }, statusError);
         }
     }
 
@@ -58,7 +58,12 @@ export class CodeforcesService {
             if (error.response.status === 429 && count > 0) {
                 return this.getSubmissions(handle, contestId, count - 1);
             }
-            throw new HttpException('BAD_REQUEST', 400);
+
+            if (error.response.status === 502) {
+                throw new HttpException({ entity: 'Codeforces', type: SERVICE_UNVALIABLE }, 503);
+            }
+            const erroType = error.response.status === 429 ? TO_MANY_REQUEST : BAD_REQUEST;
+            throw new HttpException({ entity: 'Codeforces', type: erroType }, 400);
         }
     }
 

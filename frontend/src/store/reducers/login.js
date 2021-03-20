@@ -6,14 +6,16 @@ const initialState = {
     loading: false,
     error: null,
     token: null,
-    userId: null,
-    email: null,
-    name: null,
-    role: null,
-    registration: null,
-    handle: null,
     expirationDate: null,
     pathToRedirect: '/',
+    user: {
+        userId: null,
+        email: null,
+        name: null,
+        role: null,
+        registration: null,
+        handle: null,
+    },
 };
 
 const loginStart = (state) => ({
@@ -34,13 +36,15 @@ const loginSucess = (state, data) => {
         loading: false,
         error: null,
         token: data.token,
-        userId: decoded.id,
-        email: decoded.email,
-        name: decoded.name,
-        role: decoded.role,
-        handle: decoded.handle,
-        registration: decoded.registration,
         expirationDate,
+        user: {
+            userId: decoded.id,
+            email: decoded.email,
+            name: decoded.name,
+            role: decoded.role,
+            handle: decoded.handle,
+            registration: decoded.registration,
+        },
     };
 };
 
@@ -61,13 +65,14 @@ const authSucces = (state) => {
     return {
         ...state,
         token,
-        userId: decoded.id,
-        email: decoded.email,
-        name: decoded.name,
-        role: decoded.role,
-        handle: decoded.handle,
-        registration: decoded.registration,
-        pathToRedirect: '/',
+        user: {
+            userId: decoded.id,
+            email: decoded.email,
+            name: decoded.name,
+            role: decoded.role,
+            handle: decoded.handle,
+            registration: decoded.registration,
+        },
     };
 };
 
@@ -78,13 +83,15 @@ const authLogout = (state) => {
     return {
         ...state,
         token: null,
-        userId: null,
-        email: null,
-        name: null,
-        role: null,
-        registration: null,
         expirationDate: null,
-        handle: null,
+        user: {
+            userId: null,
+            email: null,
+            name: null,
+            role: null,
+            registration: null,
+            handle: null,
+        },
     };
 };
 
@@ -105,13 +112,15 @@ const refreshTokenSuccess = (state, data) => {
         loading: false,
         error: null,
         token: data.token,
-        userId: decoded.id,
-        email: decoded.email,
-        name: decoded.name,
-        role: decoded.role,
-        handle: decoded.handle,
-        registration: decoded.registration,
         expirationDate,
+        user: {
+            userId: decoded.id,
+            email: decoded.email,
+            name: decoded.name,
+            role: decoded.role,
+            handle: decoded.handle,
+            registration: decoded.registration,
+        },
     };
 };
 

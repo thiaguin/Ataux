@@ -6,7 +6,7 @@ const confirmedEmail = (props) => {
         margin: '10% 25%',
         width: '50%',
         justifyContent: 'center',
-        border: '3px solid silver',
+        border: '3px solid lightgrey',
         borderRadius: '0.2em',
     };
 

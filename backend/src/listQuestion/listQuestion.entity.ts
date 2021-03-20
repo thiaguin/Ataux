@@ -16,9 +16,9 @@ export class ListQuestion {
     @Column({ default: 1 })
     weight: number;
 
-    @ManyToOne(() => Question, (question) => question.lists)
+    @ManyToOne(() => Question, (question) => question.lists, { onDelete: 'CASCADE' })
     question: Question;
 
-    @ManyToOne(() => List, (list) => list.questions)
+    @ManyToOne(() => List, (list) => list.questions, { onDelete: 'CASCADE' })
     list: List;
 }

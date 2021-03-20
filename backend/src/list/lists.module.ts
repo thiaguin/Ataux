@@ -1,13 +1,15 @@
 import { MiddlewareConsumer, Module, ModuleMetadata, RequestMethod } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthenticateMiddleware, AuthorizeColaboratorMiddleware } from 'src/auth/auth.middleware';
 import { CodeforcesService } from 'src/codeforces/codeforces.service';
-import { QuestionsModule } from 'src/questions/questions.module';
-import { SubmissionsController } from 'src/submissions/submissions.controller';
 import { SubmissionsModule } from 'src/submissions/submissions.module';
 import { ListController } from './list.controller';
 import { List } from './lists.entity';
 import { ListService } from './lists.service';
+import {
+    AuthenticateMiddleware,
+    MemberQueryMiddleware,
+    PrivilegedRolesValidationMiddleware,
+} from 'src/auth/auth.middleware';
 
 const metadata: ModuleMetadata = {
     imports: [TypeOrmModule.forFeature([List]), SubmissionsModule, CodeforcesService],
@@ -22,14 +24,25 @@ export class ListModule {
         consumer
             .apply(AuthenticateMiddleware)
             .forRoutes(
-                { path: 'lists', method: RequestMethod.GET },
-                { path: 'lists', method: RequestMethod.POST },
-                { path: 'lists/:id', method: RequestMethod.GET },
-                { path: 'lists/:id', method: RequestMethod.PUT },
                 { path: 'lists/:id/questions/submissions', method: RequestMethod.POST },
+                { path: 'lists/:id/questions', method: RequestMethod.POST },
+                { path: 'lists/', method: RequestMethod.POST },
+                { path: 'lists/:id/csv', method: RequestMethod.GET },
+                { path: 'lists/:id/users', method: RequestMethod.GET },
+                { path: 'lists/:id', method: RequestMethod.GET },
+                { path: 'lists/', method: RequestMethod.GET },
+                { path: 'lists/:id/resume', method: RequestMethod.GET },
+                { path: 'lists/:id', method: RequestMethod.PUT },
+                { path: 'lists/:id', method: RequestMethod.DELETE },
             );
         consumer
-            .apply(AuthorizeColaboratorMiddleware)
-            .forRoutes({ path: 'lists', method: RequestMethod.POST }, { path: 'lists/:id', method: RequestMethod.PUT });
+            .apply(PrivilegedRolesValidationMiddleware)
+            .forRoutes(
+                { path: 'lists/', method: RequestMethod.POST },
+                { path: 'lists/:id/csv', method: RequestMethod.GET },
+                { path: 'lists/:id', method: RequestMethod.PUT },
+                { path: 'lists/:id', method: RequestMethod.DELETE },
+            );
+        consumer.apply(MemberQueryMiddleware).forRoutes({ path: 'lists/:id/users', method: RequestMethod.GET });
     }
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Form, Button, Col } from 'react-bootstrap';
 import { GoogleLogin } from 'react-google-login';
 import { connect } from 'react-redux';
-import * as yup from 'yup';
+import * as Yup from 'yup';
 import { Formik } from 'formik';
 import { useHistory } from 'react-router-dom';
 import GoogleButton from '../../components/googleButton/GoogleButton';
@@ -16,13 +16,12 @@ const Register = (props) => {
     const [popup, setPopup] = useState(null);
     const history = useHistory();
 
-    const schema = yup.object().shape({
-        email: yup.string().email().required(),
-        name: yup.string().required(),
-        password: yup.string().min(6).required(),
-        confirmPassword: yup
-            .string()
-            .oneOf([yup.ref('password')], 'Passwords must match')
+    const schema = Yup.object().shape({
+        email: Yup.string().email().required(),
+        name: Yup.string().required(),
+        password: Yup.string().min(6).required(),
+        confirmPassword: Yup.string()
+            .oneOf([Yup.ref('password')], 'Passwords must match')
             .required(),
     });
 
@@ -30,7 +29,7 @@ const Register = (props) => {
         margin: '5% 25%',
         width: '50%',
         justifyContent: 'center',
-        border: '3px solid silver',
+        border: '3px solid lightgrey',
         borderRadius: '0.2em',
     };
 
@@ -75,8 +74,7 @@ const Register = (props) => {
 
     useEffect(() => {
         if (props.register.error) {
-            setPopup(<Popup type="error" message={props.register.error} />);
-            props.onResetRegister();
+            setPopup(<Popup type="error" message={props.register.error} onClose={props.onResetRegister} />);
         }
     }, [props.register.error]);
 
@@ -92,7 +90,7 @@ const Register = (props) => {
                         <div style={parentInStyle}>
                             <div style={childInStyle}>
                                 <Form noValidate onSubmit={handleSubmit}>
-                                    <Form.Group controlId="formBasicName" onSubmit={registerHandler}>
+                                    <Form.Group controlId="formName" onSubmit={registerHandler}>
                                         <Form.Label>Nome</Form.Label>
                                         <Form.Control
                                             required
@@ -106,7 +104,7 @@ const Register = (props) => {
                                         />
                                         <Form.Control.Feedback type="invalid">Campo Obrigatório</Form.Control.Feedback>
                                     </Form.Group>
-                                    <Form.Group controlId="formBasicEmail" onSubmit={registerHandler}>
+                                    <Form.Group controlId="formEmail" onSubmit={registerHandler}>
                                         <Form.Label>Email</Form.Label>
                                         <Form.Control
                                             required
@@ -122,7 +120,7 @@ const Register = (props) => {
                                             {values.email ? 'Not valid email!' : 'Campo Obrigatório'}
                                         </Form.Control.Feedback>
                                     </Form.Group>
-                                    <Form.Group controlId="formBasicPassword" onSubmit={registerHandler}>
+                                    <Form.Group controlId="formPassword" onSubmit={registerHandler}>
                                         <Form.Label>Senha</Form.Label>
                                         <Form.Control
                                             required
@@ -140,7 +138,7 @@ const Register = (props) => {
                                                 : 'Campo Obrigatório'}
                                         </Form.Control.Feedback>
                                     </Form.Group>
-                                    <Form.Group controlId="formBasicConfirmPassword">
+                                    <Form.Group controlId="formConfirmPassword">
                                         <Form.Label>Confirmar Senha</Form.Label>
                                         <Form.Control
                                             required

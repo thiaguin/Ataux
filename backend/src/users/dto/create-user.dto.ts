@@ -3,4 +3,7 @@ export class CreateUserDTO {
     name: string;
     password?: string;
     handle?: string;
+    registration?: string;
+    role?: string;
+    confirmed: boolean;
 }

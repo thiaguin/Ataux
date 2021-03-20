@@ -18,7 +18,7 @@ const ConfirmEmail = (props) => {
     useEffect(() => {
         if (props.data.error) {
             props.onResetConfirmEmail();
-            history.push('/');
+            history.push('/question');
         }
     }, [props.data.error]);
 
