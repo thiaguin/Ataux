@@ -8,6 +8,6 @@ module.exports = {
     synchronize: true,
     logging: 'all',
     entities: ['{dist, src}/**/*.entity{.ts,.js}'],
-    migrations: ['{dist, src}/**/*.migration{.ts,.js}'],
+    migrations: ['{dist, src}/**/*.migration{.ts,.js}', '{dist, src}/**/*.seed{.ts,.js}'],
     subscribers: ['{dist, src}/**/*.subscriber{.ts,.js}'],
 };
