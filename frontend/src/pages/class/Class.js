@@ -198,9 +198,9 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
     onCreateClass: (...values) => dispatch(actions.createClass(...values)),
+    onResetCreateClass: () => dispatch(actions.resetCreateClass()),
     onRegisterClass: (...values) => dispatch(actions.registerClass(...values)),
     onResetRegisterClass: () => dispatch(actions.resetRegisterClass()),
-    onResetCreateClass: () => dispatch(actions.resetCreateClass()),
     onGetClassCSV: (...values) => dispatch(actions.getCSVClass(...values)),
     onResetGetCSVClass: () => dispatch(actions.resetGetCSVClass()),
     onUpdateClass: (...values) => dispatch(actions.updateClass(...values)),

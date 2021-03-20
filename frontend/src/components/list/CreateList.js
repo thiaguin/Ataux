@@ -123,7 +123,7 @@ const creatList = (props) => {
                                         name="questionURL"
                                         value={props.newQuestionURL}
                                         type="text"
-                                        placeholder="Link da questão para adicionar"
+                                        placeholder="Link da questão no codeforces"
                                         onChange={(value) => props.onNewQuestionURLChange(value)}
                                     />
                                 </Form.Group>{' '}

@@ -27,7 +27,7 @@ const header = (props) => {
 
     const loggedHeader = (
         <Navbar bg="dark" variant="dark">
-            <Navbar.Brand href="/question">ATAUX</Navbar.Brand>
+            <Navbar.Brand href="/">ATAUX</Navbar.Brand>
             <Nav className="mr-auto">
                 <Nav.Link href="question">Questões</Nav.Link>
                 <Nav.Link href="class">Turmas</Nav.Link>
@@ -42,7 +42,7 @@ const header = (props) => {
 
     const notLoggedHeader = (
         <Navbar bg="dark" variant="dark">
-            <Navbar.Brand href="/question">ATAUX</Navbar.Brand>
+            <Navbar.Brand href="/">ATAUX</Navbar.Brand>
             <Nav className="mr-auto" />
             <div>
                 <Button style={{ width: '100px' }} variant="secondary" onClick={loginOnClickHandler}>
