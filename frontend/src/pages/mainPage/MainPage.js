@@ -18,7 +18,7 @@ const MainPage = () => {
         <div style={parentInStyle}>
             <div style={childInStyle}>
                 <h1 style={{ marginBottom: '30px' }}>Ataux</h1>
-                <p>
+                <>
                     Uma ferramenta para auxiliar o acompanhamento de submissões de questões. Que utiliza problemas do
                     <a href="https://codeforces.com/"> Codeforces.</a>
                     <br />
@@ -28,7 +28,7 @@ const MainPage = () => {
                     <ul>
                         <li>timeataux@gmail.com</li>
                     </ul>
-                </p>
+                </>
             </div>
         </div>
     );
