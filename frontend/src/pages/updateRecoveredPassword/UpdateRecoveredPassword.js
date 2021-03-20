@@ -81,7 +81,7 @@ const UpdatePasswordRecovered = (props) => {
                                             name="password"
                                             value={values.password}
                                             type="password"
-                                            placeholder="New Password"
+                                            placeholder="Nova senha"
                                             onChange={handleChange}
                                             onBlur={handleBlur}
                                             isInvalid={touched.password && errors.password}
@@ -96,7 +96,7 @@ const UpdatePasswordRecovered = (props) => {
                                             name="confirmPassword"
                                             value={values.confirmPassword}
                                             type="password"
-                                            placeholder="Confirm Password"
+                                            placeholder="Confirme a senha"
                                             onChange={handleChange}
                                             onBlur={handleBlur}
                                             isInvalid={

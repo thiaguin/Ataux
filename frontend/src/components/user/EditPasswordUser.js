@@ -52,7 +52,7 @@ const EditPasswordUser = (props) => {
                                             name="currentPassword"
                                             value={values.currentPassword}
                                             type={currentPasswordHide ? 'password' : 'text'}
-                                            placeholder="New Password"
+                                            placeholder="Senha atual"
                                             onChange={handleChange}
                                             onBlur={handleBlur}
                                             isInvalid={touched.currentPassword && errors.currentPassword}
@@ -80,7 +80,7 @@ const EditPasswordUser = (props) => {
                                             name="newPassword"
                                             value={values.newPassword}
                                             type={newPasswordHide ? 'password' : 'text'}
-                                            placeholder="New Password"
+                                            placeholder="Nova senha"
                                             onChange={handleChange}
                                             onBlur={handleBlur}
                                             isInvalid={touched.newPassword && errors.newPassword}
@@ -107,7 +107,7 @@ const EditPasswordUser = (props) => {
                                             name="confirmPassword"
                                             value={values.confirmPassword}
                                             type={confirmPasswordHide ? 'password' : 'text'}
-                                            placeholder="Confirm Password"
+                                            placeholder="Confirme a senha"
                                             onChange={handleChange}
                                             onBlur={handleBlur}
                                             isInvalid={

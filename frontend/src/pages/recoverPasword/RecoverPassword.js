@@ -74,7 +74,7 @@ const RecoverPassword = (props) => {
                                         name="email"
                                         value={values.email}
                                         type="email"
-                                        placeholder="Enter email"
+                                        placeholder="Digite seu email"
                                         onChange={handleChange}
                                         isInvalid={touched.email && errors.email}
                                         onBlur={handleBlur}

@@ -68,7 +68,7 @@ const ConfirmInfoPage = (props) => {
                                         name="handle"
                                         value={loginHandle || values.handle}
                                         type="text"
-                                        placeholder="Handle"
+                                        placeholder="Handle do codeforces"
                                         onChange={handleChange}
                                         isInvalid={touched.handle && errors.handle}
                                         onBlur={handleBlur}
@@ -81,7 +81,7 @@ const ConfirmInfoPage = (props) => {
                                         name="registration"
                                         value={loginRegistration || values.registration}
                                         type="registration"
-                                        placeholder="Matrícula"
+                                        placeholder="Matrícula da UFCG"
                                         onChange={handleChange}
                                         onBlur={handleBlur}
                                     />

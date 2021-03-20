@@ -138,7 +138,7 @@ const Login = (props) => {
                                             name="email"
                                             value={values.email}
                                             type="email"
-                                            placeholder="Enter email"
+                                            placeholder="Digite seu email"
                                             onChange={(event) => emailChangeHandler(event, handleChange)}
                                             isInvalid={touched.email && errors.email}
                                             onBlur={handleBlur}
@@ -151,7 +151,7 @@ const Login = (props) => {
                                             name="password"
                                             value={values.password}
                                             type="password"
-                                            placeholder="Password"
+                                            placeholder="Senha"
                                             onChange={handleChange}
                                             onBlur={handleBlur}
                                         />
