@@ -4,4 +4,6 @@ export class SetUserQuestionListSubmission {
     questionId: number;
     userListId: number;
     submission: CodeforcesSubmissionDTO;
+    userId: number;
+    listId: number;
 }

@@ -1,9 +1,9 @@
-import { Module, ModuleMetadata } from '@nestjs/common';
+import { MiddlewareConsumer, Module, ModuleMetadata, RequestMethod } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SubmissionsController } from './submissions.controller';
 import { Submission } from './submissions.entity';
 import { SubmissionsService } from './submissions.service';
-
+import { MemberQueryMiddleware, AuthenticateMiddleware } from '../auth/auth.middleware';
 const metadata: ModuleMetadata = {
     imports: [TypeOrmModule.forFeature([Submission])],
     providers: [SubmissionsService],
@@ -12,4 +12,19 @@ const metadata: ModuleMetadata = {
 };
 
 @Module(metadata)
-export class SubmissionsModule {}
+export class SubmissionsModule {
+    public configure(consumer: MiddlewareConsumer) {
+        consumer
+            .apply(AuthenticateMiddleware)
+            .forRoutes(
+                { path: 'submissions', method: RequestMethod.GET },
+                { path: 'submissions/:id', method: RequestMethod.GET },
+            );
+        consumer
+            .apply(MemberQueryMiddleware)
+            .forRoutes(
+                { path: 'submissions', method: RequestMethod.GET },
+                { path: 'submissions/:id', method: RequestMethod.GET },
+            );
+    }
+}

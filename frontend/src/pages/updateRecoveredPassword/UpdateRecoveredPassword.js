@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import * as yup from 'yup';
+import * as Yup from 'yup';
 import { Formik } from 'formik';
 import { Form, Button, Toast } from 'react-bootstrap';
 import * as actions from '../../store/actions';
@@ -14,9 +14,9 @@ const UpdatePasswordRecovered = (props) => {
     const onInitPage = useCallback((value) => dispatch(actions.existCodeToRecover(value)), [dispatch]);
     const [popup, setPopup] = useState(null);
 
-    const schema = yup.object().shape({
-        password: yup.string().min(6).required(),
-        confirmPassword: yup.string().oneOf([yup.ref('password'), null], 'Passwords must match'),
+    const schema = Yup.object().shape({
+        password: Yup.string().min(6).required(),
+        confirmPassword: Yup.string().oneOf([Yup.ref('password'), null], 'Passwords must match'),
     });
 
     const { code } = props.match.params;
@@ -26,7 +26,7 @@ const UpdatePasswordRecovered = (props) => {
         margin: '10% 25%',
         width: '50%',
         justifyContent: 'center',
-        border: '3px solid silver',
+        border: '3px solid lightgrey',
         borderRadius: '0.2em',
     };
 
@@ -51,14 +51,19 @@ const UpdatePasswordRecovered = (props) => {
 
     useEffect(() => {
         if (props.updatePasswordRecovered.exist === false) {
-            history.push('/');
+            history.push('/login');
         }
     }, [props.updatePasswordRecovered.exist]);
 
     useEffect(() => {
         if (props.updatePasswordRecovered.updateError) {
-            setPopup(<Popup type="error" message={props.updatePasswordRecovered.updateError} />);
-            props.onResetUpdateRecoveredPassowrd();
+            setPopup(
+                <Popup
+                    type="error"
+                    message={props.updatePasswordRecovered.updateError}
+                    onClose={props.onResetUpdateRecoveredPassowrd}
+                />,
+            );
         }
     }, [props.updatePasswordRecovered.updateError]);
 
@@ -70,7 +75,7 @@ const UpdatePasswordRecovered = (props) => {
                         <div style={parentInStyle}>
                             <div style={childInStyle}>
                                 <Form onSubmit={handleSubmit}>
-                                    <Form.Group controlId="formBasicPassword">
+                                    <Form.Group controlId="formPassword">
                                         <Form.Label>Nova Senha</Form.Label>
                                         <Form.Control
                                             name="password"
@@ -85,7 +90,7 @@ const UpdatePasswordRecovered = (props) => {
                                             Senha de tamanho minímo de 6 caracteres!
                                         </Form.Control.Feedback>
                                     </Form.Group>
-                                    <Form.Group controlId="formBasicConfirmPassword">
+                                    <Form.Group controlId="formConfirmPassword">
                                         <Form.Label>Confirmar Senha</Form.Label>
                                         <Form.Control
                                             name="confirmPassword"

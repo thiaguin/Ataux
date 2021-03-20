@@ -27,7 +27,7 @@ export class Submission {
     @Column()
     time: string;
 
-    @Column({ type: 'text' })
+    @Column({ type: 'text', select: false, nullable: true })
     code: string;
 
     @Column()
@@ -36,13 +36,16 @@ export class Submission {
     @Column()
     userId: number;
 
-    @ManyToOne(() => List, (entity) => entity.submissions)
+    @Column({ nullable: true, type: 'timestamp with time zone' })
+    createdTime: string;
+
+    @ManyToOne(() => List, (entity) => entity.submissions, { onDelete: 'CASCADE' })
     list: List;
 
-    @ManyToOne(() => Question, (entity) => entity.submissions)
+    @ManyToOne(() => Question, (entity) => entity.submissions, { onDelete: 'CASCADE' })
     question: Question;
 
-    @ManyToOne(() => User, (entity) => entity.submissions)
+    @ManyToOne(() => User, (entity) => entity.submissions, { onDelete: 'CASCADE' })
     user: User;
 
     @CreateDateColumn({ type: 'timestamp with time zone' })

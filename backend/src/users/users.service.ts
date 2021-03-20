@@ -14,8 +14,12 @@ import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcryptjs';
 import { MailService } from 'src/utils/mail.service';
 import { UpdateUserDTO } from './dto/update-user.dto';
-import { BAD_REQUEST, NOT_FOUND, NOT_UNIQUE } from 'src/resource/errorType.resource';
+import { BAD_REQUEST, FORBIDDEN, NOT_FOUND, NOT_UNIQUE } from 'src/resource/errorType.resource';
 import { CodeforcesService } from 'src/codeforces/codeforces.service';
+import { PaginateService } from 'src/utils/paginate.service';
+import { QueryService } from 'src/utils/query.service';
+import { PayloadUserDTO } from './dto/payload-user.dto';
+import { UserRole } from 'src/enums/userRole.enum';
 
 @Injectable()
 export class UsersService {
@@ -25,6 +29,8 @@ export class UsersService {
     private googleClientId: string;
     private mailService: MailService;
     private codeforceService: CodeforcesService;
+    private paginateService: PaginateService;
+    private queryService: QueryService;
 
     constructor() {
         this.repository = getCustomRepository(UserRepository);
@@ -32,6 +38,8 @@ export class UsersService {
         this.googleClient = new OAuth2Client(this.googleClientId);
         this.mailService = new MailService();
         this.codeforceService = new CodeforcesService();
+        this.paginateService = new PaginateService();
+        this.queryService = new QueryService();
     }
 
     getUserResetPasswordRepository(): Repository<UserResetPassword> {
@@ -66,7 +74,7 @@ export class UsersService {
             return user;
         }
 
-        throw new HttpException(NOT_FOUND, 404);
+        throw new HttpException({ entity: 'User', type: NOT_FOUND }, 404);
     }
 
     async findOne(email: string): Promise<User> {
@@ -87,9 +95,12 @@ export class UsersService {
         return user;
     }
 
-    async findAndCountAll(): Promise<{ users: User[]; count: number }> {
-        const [users, count] = await this.repository.findAndCount();
-        return { users, count };
+    async findAndCountAll(query): Promise<{ data: User[]; count: number }> {
+        const page = this.paginateService.getPage(query);
+        const where = this.queryService.getQueryToFind(User, query);
+
+        const [users, count] = await this.repository.findAndCount({ ...page, where, order: { id: 'ASC' } });
+        return { data: users, count };
     }
 
     async confirmEmail(code: string): Promise<void> {
@@ -106,6 +117,14 @@ export class UsersService {
         const user = await this.findById(id);
         delete body.password;
         await this.repository.update({ id: user.id }, body);
+    }
+
+    async updateUser(id: number, body: UpdateUserDTO, loggedUser: PayloadUserDTO): Promise<void> {
+        if (loggedUser.role !== UserRole.ADMIN && `${id}` !== `${loggedUser.id}`) {
+            throw new HttpException({ entity: 'User', type: FORBIDDEN }, 403);
+        }
+
+        await this.update(id, body);
     }
 
     async create(body: CreateUserDTO): Promise<User> {
@@ -149,10 +168,10 @@ export class UsersService {
                 return newUser;
             }
 
-            throw new HttpException('NotUnique', 409);
+            throw new HttpException({ entity: 'User', type: NOT_UNIQUE }, 409);
         }
 
-        throw new HttpException(NOT_FOUND, 404);
+        throw new HttpException({ entity: 'GoogleUser', type: NOT_FOUND }, 404);
     }
 
     async sendCodeToResetPassword(body): Promise<void> {
@@ -220,13 +239,13 @@ export class UsersService {
             select: ['id', 'email', 'googleId', 'handle', 'method', 'name', 'password', 'registration'],
         });
 
-        if (!user) throw new HttpException(NOT_FOUND, 404);
+        if (!user) throw new HttpException({ entity: 'User', type: NOT_FOUND }, 404);
 
         if (bcrypt.compareSync(body.currentPassword, user.password)) {
             user.password = body.newPassword;
             await this.repository.save(user);
         } else {
-            throw new HttpException(BAD_REQUEST, 400);
+            throw new HttpException({ entity: 'WrongPassword', type: BAD_REQUEST }, 400);
         }
     }
 
@@ -244,5 +263,17 @@ export class UsersService {
         const userClass = await userClassRepository.create(body);
         await userClassRepository.save(userClass);
         return userClass;
+    }
+
+    async remove(id: number, loggedUser: PayloadUserDTO): Promise<void> {
+        if (loggedUser.id === id) throw new HttpException({ entity: 'User', type: FORBIDDEN }, 403);
+
+        const user = await this.repository.findOne({ where: { id } });
+
+        if (!user) {
+            throw new HttpException({ entity: 'User', type: NOT_FOUND }, 404);
+        }
+
+        this.repository.remove(user);
     }
 }

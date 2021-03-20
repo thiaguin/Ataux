@@ -13,9 +13,9 @@ export class QuestionTag {
     @Column()
     tagId: number;
 
-    @ManyToOne(() => Question, (question) => question.tags)
+    @ManyToOne(() => Question, (question) => question.tags, { onDelete: 'CASCADE' })
     question: Question;
 
-    @ManyToOne(() => Tag, (tag) => tag.questions)
+    @ManyToOne(() => Tag, (tag) => tag.questions, { onDelete: 'CASCADE' })
     tag: Tag;
 }

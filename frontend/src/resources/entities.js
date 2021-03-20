@@ -5,4 +5,11 @@ export const entities = {
     USER_RESET_PASSWORD_CODE: 'Código de recuperação de senha',
     NOT_CONFIRMED: 'Usuário não confirmado.',
     HANDLE: 'Handle do Codeforces',
+    QUESTION: 'Questão',
+    TAG: 'Tag',
+    CODEFORCES_URL: 'Link da questão inválido',
+    CLASS: 'Turma',
+    USER_CLASS: 'Erro do usuário relacionad a turma',
+    INVALID_CODE: 'Código inválido',
+    WRONG_PASSWORD: 'Senha errada.',
 };

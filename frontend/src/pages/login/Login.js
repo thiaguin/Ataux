@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Form, Button, Col } from 'react-bootstrap';
 import { GoogleLogin } from 'react-google-login';
 import { connect } from 'react-redux';
-import * as yup from 'yup';
+import * as Yup from 'yup';
 import { Formik } from 'formik';
-import { useHistory } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 import * as actions from '../../store/actions';
 import GoogleButton from '../../components/googleButton/GoogleButton';
 import Popup from '../../components/popup/Popup';
@@ -16,21 +16,22 @@ const Login = (props) => {
     const [popup, setPopup] = useState(null);
     const [modal, setModal] = useState(null);
     const [email, setEmail] = useState('');
-    const [recoverPasswordHover, setrecoverPasswordHover] = useState(false);
-    const [recoverPasswordStyle, setrecoverPasswordStyle] = useState({ textAlign: 'center' });
+    const [hasError, setHasError] = useState(false);
+    const [recoverPasswordHover, setRecoverPasswordHover] = useState(false);
+    const [recoverPasswordStyle, setRecoverPasswordStyle] = useState({ textAlign: 'center' });
     const history = useHistory();
     const loginError = login.error;
 
-    const schema = yup.object().shape({
-        email: yup.string().email().required(),
-        password: yup.string().required(),
+    const schema = Yup.object().shape({
+        email: Yup.string().email().required(),
+        password: Yup.string().required(),
     });
 
     const parentInStyle = {
         margin: '10% 25%',
         width: '50%',
         justifyContent: 'center',
-        border: '3px solid silver',
+        border: '3px solid lightgrey',
         borderRadius: '0.2em',
     };
 
@@ -40,7 +41,7 @@ const Login = (props) => {
     };
 
     const recoverPasswordHoverHandler = () => {
-        setrecoverPasswordHover(!recoverPasswordHover);
+        setRecoverPasswordHover(!recoverPasswordHover);
     };
 
     const loginGoogleHandler = (response) => {
@@ -72,8 +73,7 @@ const Login = (props) => {
     useEffect(() => {
         if (loginError) {
             if (loginError !== entitiesTypes.NOT_CONFIRMED) {
-                setPopup(<Popup type="error" message={loginError} />);
-                props.onResetLogin();
+                setPopup(<Popup type="error" message={loginError} onClose={props.onResetLogin} />);
             } else {
                 const body =
                     'Você ainda não confirmou seu email.\n caso seja necessário renviaremos outro email para confirmação de cadastro.';
@@ -94,23 +94,36 @@ const Login = (props) => {
     }, [loginError]);
 
     useEffect(() => {
+        if (hasError) {
+            props.onResetLogin();
+            setHasError(false);
+        }
+    }, [hasError]);
+
+    useEffect(() => {
         if (recoverPasswordHover) {
-            setrecoverPasswordStyle({ ...recoverPasswordStyle, textDecoration: 'underline', cursor: 'pointer' });
+            setRecoverPasswordStyle({ ...recoverPasswordStyle, textDecoration: 'underline', cursor: 'pointer' });
         } else {
-            setrecoverPasswordStyle({ textAlign: 'center' });
+            setRecoverPasswordStyle({ textAlign: 'center' });
         }
     }, [recoverPasswordHover]);
 
     useEffect(() => {
         if (confirmEmail.resended) {
             setModal(null);
-            setPopup(<Popup type="info" message="Você receberá um novo email para confirmar o seu cadastro." />);
-            props.onResetResendEmailToConfirm();
+            setPopup(
+                <Popup
+                    type="info"
+                    message="Você receberá um novo email para confirmar o seu cadastro."
+                    onClose={props.onResetResendEmailToConfirm}
+                />,
+            );
         }
     }, [confirmEmail.resended]);
 
     return (
         <>
+            {props.token && <Redirect to="/question" />}
             {popup}
             {modal}
             {!modal && (
@@ -119,7 +132,7 @@ const Login = (props) => {
                         <div style={parentInStyle}>
                             <div style={childInStyle}>
                                 <Form noValidate onSubmit={handleSubmit}>
-                                    <Form.Group controlId="formBasicEmail" onSubmit={loginHandler}>
+                                    <Form.Group controlId="formEmail" onSubmit={loginHandler}>
                                         <Form.Label>Email</Form.Label>
                                         <Form.Control
                                             name="email"
@@ -132,7 +145,7 @@ const Login = (props) => {
                                         />
                                         <Form.Control.Feedback type="invalid">Not valid email!</Form.Control.Feedback>
                                     </Form.Group>
-                                    <Form.Group controlId="formBasicPassword" onSubmit={loginHandler}>
+                                    <Form.Group controlId="formPassword" onSubmit={loginHandler}>
                                         <Form.Label>Senha</Form.Label>
                                         <Form.Control
                                             name="password"
@@ -159,12 +172,11 @@ const Login = (props) => {
                                                 render={(renderProps) => (
                                                     <GoogleButton
                                                         name="Entrar com Google"
-                                                        onClick={renderProps.onClick}
+                                                        onClick={(currvalues) => renderProps.onClick(currvalues)}
                                                         style={{ minWidth: '200px' }}
                                                     />
                                                 )}
                                                 onSuccess={loginGoogleHandler}
-                                                cookiePolicy="single_host_origin"
                                             />
                                         </Form.Group>
                                         <Form.Group as={Col} controlId="formGridSubmtiButton">
@@ -192,6 +204,7 @@ const Login = (props) => {
 const mapStateToProps = (state) => ({
     login: state.login,
     confirmEmail: state.confirmEmail,
+    token: state.login.token,
 });
 
 const mapDispatchToProps = (dispatch) => ({

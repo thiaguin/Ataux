@@ -34,8 +34,9 @@ const authCheckSucces = () => ({
     type: actionTypes.AUTH_CHECK_SUCCESS,
 });
 
-export const logout = () => ({
+export const logout = (hasExpired) => ({
     type: actionTypes.AUTH_LOGOUT,
+    hasExpired,
 });
 
 const authLogoutAsync = (expiresTime) => (dispatch) => {

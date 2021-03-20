@@ -7,6 +7,26 @@ const initialState = {
         error: null,
         success: null,
     },
+    getAll: {
+        loading: false,
+        error: null,
+        data: null,
+    },
+    get: {
+        loading: false,
+        error: null,
+        data: null,
+    },
+    updatePassword: {
+        loading: false,
+        error: null,
+        success: null,
+    },
+    remove: {
+        loading: false,
+        error: null,
+        success: null,
+    },
 };
 
 const updateUserStart = (state) => ({
@@ -42,6 +62,136 @@ const resetUpdateUser = (state) => ({
     update: { ...initialState.update },
 });
 
+const updateUserPasswordStart = (state) => ({
+    ...state,
+    update: {
+        ...state.update,
+        loading: true,
+    },
+});
+
+const updateUserPasswordSucess = (state) => ({
+    ...state,
+    update: {
+        ...state.update,
+        loading: false,
+        success: true,
+        error: null,
+    },
+});
+
+const updateUserPasswordFail = (state, data) => ({
+    ...state,
+    update: {
+        ...state.update,
+        loading: false,
+        success: null,
+        error: getErrorMessage(data),
+    },
+});
+
+const resetUpdateUserPassword = (state) => ({
+    ...state,
+    update: { ...initialState.update },
+});
+
+const getAllUsersStart = (state) => ({
+    ...state,
+    getAll: {
+        ...state.getAll,
+        loading: true,
+    },
+});
+
+const getAllUsersSuccess = (state, data) => ({
+    ...state,
+    getAll: {
+        ...state.getAll,
+        loading: false,
+        data,
+    },
+});
+
+const getAllUsersFail = (state, data) => ({
+    ...state,
+    getAll: {
+        ...state.getAll,
+        loading: false,
+        error: getErrorMessage(data),
+    },
+});
+
+const resetGetAllUsers = (state) => ({
+    ...state,
+    ...initialState,
+    getAll: { ...initialState.getAll },
+});
+
+const getUserByIdStart = (state) => ({
+    ...state,
+    get: {
+        ...state.get,
+        loading: true,
+    },
+});
+
+const getUserByIdSuccess = (state, data) => ({
+    ...state,
+    get: {
+        ...state.get,
+        loading: false,
+        data,
+    },
+});
+
+const getUserByIdFail = (state, data) => ({
+    ...state,
+    get: {
+        ...state.get,
+        loading: false,
+        error: getErrorMessage(data),
+    },
+});
+
+const resetGetUserById = (state) => ({
+    ...state,
+    ...initialState,
+    get: { ...initialState.get },
+});
+
+const removeUserStart = (state) => ({
+    ...state,
+    remove: {
+        ...state.remove,
+        loading: true,
+    },
+});
+
+const removeUserSucess = (state) => ({
+    ...state,
+    remove: {
+        ...state.remove,
+        loading: false,
+        success: true,
+        error: null,
+    },
+});
+
+const removeUserFail = (state, data) => ({
+    ...state,
+    remove: {
+        ...state.remove,
+        loading: false,
+        success: null,
+        error: getErrorMessage(data),
+    },
+});
+
+const resetRemoveUser = (state) => ({
+    ...state,
+    remove: { ...initialState.remove },
+});
+
 const reducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.UPDATE_USER_START:
@@ -52,6 +202,39 @@ const reducer = (state = initialState, action) => {
             return updateUserFail(state, action.error.response);
         case actionTypes.RESET_UPDATE_USER:
             return resetUpdateUser(state);
+        case actionTypes.UPDATE_USER_PASSWORD_START:
+            return updateUserPasswordStart(state);
+        case actionTypes.UPDATE_USER_PASSWORD_SUCCESS:
+            return updateUserPasswordSucess(state);
+        case actionTypes.UPDATE_USER_PASSWORD_FAIL:
+            return updateUserPasswordFail(state, action.error.response);
+        case actionTypes.RESET_UPDATE_USER_PASSWORD:
+            return resetUpdateUserPassword(state);
+        case actionTypes.GET_ALL_USERS_START:
+            return getAllUsersStart(state);
+        case actionTypes.GET_ALL_USERS_SUCCESS:
+            return getAllUsersSuccess(state, action.data);
+        case actionTypes.GET_ALL_USERS_FAIL:
+            return getAllUsersFail(state, action.error.response);
+        case actionTypes.RESET_GET_ALL_USERS:
+            return resetGetAllUsers(state);
+        case actionTypes.GET_USER_BY_ID_START:
+            return getUserByIdStart(state);
+        case actionTypes.GET_USER_BY_ID_SUCCESS:
+            return getUserByIdSuccess(state, action.data);
+        case actionTypes.GET_USER_BY_ID_FAIL:
+            return getUserByIdFail(state, action.error.response);
+        case actionTypes.RESET_GET_USER_BY_ID:
+            return resetGetUserById(state);
+        case actionTypes.REMOVE_USER_START:
+            return removeUserStart(state);
+        case actionTypes.REMOVE_USER_SUCCESS:
+            return removeUserSucess(state);
+        case actionTypes.REMOVE_USER_FAIL:
+            return removeUserFail(state, action.error.response);
+        case actionTypes.RESET_REMOVE_USER:
+            return resetRemoveUser(state);
+
         default:
             return { ...state };
     }
