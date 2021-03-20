@@ -34,7 +34,7 @@ const ConfirmInfoPage = (props) => {
     };
 
     const submitHandler = (values) => {
-        props.onCheckValidMissInfo({ ...values, userId: login.userId }, login.token);
+        props.onCheckValidMissInfo({ ...values, userId: login.user.userId }, login.token);
     };
 
     useEffect(() => {

@@ -29,7 +29,7 @@ export const checkValidMissInfo = (query, token) => (dispatch) => {
     dispatch(updateUserStart());
     axios
         .get(`/users/existHandle`, { params: { handle: query.handle }, headers: { Authorization: token } })
-        .then(() => dispatch(updateUser(query)))
+        .then(() => dispatch(updateUser({ ...query, token })))
         .catch((error) => dispatch(updateUserFail(error)));
 };
 
