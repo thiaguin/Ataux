@@ -22,6 +22,7 @@ import Submission from './pages/submission/Submission';
 import UserList from './pages/user/UserList';
 import User from './pages/user/User';
 import ClassAddUser from './pages/class/ClassAddUser';
+import MainPage from './pages/mainPage/MainPage';
 
 const App = (props) => {
     const dispatch = useDispatch();
@@ -46,7 +47,7 @@ const App = (props) => {
             <Route path="/recoverPassword/:code" render={(currProps) => <UpdateRecoveredPassword {...currProps} />} />
             <Route path="/recoverPassword" render={(currProps) => <RecoverPassword {...currProps} />} />
             <Route>
-                <Login />
+                <MainPage />
             </Route>
         </Switch>
     );
@@ -69,7 +70,7 @@ const App = (props) => {
             <Route exact path="/submission" render={(currProps) => <SubmissionList {...currProps} />} />
             <Route exact path="/user/:mode/:userId?" render={(currProps) => <User {...currProps} />} />
             <Route>
-                <h1>Página não encontrada</h1>
+                <MainPage />
             </Route>
         </Switch>
     );
@@ -97,7 +98,7 @@ const App = (props) => {
             <Route exact path="/user/:mode/:userId?" render={(currProps) => <User {...currProps} />} />
             <Route exact path="/user" render={(currProps) => <UserList {...currProps} />} />
             <Route>
-                <h1>Página não encontrada</h1>
+                <MainPage />
             </Route>
         </Switch>
     );
