@@ -12,6 +12,7 @@ export {
     getAllSubmissions,
     resetGetAllSubmissions,
     checkSubmission,
+    checkAllUsersSubmissions,
     resetCheckSubmssions,
     getSubmissionById,
     resetGetSubmissionById,

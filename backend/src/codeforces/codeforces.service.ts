@@ -23,7 +23,7 @@ export class CodeforcesService {
         throw new HttpException({ entity: 'CodeforcesQuestion', type: NOT_FOUND }, 404);
     }
 
-    async getContest(contestId: string, count = 3): Promise<CodeforcesContestDTO> {
+    async getContest(contestId: string, count = 5): Promise<CodeforcesContestDTO> {
         try {
             const url = `${this.BASE_URL}/contest.standings`;
             const query = {
@@ -48,7 +48,7 @@ export class CodeforcesService {
         }
     }
 
-    async getSubmissions(handle: string, contestId: string, count = 3) {
+    async getSubmissions(handle: string, contestId: string, count = 5) {
         try {
             const url = `${this.BASE_URL}/contest.status`;
             const query = { params: { contestId, handle } };
@@ -67,7 +67,7 @@ export class CodeforcesService {
         }
     }
 
-    async getUser(handle: string, count = 3) {
+    async getUser(handle: string, count = 5) {
         try {
             const url = `${this.BASE_URL}/user.info `;
             const query = { params: { handles: handle } };

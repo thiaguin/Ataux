@@ -84,14 +84,22 @@ const List = (props) => {
         props.onRemoveList(id, props.token);
     };
 
-    const onCheckSubmissionHandler = (questions) => {
+    const onCheckSubmissionMemberHandler = (questions) => {
         props.onCheckSubmissions({
             token: props.token,
             listId,
             body: { questions: questions.map((el) => el.questionId) },
         });
+        setPopup(<Popup type="info" message="Isso pode demorar um pouco" onClose={props.onResetCheckSubmissions} />);
+    };
+
+    const onCheckSubmissionNotMemberHandler = (id) => {
+        props.onCheckAllUsersSubmissions(id, props.token);
         setPopup(<Popup type="info" message="Isso pode demorar um pouco" onClose={props.onResetCreateList} />);
     };
+
+    const onCheckSubmissionHandler =
+        props.loggedUser.role === 'MEMBER' ? onCheckSubmissionMemberHandler : onCheckSubmissionNotMemberHandler;
 
     const onGetCSVHandler = (id) => {
         props.getListCSV(id, props.token);
@@ -248,6 +256,7 @@ const mapDispatchToProps = (dispatch) => ({
     onUpdateList: (...values) => dispatch(actions.updateList(...values)),
     onResetUpdateList: () => dispatch(actions.resetUpdateList()),
     onCheckSubmissions: (value) => dispatch(actions.checkSubmission(value)),
+    onCheckAllUsersSubmissions: (...values) => dispatch(actions.checkAllUsersSubmissions(...values)),
     onResetCheckSubmissions: () => dispatch(actions.resetCheckSubmssions()),
     getListCSV: (...values) => dispatch(actions.getListCSV(...values)),
     onResetGetListCSV: () => dispatch(actions.resetGetListCSV()),

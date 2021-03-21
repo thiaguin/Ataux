@@ -52,6 +52,11 @@ export class ListController {
         return this.listService.checkSubmissions(params.id, req.user, body);
     }
 
+    @Post('/:id/users/submissions')
+    checkAllUsersSubmissions(@Param() params: { id: number }): Promise<void> {
+        return this.listService.checkAllUsersSubmissions(params.id);
+    }
+
     @Post('/:id/questions')
     addQuestions(@Param() params: { id: number }, @Body() body: AddQuestionListDTO): Promise<void> {
         return this.listService.setQuestions(params.id, body.questionIds);

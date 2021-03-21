@@ -366,6 +366,23 @@ export class ListService {
         throw new HttpException({ entity: 'UserClass', type: BAD_REQUEST }, 400);
     }
 
+    async checkAllUsersSubmissions(id: number) {
+        const list = await this.findById(id);
+        const questionsId = list.questions.map((el) => el.questionId);
+        const usersClass = await this.getUserClassRepository().find({
+            where: { classId: list.classId },
+            relations: ['user'],
+        });
+
+        const users = usersClass
+            .filter((el) => el.user.handle && el.user.role === UserRole.MEMBER)
+            .map((el) => el.user);
+
+        for (const user of users) {
+            await this.checkSubmissions(list.id, <any>user, { questions: questionsId });
+        }
+    }
+
     async checkSubmissions(id: number, user: PayloadUserDTO, body: CheckSubmissionListDTO) {
         const currUser = body.user || user;
         const list = await this.findById(id);

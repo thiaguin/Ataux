@@ -37,23 +37,33 @@ const showListQuestion = (props) => {
                                     {props.list.title} - Questões
                                 </h3>
                                 <div style={{ display: 'inline-block', position: 'relative', float: 'right' }}>
-                                    {props.currentUser.role === 'MEMBER' &&
-                                        (props.checkSubmissionLoading ? (
-                                            <SpinnerButton
-                                                buttonVariant="secondary"
-                                                style={{ width: '100px', height: '10%' }}
-                                            />
-                                        ) : (
-                                            <Button
-                                                style={{ display: 'inline-block' }}
-                                                onClick={() => props.onCheckSubmission(props.list.questions)}
-                                                variant="secondary"
-                                            >
-                                                Atualizar
-                                            </Button>
-                                        ))}
+                                    {props.checkSubmissionLoading ? (
+                                        <SpinnerButton
+                                            buttonVariant="outline-secondary"
+                                            style={{ width: '100px', height: '10%' }}
+                                        />
+                                    ) : (
+                                        <Button
+                                            style={{ display: 'inline-block' }}
+                                            onClick={() =>
+                                                props.onCheckSubmission(
+                                                    props.currentUser.role === 'MEMBER'
+                                                        ? props.list.questions
+                                                        : props.list.id,
+                                                )
+                                            }
+                                            variant="outline-secondary"
+                                        >
+                                            Atualizar
+                                        </Button>
+                                    )}
                                     {props.currentUser.role !== 'MEMBER' && (
-                                        <Button variant="secondary" type="button" onClick={props.goToEditPage}>
+                                        <Button
+                                            variant="secondary"
+                                            style={{ marginLeft: '7px' }}
+                                            type="button"
+                                            onClick={props.goToEditPage}
+                                        >
                                             Editar Lista
                                         </Button>
                                     )}

@@ -283,16 +283,16 @@ export class ClassesService {
         const userClass = await userClassRepository.findOne({ classId: entity.id, userId: user.id });
 
         if (!userClass) {
-            if (entity.code === body.code) {
-                const newUserClass = userClassRepository.create({
-                    userId: user.id,
-                    classId: entity.id,
-                });
-
-                await userClassRepository.save(newUserClass);
+            if (entity.code !== body.code) {
+                throw new HttpException({ entity: 'InvalidCode', type: BAD_REQUEST }, 400);
             }
 
-            throw new HttpException({ entity: 'InvalidCode', type: BAD_REQUEST }, 400);
+            const newUserClass = userClassRepository.create({
+                userId: user.id,
+                classId: entity.id,
+            });
+
+            await userClassRepository.save(newUserClass);
         }
     }
 
