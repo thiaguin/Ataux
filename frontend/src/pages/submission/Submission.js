@@ -120,7 +120,11 @@ const Submission = (props) => {
                                             {submission.get.data.language}
                                         </td>
                                         <td key="createdTime" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                                            {submission.get.data.createdTime}
+                                            {`${new Date(submission.get.data.createdTime).toLocaleDateString(
+                                                'pt-BR',
+                                            )} - ${new Date(submission.get.data.createdTime).toLocaleTimeString(
+                                                'pt-BR',
+                                            )}`}
                                         </td>
                                     </tr>
                                 </tbody>

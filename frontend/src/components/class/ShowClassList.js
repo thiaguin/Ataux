@@ -81,18 +81,6 @@ const showClassList = (props) => {
                                         </td>
                                         <td key="name">
                                             <>
-                                                {/* <p
-                                                    onClick={() => props.onClickList(currList.id)}
-                                                    onMouseEnter={() => classNameHoverHandler(currList.id)}
-                                                    onMouseLeave={() => classNameHoverHandler(null)}
-                                                    style={
-                                                        classNameHover === currList.id
-                                                            ? { textDecoration: 'underline', cursor: 'pointer' }
-                                                            : {}
-                                                    }
-                                                >
-                                                    {currList.title}
-                                                </p> */}
                                                 <Nav.Link href={`/list/show/${currList.id}`} eventKey="link-1">
                                                     {currList.title}
                                                 </Nav.Link>
@@ -106,9 +94,15 @@ const showClassList = (props) => {
                                         </td>
                                         <td
                                             key="expirationTime"
-                                            style={{ textAlign: 'center', verticalAlign: 'middle' }}
+                                            style={{
+                                                textAlign: 'center',
+                                                verticalAlign: 'middle',
+                                                color: new Date() > new Date(currList.expirationTime) ? 'red' : '',
+                                            }}
                                         >
-                                            {currList.expirationTime}
+                                            {`${new Date(currList.expirationTime).toLocaleDateString(
+                                                'pt-BR',
+                                            )} - ${new Date(currList.expirationTime).toLocaleTimeString('pt-BR')}`}
                                         </td>
                                     </tr>
                                 ))}

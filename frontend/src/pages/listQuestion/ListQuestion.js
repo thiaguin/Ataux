@@ -118,7 +118,7 @@ const ListQuestion = (props) => {
                                         type="button"
                                         onClick={onCheckSubmissionHandler}
                                     >
-                                        Atualizar
+                                        Sincronizar
                                     </Button>
                                 )}
                                 <div style={{ display: 'inline-block', position: 'relative', float: 'right' }}>
@@ -198,7 +198,9 @@ const ListQuestion = (props) => {
                                                 key="createdTime"
                                                 style={{ textAlign: 'center', verticalAlign: 'middle' }}
                                             >
-                                                {el.createdTime}
+                                                {`${new Date(el.createdTime).toLocaleDateString('pt-BR')} - ${new Date(
+                                                    el.createdTime,
+                                                ).toLocaleTimeString('pt-BR')}`}
                                             </td>
                                         </tr>
                                     ))}
@@ -218,14 +220,6 @@ const ListQuestion = (props) => {
                                     Voltar
                                 </Button>
                             </Form.Group>
-                            {/* <Form.Group
-                                controlId="formGridSubmtiButton"
-                                style={{ width: '150px', display: 'inline-block', marginLeft: '15px' }}
-                            >
-                                <Button style={{ minWidth: '150px' }} variant="primary" type="submit">
-                                    Ver Usuários
-                                </Button>
-                            </Form.Group> */}
                         </div>
                     </div>
                 </div>

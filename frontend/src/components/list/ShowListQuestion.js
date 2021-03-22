@@ -54,7 +54,7 @@ const showListQuestion = (props) => {
                                             }
                                             variant="outline-secondary"
                                         >
-                                            Atualizar
+                                            Sincronizar
                                         </Button>
                                     )}
                                     {props.currentUser.role !== 'MEMBER' && (

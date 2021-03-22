@@ -134,7 +134,9 @@ const SubmissionList = (props) => {
                                             </Nav.Link>
                                         </td>
                                         <td key="createdTime" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                                            {el.createdTime}
+                                            {`${new Date(el.createdTime).toLocaleDateString('pt-BR')} - ${new Date(
+                                                el.createdTime,
+                                            ).toLocaleTimeString('pt-BR')}`}
                                         </td>
                                     </tr>
                                 ))}
