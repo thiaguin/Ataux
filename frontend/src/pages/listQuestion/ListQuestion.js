@@ -34,12 +34,17 @@ const ListQuestion = (props) => {
 
     const history = useHistory();
 
-    const onCheckSubmissionHandler = () => {
+    const onCheckMemberSubmissionHandler = () => {
         props.onCheckSubmissions({
             token,
             listId,
             body: { questions: [Number(questionId)] },
         });
+    };
+
+    const onCheckPriviligiesSubmissionHandler = () => {
+        const body = { questions: [Number(questionId)] };
+        props.onCheckAllUsersSubmissionHandler(listId, token, body);
     };
 
     const goToUrlPageHandler = (url) => {
@@ -50,6 +55,9 @@ const ListQuestion = (props) => {
     const goBackHandler = () => {
         history.goBack();
     };
+
+    const onCheckSubmissionHandler =
+        props.loggedUser.role === 'MEMBER' ? onCheckMemberSubmissionHandler : onCheckPriviligiesSubmissionHandler;
 
     const clickQuestionHandler = (el) => {
         history.push(`/question/show/${el.questionId}`);
@@ -230,11 +238,13 @@ const mapStateToProps = (state) => ({
     question: state.question.get,
     submission: state.submission,
     token: state.login.token,
+    loggedUser: state.login.user,
 });
 
 const mapDispatchToProps = (dispatch) => ({
     onGetAllSubmissions: (...values) => dispatch(actions.getAllSubmissions(...values)),
     onCheckSubmissions: (value) => dispatch(actions.checkSubmission(value)),
+    onCheckAllUsersSubmissionHandler: (...values) => dispatch(actions.checkAllUsersSubmissions(...values)),
     onResetCheckSubmissions: () => dispatch(actions.resetCheckSubmssions()),
 });
 

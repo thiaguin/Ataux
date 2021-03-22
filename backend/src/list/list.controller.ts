@@ -53,8 +53,8 @@ export class ListController {
     }
 
     @Post('/:id/users/submissions')
-    checkAllUsersSubmissions(@Param() params: { id: number }): Promise<void> {
-        return this.listService.checkAllUsersSubmissions(params.id);
+    checkAllUsersSubmissions(@Param() params: { id: number }, @Body() body): Promise<void> {
+        return this.listService.checkAllUsersSubmissions(params.id, body.questions);
     }
 
     @Post('/:id/questions')

@@ -4,7 +4,7 @@ import { UserMethod } from 'src/enums/userMethod.enum';
 import { CreateUserClassDTO } from 'src/usersClasses/dto/create-user-class.dto';
 import { UserClass } from 'src/usersClasses/usersClasses.entity';
 import { UserClassRepository } from 'src/usersClasses/usersClasses.repository';
-import { Repository, getCustomRepository, getManager } from 'typeorm';
+import { Repository, getCustomRepository, getManager, Not } from 'typeorm';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { User } from './users.entity';
 import { UserRepository } from './users.repository';
@@ -122,6 +122,19 @@ export class UsersService {
     async updateUser(id: number, body: UpdateUserDTO, loggedUser: PayloadUserDTO): Promise<void> {
         if (loggedUser.role !== UserRole.ADMIN && `${id}` !== `${loggedUser.id}`) {
             throw new HttpException({ entity: 'User', type: FORBIDDEN }, 403);
+        }
+
+        if (body.handle) {
+            const user = await this.repository.findOne({
+                where: {
+                    handle: body.handle,
+                    id: Not(id),
+                },
+            });
+
+            if (user) {
+                throw new HttpException({ entity: 'Handle', type: NOT_UNIQUE }, 403);
+            }
         }
 
         await this.update(id, body);

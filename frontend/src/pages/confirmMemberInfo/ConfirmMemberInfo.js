@@ -39,7 +39,7 @@ const ConfirmInfoPage = (props) => {
 
     useEffect(() => {
         if (props.user.error) {
-            setPopup(<Popup type="error" message={props.user.error} />);
+            setPopup(<Popup type="error" message={props.user.error} onClose={props.onResetUpdateUser} />);
         }
     }, [props.user.error]);
 

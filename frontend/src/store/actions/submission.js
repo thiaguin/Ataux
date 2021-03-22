@@ -73,10 +73,10 @@ export const checkSubmission = ({ listId, body, token }) => (dispatch) => {
         .catch((error) => dispatch(checkSubmissionFail(error)));
 };
 
-export const checkAllUsersSubmissions = (id, token) => (dispatch) => {
+export const checkAllUsersSubmissions = (id, token, body = {}) => (dispatch) => {
     dispatch(checkSubmissionStart());
     axios
-        .post(`/lists/${id}/users/submissions`, {}, { headers: { Authorization: token } })
+        .post(`/lists/${id}/users/submissions`, body, { headers: { Authorization: token } })
         .then((response) => dispatch(checkSubmissionSuccess(response.data)))
         .catch((error) => dispatch(checkSubmissionFail(error)));
 };
