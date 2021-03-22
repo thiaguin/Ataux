@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 import SpinnerButton from '../../components/spinnerButton/SpinnerButton';
 import Popup from '../../components/popup/Popup';
 import * as actions from '../../store/actions';
+import Spinner from '../../components/spinner/spinner';
 
 const ListQuestion = (props) => {
     const { token, submission, question } = props;
@@ -13,7 +14,6 @@ const ListQuestion = (props) => {
     const dispatch = useDispatch();
     const onInitPage = useCallback((...values) => dispatch(actions.getQuestionById(...values)), [dispatch]);
 
-    // const [classNameHover, setClassNameHover] = useState(false);
     const [popup, setPopup] = useState(null);
     const [questionNameHover, setQuestionNameHover] = useState(null);
 
@@ -224,6 +224,7 @@ const ListQuestion = (props) => {
                     </div>
                 </div>
             )}
+            {question.loading && <Spinner />}
         </>
     );
 };

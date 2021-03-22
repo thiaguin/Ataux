@@ -6,8 +6,9 @@ export const setRedirectPath = (path) => ({
     pathToRedirect: path,
 });
 
-const loginStart = () => ({
+const loginStart = (method) => ({
     type: actionTypes.LOGIN_START,
+    method,
 });
 
 const loginSucces = (data) => ({
@@ -23,7 +24,7 @@ const loginFail = (error) => ({
 export const resetLogin = () => ({ type: actionTypes.RESET_LOGIN });
 
 export const login = (body) => (dispatch) => {
-    dispatch(loginStart());
+    dispatch(loginStart('LOCAL'));
     axios
         .post('/auth', body)
         .then((response) => dispatch(loginSucces(response.data)))
@@ -64,7 +65,7 @@ export const authCheck = () => (dispatch) => {
 };
 
 export const googleLogin = (body) => (dispatch) => {
-    dispatch(loginStart());
+    dispatch(loginStart('GOOGLE'));
     axios
         .post('/auth/google', body)
         .then((response) => dispatch(loginSucces(response.data)))

@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Nav, Pagination, Table } from 'react-bootstrap';
 import { connect, useDispatch } from 'react-redux';
-// import { useHistory } from 'react-router-dom';
 import Popup from '../../components/popup/Popup';
 import * as actions from '../../store/actions';
 import userTypes from '../../enums/userTypes';
+import Spinner from '../../components/spinner/spinner';
 
 const UserList = (props) => {
     const { user } = props;
@@ -12,11 +12,8 @@ const UserList = (props) => {
     const dispatch = useDispatch();
     const onInitPage = useCallback((...values) => dispatch(actions.getAllUsers(...values)), [dispatch]);
 
-    // const history = useHistory();
-
     const [popup, setPopup] = useState(null);
     const [page, setPage] = useState(0);
-    // const [questionNameHover, setQuestionNameHover] = useState(null);
 
     const parentInStyle = {
         margin: '5%',
@@ -37,10 +34,6 @@ const UserList = (props) => {
     const usersPerPage = 30;
     const initialPage = 0;
     const lastPage = usersCount ? Math.floor((usersCount - 1) / usersPerPage) : 0;
-
-    // const clickQuestionHandler = (el) => {
-    //     history.push(`/question/show/${el.questionId}`);
-    // };
 
     useEffect(() => {
         onInitPage({ page }, props.token);
@@ -142,6 +135,7 @@ const UserList = (props) => {
                     </div>
                 </div>
             )}
+            {props.user.getAll.loading && <Spinner />}
         </>
     );
 };

@@ -2,8 +2,6 @@ import React from 'react';
 import { Button, Form, Nav, Table } from 'react-bootstrap';
 
 const showClassList = (props) => {
-    // const [classNameHover, setClassNameHover] = useState(false);
-
     const parentInStyle = {
         margin: '5%',
         width: '90%',
@@ -16,10 +14,6 @@ const showClassList = (props) => {
         width: '100%',
         margin: '0',
     };
-
-    // const classNameHoverHandler = (value) => {
-    //     setClassNameHover(value);
-    // };
 
     return (
         <>

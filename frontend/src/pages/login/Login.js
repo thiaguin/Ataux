@@ -9,6 +9,7 @@ import * as actions from '../../store/actions';
 import GoogleButton from '../../components/googleButton/GoogleButton';
 import Popup from '../../components/popup/Popup';
 import Modal from '../../components/modal/Modal';
+import SpinnerButton from '../../components/spinnerButton/SpinnerButton';
 import { entities as entitiesTypes } from '../../resources/entities';
 
 const Login = (props) => {
@@ -167,28 +168,39 @@ const Login = (props) => {
                                     </Form.Text>
                                     <Form.Row style={{ paddingTop: '20px' }}>
                                         <Form.Group as={Col} controlId="formGridGoogleButton">
-                                            <GoogleLogin
-                                                clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-                                                render={(renderProps) => (
-                                                    <GoogleButton
-                                                        name="Entrar com Google"
-                                                        onClick={(currvalues) => renderProps.onClick(currvalues)}
-                                                        style={{ minWidth: '200px' }}
-                                                    />
-                                                )}
-                                                onSuccess={loginGoogleHandler}
-                                            />
+                                            {login.loadingGoogle ? (
+                                                <SpinnerButton
+                                                    style={{ minWidth: '200px', width: '100%' }}
+                                                    buttonVariant="secondary"
+                                                />
+                                            ) : (
+                                                <GoogleLogin
+                                                    clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
+                                                    render={(renderProps) => (
+                                                        <GoogleButton
+                                                            name="Entrar com Google"
+                                                            onClick={(currvalues) => renderProps.onClick(currvalues)}
+                                                            style={{ minWidth: '200px' }}
+                                                        />
+                                                    )}
+                                                    onSuccess={loginGoogleHandler}
+                                                />
+                                            )}
                                         </Form.Group>
                                         <Form.Group as={Col} controlId="formGridSubmtiButton">
-                                            <Button
-                                                style={{ width: '100%', minWidth: '200px' }}
-                                                variant="primary"
-                                                type="submit"
-                                                disabled={!values.email || !values.password || !isValid}
-                                                onClick={() => loginHandler(values)}
-                                            >
-                                                Login
-                                            </Button>
+                                            {login.loadingLocal ? (
+                                                <SpinnerButton style={{ minWidth: '200px', width: '100%' }} />
+                                            ) : (
+                                                <Button
+                                                    style={{ width: '100%', minWidth: '200px' }}
+                                                    variant="primary"
+                                                    type="submit"
+                                                    disabled={!values.email || !values.password || !isValid}
+                                                    onClick={() => loginHandler(values)}
+                                                >
+                                                    Login
+                                                </Button>
+                                            )}
                                         </Form.Group>
                                     </Form.Row>
                                 </Form>

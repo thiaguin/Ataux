@@ -3,6 +3,7 @@ import { Nav, Pagination, Table } from 'react-bootstrap';
 import { connect, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import Popup from '../../components/popup/Popup';
+import Spinner from '../../components/spinner/spinner';
 import * as actions from '../../store/actions';
 
 const SubmissionList = (props) => {
@@ -163,6 +164,7 @@ const SubmissionList = (props) => {
                     </div>
                 </div>
             )}
+            {submission.getAll.loading && <Spinner />}
         </>
     );
 };

@@ -3,6 +3,7 @@ import { Button, FormControl, InputGroup, Nav, Pagination, Table } from 'react-b
 import { useHistory } from 'react-router-dom';
 import { connect, useDispatch } from 'react-redux';
 import * as actions from '../../store/actions';
+import Spinner from '../../components/spinner/spinner';
 
 const TagList = (props) => {
     const dispatch = useDispatch();
@@ -148,12 +149,14 @@ const TagList = (props) => {
                     </div>
                 </div>
             )}
+            {props.loading && <Spinner />}
         </>
     );
 };
 
 const mapStateToProps = (state) => ({
     tags: state.tag.getAll.data,
+    loading: state.tag.getAll.loading,
     token: state.login.token,
 });
 

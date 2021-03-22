@@ -3,7 +3,8 @@ import * as actionTypes from '../actions/actionTypes';
 import { getErrorMessage } from '../../services/error';
 
 const initialState = {
-    loading: false,
+    loadingLocal: false,
+    loadingGoogle: false,
     error: null,
     token: null,
     expirationDate: null,
@@ -18,9 +19,10 @@ const initialState = {
     },
 };
 
-const loginStart = (state) => ({
+const loginStart = (state, method) => ({
     ...state,
-    loading: true,
+    loadingLocal: method === 'LOCAL',
+    loadingGoogle: method === 'GOOGLE',
     error: null,
 });
 
@@ -33,7 +35,8 @@ const loginSucess = (state, data) => {
 
     return {
         ...state,
-        loading: false,
+        loadingLocal: false,
+        loadingGoogle: false,
         error: null,
         token: data.token,
         expirationDate,
@@ -50,7 +53,8 @@ const loginSucess = (state, data) => {
 
 const loginFail = (state, data) => ({
     ...state,
-    loading: false,
+    loadingLocal: false,
+    loadingGoogle: false,
     error: getErrorMessage(data),
 });
 
@@ -109,7 +113,8 @@ const refreshTokenSuccess = (state, data) => {
 
     return {
         ...state,
-        loading: false,
+        loadingLocal: false,
+        loadingGoogle: false,
         error: null,
         token: data.token,
         expirationDate,
@@ -127,7 +132,7 @@ const refreshTokenSuccess = (state, data) => {
 const reducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.LOGIN_START:
-            return loginStart(state);
+            return loginStart(state, action.method);
         case actionTypes.LOGIN_SUCCESS:
             return loginSucess(state, action.data);
         case actionTypes.LOGIN_FAIL:

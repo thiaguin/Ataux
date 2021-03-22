@@ -7,6 +7,7 @@ import CreateList from '../../components/list/CreateList';
 import EditList from '../../components/list/EditList';
 import ShowListQuestion from '../../components/list/ShowListQuestion';
 import ShowListUsers from '../../components/list/ShowListUsers';
+import Spinner from '../../components/spinner/spinner';
 
 const List = (props) => {
     const { list } = props;
@@ -234,6 +235,7 @@ const List = (props) => {
                     onNewQuestionURLChange={(value) => setNewQuestionURL(value.target.value)}
                 />
             )}
+            {list.get.loading && <Spinner />}
         </>
     );
 };

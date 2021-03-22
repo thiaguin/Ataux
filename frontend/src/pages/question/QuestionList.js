@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 import * as actions from '../../store/actions';
 import levelTypes from '../../enums/levelTypes';
 import Popover from '../../components/popover/Popover';
+import Spinner from '../../components/spinner/spinner';
 
 const QuestionList = (props) => {
     const dispatch = useDispatch();
@@ -220,12 +221,14 @@ const QuestionList = (props) => {
                     </div>
                 </div>
             )}
+            {props.loading && <Spinner />}
         </>
     );
 };
 
 const mapStateToProps = (state) => ({
     questions: state.question.getAll.questions,
+    loading: state.question.getAll.loading,
     tags: state.tag.getAll.data,
     loggedUser: state.login.user,
     token: state.login.token,

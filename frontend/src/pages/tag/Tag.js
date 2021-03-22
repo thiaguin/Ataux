@@ -6,6 +6,7 @@ import Popup from '../../components/popup/Popup';
 import CreateTag from '../../components/tag/CreateTag';
 import ShowTag from '../../components/tag/ShowTag';
 import EditTag from '../../components/tag/EditTag';
+import Spinner from '../../components/spinner/spinner';
 
 const Tag = (props) => {
     const { tag } = props;
@@ -96,6 +97,7 @@ const Tag = (props) => {
             {mode === 'edit' && tag.get.tag && (
                 <EditTag tag={tag.get.tag} goBack={goBackHandler} submit={editHandler} onRemove={removeTagHandler} />
             )}
+            {tag.get.loading && <Spinner />}
         </>
     );
 };

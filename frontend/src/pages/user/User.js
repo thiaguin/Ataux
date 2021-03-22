@@ -2,11 +2,11 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import { Redirect, useHistory } from 'react-router-dom';
 import * as actions from '../../store/actions';
-// import Popup from '../../components/popup/Popup';
 import ShowUser from '../../components/user/ShowUser';
 import EditUser from '../../components/user/EditUser';
 import EditPasswordUser from '../../components/user/EditPasswordUser';
 import Popup from '../../components/popup/Popup';
+import Spinner from '../../components/spinner/spinner';
 
 const User = (props) => {
     const { user, login, loggedUser } = props;
@@ -109,6 +109,7 @@ const User = (props) => {
                     loading={user.updatePassword.loading}
                 />
             )}
+            {user.get.loading && <Spinner />}
         </>
     );
 };

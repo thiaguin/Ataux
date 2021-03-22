@@ -7,6 +7,7 @@ import CreateQuestion from '../../components/question/CreateQuestion';
 import ShowQuestion from '../../components/question/ShowQuestion';
 import EditQuestion from '../../components/question/EditQuestion';
 import QuestionCode from '../../components/question/QuestionCode';
+import Spinner from '../../components/spinner/spinner';
 
 const Question = (props) => {
     const { question, tags, loggedUser } = props;
@@ -163,6 +164,7 @@ const Question = (props) => {
             {loggedUser.role !== 'MEMBER' && mode === 'code' && question.get.data && (
                 <QuestionCode question={question.get.data} onSaveCode={editCodeHandler} />
             )}
+            {question.get.loading && <Spinner />}
         </>
     );
 };

@@ -140,16 +140,6 @@ const editQuestion = (props) => {
                                         Adicionar Tag
                                     </Button>
                                 </div>
-                                {/* <Form.Text
-                                // onClick={recoverPasswordClickHandler}
-                                // onMouseEnter={recoverPasswordHoverHandler}
-                                // onMouseLeave={recoverPasswordHoverHandler}
-                                // style={recoverPasswordStyle}
-                                className="text-muted"
-                                style={{ textAlign: 'left', marginBottom: '10px' }}
-                            >
-                                Editar solução padrão
-                            </Form.Text> */}
                                 <div style={{ textAlign: 'center' }}>
                                     <Form.Group
                                         style={{ width: '150px', display: 'inline-block' }}

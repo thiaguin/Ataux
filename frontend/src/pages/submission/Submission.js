@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 import Popup from '../../components/popup/Popup';
 import * as actions from '../../store/actions';
 import Code from '../../components/code/Code';
+import Spinner from '../../components/spinner/spinner';
 
 const Submission = (props) => {
     const { token, submission } = props;
@@ -134,6 +135,7 @@ const Submission = (props) => {
                     </div>
                 </div>
             )}
+            {submission.get.loading && <Spinner />}
         </>
     );
 };

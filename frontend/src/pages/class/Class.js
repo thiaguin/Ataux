@@ -8,6 +8,7 @@ import RegisterClass from '../../components/class/RegisterClass';
 import ShowClassList from '../../components/class/ShowClassList';
 import ShowClassUser from '../../components/class/ShowClassUser';
 import EditClass from '../../components/class/EditClass';
+import Spinner from '../../components/spinner/spinner';
 
 const Class = (props) => {
     const { token, classData, loggedUser } = props;
@@ -185,6 +186,7 @@ const Class = (props) => {
                     onRemove={removeClassHandler}
                 />
             )}
+            {classData.get.loading && <Spinner />}
         </>
     );
 };
