@@ -147,6 +147,9 @@ const ListQuestion = (props) => {
                                     <th key="memory" style={{ textAlign: 'center' }}>
                                         Mem (ms)
                                     </th>
+                                    <th key="penalty" style={{ textAlign: 'center' }}>
+                                        Pênalti
+                                    </th>
                                     <th key="language" style={{ textAlign: 'center' }}>
                                         Linguagem
                                     </th>
@@ -188,6 +191,9 @@ const ListQuestion = (props) => {
                                             </td>
                                             <td key="memory" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                                 {el.memory}
+                                            </td>
+                                            <td key="penalty" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                                                {el.penalty}
                                             </td>
                                             <td key="language" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                                 <Nav.Link href={`/submission/show/${el.id}`} eventKey="link-2">

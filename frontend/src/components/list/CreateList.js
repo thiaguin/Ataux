@@ -16,6 +16,8 @@ const creatList = (props) => {
         title: Yup.string().required(),
         expirationDate: Yup.date().min(today).required(),
         expirationTime: Yup.string().required(),
+        startDate: Yup.date().min(today).required(),
+        startTime: Yup.string().required(),
         questionURL: Yup.string(),
     });
 
@@ -37,7 +39,15 @@ const creatList = (props) => {
     return (
         <Formik
             validationSchema={schema}
-            initialValues={{ title: '', expirationTime: '23:59', expirationDate: '', questions: [], questionURL: '' }}
+            initialValues={{
+                title: '',
+                expirationTime: '23:59',
+                expirationDate: '',
+                questions: [],
+                questionURL: '',
+                startTime: '00:00',
+                startDate: '',
+            }}
         >
             {({ handleSubmit, handleChange, handleBlur, values, touched, errors, isValid }) => (
                 <div style={parentInStyle}>
@@ -55,6 +65,32 @@ const creatList = (props) => {
                                     onBlur={handleBlur}
                                 />
                             </Form.Group>
+                            <Form.Row>
+                                <Form.Group as={Col} controlId="formDateURL" onSubmit={props.submitHandler}>
+                                    <Form.Label>Data de Início</Form.Label>
+                                    <Form.Control
+                                        name="startDate"
+                                        value={values.startDate}
+                                        type="date"
+                                        placeholder="Data de início da nova lista"
+                                        onChange={handleChange}
+                                        isInvalid={touched.startDate && errors.startDate}
+                                        onBlur={handleBlur}
+                                    />
+                                </Form.Group>
+                                <Form.Group as={Col} controlId="formTimeURL" onSubmit={props.submitHandler}>
+                                    <Form.Label>Horário de Início</Form.Label>
+                                    <Form.Control
+                                        name="startTime"
+                                        value={values.startTime}
+                                        type="time"
+                                        placeholder="Horário limite da nova lista"
+                                        onChange={handleChange}
+                                        isInvalid={touched.startTime && errors.startTime}
+                                        onBlur={handleBlur}
+                                    />
+                                </Form.Group>
+                            </Form.Row>
                             <Form.Row>
                                 <Form.Group as={Col} controlId="formDateURL" onSubmit={props.submitHandler}>
                                     <Form.Label>Data Limite</Form.Label>

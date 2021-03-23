@@ -17,6 +17,8 @@ const editList = (props) => {
         title: Yup.string().required(),
         expirationDate: Yup.date().min(today).required(),
         expirationTime: Yup.string().required(),
+        startDate: Yup.date().required(),
+        startTime: Yup.string().required(),
         questionURL: Yup.string(),
     });
 
@@ -36,12 +38,20 @@ const editList = (props) => {
     const [trashHover, setTrashHover] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const expirationTime = new Date(props.list.expirationTime);
-    const hours = expirationTime.getHours();
-    const minutes = expirationTime.getMinutes();
-    const year = expirationTime.getFullYear();
-    const month =
+    const expirationHours =
+        expirationTime.getHours() < 10 ? `0${expirationTime.getHours()}` : expirationTime.getHours();
+    const expirationMinute =
+        expirationTime.getMinutes() < 10 ? `0${expirationTime.getMinutes()}` : expirationTime.getMinutes();
+    const expirationYear = expirationTime.getFullYear();
+    const expirationMonth =
         expirationTime.getMonth() + 1 < 10 ? `0${expirationTime.getMonth() + 1}` : expirationTime.getMonth() + 1;
-    const date = expirationTime.getDate();
+    const expirationDate = expirationTime.getDate();
+    const startTime = new Date(props.list.startTime);
+    const startHours = startTime.getHours() < 10 ? `0${startTime.getHours()}` : startTime.getHours();
+    const startMinute = startTime.getMinutes() < 10 ? `0${startTime.getMinutes()}` : startTime.getMinutes();
+    const startYear = startTime.getFullYear();
+    const startMonth = startTime.getMonth() + 1 < 10 ? `0${startTime.getMonth() + 1}` : startTime.getMonth() + 1;
+    const startDate = startTime.getDate();
 
     return (
         <>
@@ -60,8 +70,10 @@ const editList = (props) => {
                     validationSchema={schema}
                     initialValues={{
                         title: props.list.title,
-                        expirationTime: `${hours}:${minutes}`,
-                        expirationDate: `${year}-${month}-${date}`,
+                        expirationTime: `${expirationHours}:${expirationMinute}`,
+                        expirationDate: `${expirationYear}-${expirationMonth}-${expirationDate}`,
+                        startTime: `${startHours}:${startMinute}`,
+                        startDate: `${startYear}-${startMonth}-${startDate}`,
                         questions: props.questions,
                         questionURL: '',
                     }}
@@ -82,6 +94,32 @@ const editList = (props) => {
                                             onBlur={handleBlur}
                                         />
                                     </Form.Group>
+                                    <Form.Row>
+                                        <Form.Group as={Col} controlId="formDateURL" onSubmit={props.submitHandler}>
+                                            <Form.Label>Data de Início</Form.Label>
+                                            <Form.Control
+                                                name="startDate"
+                                                value={values.startDate}
+                                                type="date"
+                                                placeholder="Data de início da nova lista"
+                                                onChange={handleChange}
+                                                isInvalid={touched.startDate && errors.startDate}
+                                                onBlur={handleBlur}
+                                            />
+                                        </Form.Group>
+                                        <Form.Group as={Col} controlId="formTimeURL" onSubmit={props.submitHandler}>
+                                            <Form.Label>Horário de Início</Form.Label>
+                                            <Form.Control
+                                                name="startTime"
+                                                value={values.startTime}
+                                                type="time"
+                                                placeholder="Horário de início da nova lista"
+                                                onChange={handleChange}
+                                                isInvalid={touched.startTime && errors.startTime}
+                                                onBlur={handleBlur}
+                                            />
+                                        </Form.Group>
+                                    </Form.Row>
                                     <Form.Row>
                                         <Form.Group as={Col} controlId="formDateURL" onSubmit={props.submitHandler}>
                                             <Form.Label>Data Limite</Form.Label>

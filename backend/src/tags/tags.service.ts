@@ -30,7 +30,7 @@ export class TagsService {
         const [tags, count] = await this.repository.findAndCount({
             ...page,
             where,
-            order: { id: 'ASC' },
+            order: { name: 'ASC' },
         });
 
         return { data: tags, count };
@@ -40,6 +40,7 @@ export class TagsService {
         const where = titles.map((title) => ({ name: title }));
         const tags = await this.repository.find({
             where: where,
+            order: { name: 'ASC' },
         });
 
         return tags;

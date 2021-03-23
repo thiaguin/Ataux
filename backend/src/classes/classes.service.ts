@@ -110,7 +110,7 @@ export class ClassesService {
             'Nome',
             'Handle',
             'Matrícula',
-            ...classResume.lists.map((el, index) => `List ${index + 1} - ${el.title}`),
+            ...classResume.lists.map((el, index) => `Lista ${index + 1} - ${el.title}`),
             'Média',
         ];
         const rows = [];
@@ -206,6 +206,10 @@ export class ClassesService {
 
     async findOne(id: number, loggedUser: PayloadUserDTO): Promise<Class> {
         const entity = await this.getResume(id);
+
+        if (loggedUser.role === UserRole.MEMBER) {
+            entity.lists = entity.lists.filter((list) => new Date(list.startTime) < new Date());
+        }
 
         const { users, lists } = entity;
 

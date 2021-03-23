@@ -37,6 +37,12 @@ import { Query } from 'typeorm/driver/Query';
 
 @Injectable()
 export class ListService {
+    statusToCSV = {
+        [QuestionStatus.OK]: 'Aceito',
+        [QuestionStatus.NOK]: 'Rejeitado',
+        [QuestionStatus.BLANK]: '-',
+    };
+
     @InjectRepository(List)
     private repository: Repository<List>;
     private submissionService: SubmissionsService;
@@ -73,24 +79,21 @@ export class ListService {
     }
 
     addUserGrade(list: List): List {
-        const questionsWeight = {};
-        let maxGrade = 0;
-
-        for (const value of list?.questions) {
-            maxGrade += value.weight;
-            questionsWeight[value.questionId] = value.weight;
-        }
+        const maxQuestionGrade = 10;
+        const maxGrade = list.questions.length * 10;
 
         for (const value of list.users) {
-            let userWeight = 0;
+            let usersGrade = 0;
+            let flag = false;
 
             for (const question of value.questions) {
-                if (question.status === QuestionStatus.OK) {
-                    userWeight += questionsWeight[question.questionId];
+                if (question.status === QuestionStatus.OK && !flag) {
+                    flag = true;
+                    usersGrade += Math.max(0, maxQuestionGrade - question.penalty);
                 }
             }
 
-            value.grade = maxGrade > 0 ? ((userWeight * 10) / maxGrade).toFixed(2) : '0';
+            value.grade = maxGrade > 0 ? ((usersGrade * maxQuestionGrade) / maxGrade).toFixed(2) : '0';
         }
 
         return list;
@@ -159,14 +162,14 @@ export class ListService {
         const listResume = await this.getResume(id, {});
         const listResumeUsers = listResume.users.filter((el) => el.user[0].role === UserRole.MEMBER);
         const columnsName = [
-            'Name',
+            'Nome',
             'Handle',
-            'Registration',
+            'Matrícula',
             ...listResume.questions.map((el, index) => {
                 const [question] = <any>el.question;
-                return `Question ${index + 1} - (${question.title})`;
+                return `Questão ${index + 1} - (${question.title})`;
             }),
-            'Grade',
+            'Média',
         ];
 
         const rows = [];
@@ -176,11 +179,17 @@ export class ListService {
             const [currentUser] = <any>user.user;
 
             for (const question of user.questions) {
-                questionsSubmmited[question.questionId] = `${question.status} - (${question.count})`;
+                if (question.status === QuestionStatus.BLANK) {
+                    questionsSubmmited[question.questionId] = `(${question.count})`;
+                } else {
+                    questionsSubmmited[question.questionId] = `${this.statusToCSV[question.status]} - (${
+                        question.count
+                    })`;
+                }
             }
 
             const userQuestions = listResume.questions.map((question) => {
-                return questionsSubmmited[question.questionId] || `${QuestionStatus.BLANK} - (0)`;
+                return questionsSubmmited[question.questionId] || `(0)`;
             });
 
             const rowValues = [
@@ -285,6 +294,10 @@ export class ListService {
         });
 
         if (!list) {
+            throw new HttpException({ entity: 'List', type: NOT_FOUND }, 404);
+        }
+
+        if (user.role === UserRole.MEMBER && new Date(list.startTime) > new Date()) {
             throw new HttpException({ entity: 'List', type: NOT_FOUND }, 404);
         }
 

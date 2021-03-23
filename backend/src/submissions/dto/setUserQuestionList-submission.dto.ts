@@ -6,4 +6,5 @@ export class SetUserQuestionListSubmission {
     submission: CodeforcesSubmissionDTO;
     userId: number;
     listId: number;
+    penalty: number;
 }

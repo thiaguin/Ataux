@@ -28,6 +28,8 @@ const MainPage = () => {
                     <ul>
                         <li>timeataux@gmail.com</li>
                     </ul>
+                    <br />
+                    Resolva problemas para aprender novas técnicas de programação!
                 </>
             </div>
         </div>

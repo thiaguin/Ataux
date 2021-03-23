@@ -64,6 +64,7 @@ const showClassList = (props) => {
                                         Lista
                                     </th>
                                     <th key="questionsCount">N° de Questões</th>
+                                    <th key="startedTime">Data de Início</th>
                                     <th key="expirationTime">Data de Expiração</th>
                                 </tr>
                             </thead>
@@ -85,6 +86,17 @@ const showClassList = (props) => {
                                             style={{ textAlign: 'center', verticalAlign: 'middle' }}
                                         >
                                             {currList.questions ? currList.questions.length : 0}
+                                        </td>
+                                        <td
+                                            key="startedTome"
+                                            style={{
+                                                textAlign: 'center',
+                                                verticalAlign: 'middle',
+                                            }}
+                                        >
+                                            {`${new Date(currList.startTime).toLocaleDateString('pt-BR')} - ${new Date(
+                                                currList.startTime,
+                                            ).toLocaleTimeString('pt-BR')}`}
                                         </td>
                                         <td
                                             key="expirationTime"

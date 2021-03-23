@@ -26,6 +26,9 @@ export class UserQuestionList {
     @Column()
     status: string;
 
+    @Column({ type: 'int', default: 0 })
+    penalty: number;
+
     @ManyToOne(() => List, (list) => list.usersQuestions, { onDelete: 'CASCADE' })
     list: List;
 

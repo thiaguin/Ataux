@@ -29,14 +29,14 @@ const List = (props) => {
         setShowMode(showMode === QUESTIONS ? USERS : QUESTIONS);
     };
 
-    const getExpirationTime = (values) => {
-        const [hours, minutes] = values.expirationTime.split(':');
-        const expirationDate = new Date(values.expirationDate);
-        const year = expirationDate.getUTCFullYear();
-        const month = expirationDate.getUTCMonth();
-        const day = expirationDate.getUTCDate();
-        const expirationTime = new Date(year, month, day, hours, minutes, 59);
-        return expirationTime;
+    const getTime = (dateValue, time) => {
+        const [hours, minutes] = time.split(':');
+        const date = new Date(dateValue);
+        const year = date.getUTCFullYear();
+        const month = date.getUTCMonth();
+        const day = date.getUTCDate();
+        const reseult = new Date(year, month, day, hours, minutes, 59);
+        return reseult.toISOString();
     };
 
     const onEditHandler = (listToEdit, values) => {
@@ -44,7 +44,8 @@ const List = (props) => {
             listToEdit.id,
             {
                 classId: listToEdit.classId,
-                expirationTime: getExpirationTime(values).toISOString(),
+                expirationTime: getTime(values.expirationDate, values.expirationTime),
+                startTime: getTime(values.startDate, values.startTime),
                 title: values.title,
                 questions: values.questions.map((question) => question.id),
             },
@@ -56,7 +57,8 @@ const List = (props) => {
         props.onCreateList(
             {
                 classId,
-                expirationTime: getExpirationTime(values).toISOString(),
+                expirationTime: getTime(values.expirationDate, values.expirationTime),
+                startTime: getTime(values.startDate, values.startTime),
                 title: values.title,
                 questions: values.questions.map((question) => question.id),
             },

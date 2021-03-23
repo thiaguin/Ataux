@@ -29,6 +29,9 @@ export class List {
     @Column({ nullable: true, type: 'timestamp with time zone' })
     expirationTime: string;
 
+    @Column({ nullable: true, type: 'timestamp with time zone' })
+    startTime: string;
+
     @ManyToOne(() => Class, (entity) => entity.lists, { onDelete: 'CASCADE' })
     class: Class;
 

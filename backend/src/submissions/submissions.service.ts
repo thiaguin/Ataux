@@ -41,6 +41,12 @@ export class SubmissionsService {
             { entity: Question, nick: 'sq' },
         ];
     }
+
+    getDifferenceDays(day1, day2) {
+        const diffTime = Math.abs(day1 - day2);
+        return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    }
+
     async findAll(query): Promise<{ data: Submission[]; count: number }> {
         const where = this.queryService.getQueryToFind(Submission, query);
         const [submissions, count] = await this.repository.findAndCount({
@@ -80,6 +86,7 @@ export class SubmissionsService {
             const statusIsOk = userQuestionList.status === statusOK || data.submission.verdict === statusOK;
             const newValue = {
                 ...userQuestionList,
+                penalty: userQuestionList.penalty > 0 ? userQuestionList.penalty : 0,
                 status: statusIsOk ? statusOK : statusNOK,
                 count: userQuestionList.count + 1,
             };
@@ -92,6 +99,7 @@ export class SubmissionsService {
                 count: 1,
                 listId: data.listId,
                 userId: data.userId,
+                penalty: data.penalty,
             };
             this.getUserQuestionListRepository().create(newUserQuestionList);
             await this.getUserQuestionListRepository().save(newUserQuestionList);
@@ -116,10 +124,14 @@ export class SubmissionsService {
             submission: submission,
             userId: data.userId,
             listId: data.listId,
+            penalty:
+                submission.verdict === 'OK' && createdTime > limitTime
+                    ? this.getDifferenceDays(createdTime, limitTime)
+                    : 0,
         };
 
         const existInTesting = exist && exist.status === 'TESTING';
-        if ((!exist || existInTesting) && createdTime <= limitTime) {
+        if (!exist || existInTesting) {
             await this.setUserQuestionList(dataToSetUserQuestionList);
             const sourceCode = await this.getSourceCode(submission.contestId, submission.id);
             const newSubmission = this.repository.create({
