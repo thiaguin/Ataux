@@ -89,7 +89,7 @@ const SubmissionList = (props) => {
                                         Mem (ms)
                                     </th>
                                     <th key="penalty" style={{ textAlign: 'center' }}>
-                                        Pênaltii
+                                        Atraso (dias)
                                     </th>
                                     <th key="language" style={{ textAlign: 'center' }}>
                                         Linguagem

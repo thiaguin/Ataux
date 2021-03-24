@@ -145,6 +145,10 @@ export class SubmissionsService {
                 code: sourceCode,
                 memory: submission.memoryConsumedBytes,
                 createdTime: createdTime.toISOString(),
+                penalty:
+                    submission.verdict === 'OK' && createdTime > limitTime
+                        ? this.getDifferenceDays(createdTime, limitTime)
+                        : 0,
             });
             await this.repository.save(newSubmission);
             return newSubmission;

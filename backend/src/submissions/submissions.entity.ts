@@ -36,6 +36,9 @@ export class Submission {
     @Column()
     userId: number;
 
+    @Column({ type: 'int', default: 0 })
+    penalty: number;
+
     @Column({ nullable: true, type: 'timestamp with time zone' })
     createdTime: string;
 

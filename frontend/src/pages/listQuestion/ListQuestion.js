@@ -148,7 +148,7 @@ const ListQuestion = (props) => {
                                         Mem (ms)
                                     </th>
                                     <th key="penalty" style={{ textAlign: 'center' }}>
-                                        Pênalti
+                                        Atraso (dias)
                                     </th>
                                     <th key="language" style={{ textAlign: 'center' }}>
                                         Linguagem
