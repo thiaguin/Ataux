@@ -72,7 +72,7 @@ const Login = (props) => {
     };
 
     const loginGoogleFailHandler = () => {
-        setPopup(<Popup type="error" message="Erro do login com google." />);
+        setPopup(<Popup type="error" message="Erro de login com Google." />);
     };
 
     useEffect(() => {

@@ -166,7 +166,7 @@ const editUser = (props) => {
                                             </Button>
                                         </Form.Group>
 
-                                        {user.method === 'LOCAL' && (
+                                        {user.method === 'LOCAL' && `${user.id}` === `${currUser.userId}` && (
                                             <Form.Group
                                                 style={{ width: '150px', marginLeft: '5px', display: 'inline-block' }}
                                                 controlId="formGridGoogleButton"
