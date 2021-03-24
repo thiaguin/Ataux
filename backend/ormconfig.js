@@ -10,8 +10,8 @@ module.exports = {
     entities: ['{dist, src}/**/*.entity{.ts,.js}'],
     migrations: ['{dist, src}/**/*.migration{.ts,.js}', '{dist, src}/**/*.seed{.ts,.js}'],
     subscribers: ['{dist, src}/**/*.subscriber{.ts,.js}'],
-    ssl: true,
-    extra: {
+    ssl: process.env.NODE_ENV === 'production',
+    extra: process.env.NODE_ENV === 'production' && {
         ssl: {
             rejectUnauthorized: false,
         },
