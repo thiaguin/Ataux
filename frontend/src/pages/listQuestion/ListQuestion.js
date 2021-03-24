@@ -6,6 +6,7 @@ import SpinnerButton from '../../components/spinnerButton/SpinnerButton';
 import Popup from '../../components/popup/Popup';
 import * as actions from '../../store/actions';
 import Spinner from '../../components/spinner/spinner';
+import { showTime } from '../../utils/timeUtils';
 
 const ListQuestion = (props) => {
     const { token, submission, question } = props;
@@ -204,9 +205,7 @@ const ListQuestion = (props) => {
                                                 key="createdTime"
                                                 style={{ textAlign: 'center', verticalAlign: 'middle' }}
                                             >
-                                                {`${new Date(el.createdTime).toLocaleDateString('pt-BR')} - ${new Date(
-                                                    el.createdTime,
-                                                ).toLocaleTimeString('pt-BR')}`}
+                                                {showTime(el.createdTime)}
                                             </td>
                                         </tr>
                                     ))}

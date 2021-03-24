@@ -75,6 +75,7 @@ const Question = (props) => {
     const editCodeHandler = (code) => {
         props.onUpdateQuestion({
             id: questionId,
+            token: props.token,
             resolution: code,
         });
     };
@@ -135,7 +136,11 @@ const Question = (props) => {
         <>
             {popup}
             {loggedUser.role !== 'MEMBER' && mode === 'create' && (
-                <CreateQuestion submitHandler={createHandler} loading={question.create.loading} />
+                <CreateQuestion
+                    goBack={goBackHandler}
+                    submitHandler={createHandler}
+                    loading={question.create.loading}
+                />
             )}
             {mode === 'show' && question.get.data && (
                 <ShowQuestion

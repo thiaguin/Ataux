@@ -149,14 +149,31 @@ const editUser = (props) => {
                                         />
                                     </Form.Group>
                                     <div style={{ textAlign: 'right' }}>
+                                        <Form.Group
+                                            style={{
+                                                width: '150px',
+                                                display: 'inline-block',
+                                            }}
+                                            controlId="formGridGoogleButton"
+                                        >
+                                            <Button
+                                                style={{ minWidth: '150px' }}
+                                                variant="secondary"
+                                                type="button"
+                                                onClick={props.goBack}
+                                            >
+                                                Voltar
+                                            </Button>
+                                        </Form.Group>
+
                                         {user.method === 'LOCAL' && (
                                             <Form.Group
-                                                style={{ width: '150px', display: 'inline-block' }}
+                                                style={{ width: '150px', marginLeft: '5px', display: 'inline-block' }}
                                                 controlId="formGridGoogleButton"
                                             >
                                                 <Button
                                                     style={{ minWidth: '150px' }}
-                                                    variant="secondary"
+                                                    variant="outline-secondary"
                                                     type="button"
                                                     onClick={props.onClickEditPassword}
                                                 >
@@ -164,21 +181,26 @@ const editUser = (props) => {
                                                 </Button>
                                             </Form.Group>
                                         )}
-                                        {props.currUser.role === 'ADMIN' && (
-                                            <Form.Group
-                                                style={{ width: '150px', display: 'inline-block', marginLeft: '5px' }}
-                                                controlId="formGridGoogleButton"
-                                            >
-                                                <Button
-                                                    style={{ minWidth: '150px' }}
-                                                    variant="outline-danger"
-                                                    type="button"
-                                                    onClick={() => setShowModal(true)}
+                                        {props.currUser.role === 'ADMIN' &&
+                                            `${user.id}` !== `${props.currUser.userId}` && (
+                                                <Form.Group
+                                                    style={{
+                                                        width: '150px',
+                                                        display: 'inline-block',
+                                                        marginLeft: '5px',
+                                                    }}
+                                                    controlId="formGridGoogleButton"
                                                 >
-                                                    Remover
-                                                </Button>
-                                            </Form.Group>
-                                        )}
+                                                    <Button
+                                                        style={{ minWidth: '150px' }}
+                                                        variant="outline-danger"
+                                                        type="button"
+                                                        onClick={() => setShowModal(true)}
+                                                    >
+                                                        Remover
+                                                    </Button>
+                                                </Form.Group>
+                                            )}
                                         <Form.Group
                                             controlId="formGridSubmtiButton"
                                             style={{ width: '150px', display: 'inline-block', marginLeft: '5px' }}

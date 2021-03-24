@@ -35,7 +35,7 @@ const List = (props) => {
         const year = date.getUTCFullYear();
         const month = date.getUTCMonth();
         const day = date.getUTCDate();
-        const reseult = new Date(year, month, day, hours, minutes, 59);
+        const reseult = new Date(year, month, day, hours, minutes, 0);
         return reseult.toISOString();
     };
 
@@ -186,6 +186,7 @@ const List = (props) => {
             {popup}
             {mode === 'create' && (
                 <CreateList
+                    goBack={onGoBackHandler}
                     loading={list.create.loading}
                     questions={listQuestions}
                     onAddQuestion={onAddQuestionToListHandler}

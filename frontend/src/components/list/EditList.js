@@ -6,6 +6,7 @@ import SpinnerButton from '../spinnerButton/SpinnerButton';
 import trashSVG from '../../assets/trash.svg';
 import whiteTrashSVG from '../../assets/trash-white.svg';
 import Modal from '../modal/Modal';
+import { getDefaultTime } from '../../utils/timeUtils';
 
 const editList = (props) => {
     const today = new Date();
@@ -37,21 +38,8 @@ const editList = (props) => {
 
     const [trashHover, setTrashHover] = useState(false);
     const [showModal, setShowModal] = useState(false);
-    const expirationTime = new Date(props.list.expirationTime);
-    const expirationHours =
-        expirationTime.getHours() < 10 ? `0${expirationTime.getHours()}` : expirationTime.getHours();
-    const expirationMinute =
-        expirationTime.getMinutes() < 10 ? `0${expirationTime.getMinutes()}` : expirationTime.getMinutes();
-    const expirationYear = expirationTime.getFullYear();
-    const expirationMonth =
-        expirationTime.getMonth() + 1 < 10 ? `0${expirationTime.getMonth() + 1}` : expirationTime.getMonth() + 1;
-    const expirationDate = expirationTime.getDate();
-    const startTime = new Date(props.list.startTime);
-    const startHours = startTime.getHours() < 10 ? `0${startTime.getHours()}` : startTime.getHours();
-    const startMinute = startTime.getMinutes() < 10 ? `0${startTime.getMinutes()}` : startTime.getMinutes();
-    const startYear = startTime.getFullYear();
-    const startMonth = startTime.getMonth() + 1 < 10 ? `0${startTime.getMonth() + 1}` : startTime.getMonth() + 1;
-    const startDate = startTime.getDate();
+    const expirationTime = getDefaultTime(props.list.expirationTime);
+    const startTime = getDefaultTime(props.list.startTime);
 
     return (
         <>
@@ -70,10 +58,10 @@ const editList = (props) => {
                     validationSchema={schema}
                     initialValues={{
                         title: props.list.title,
-                        expirationTime: `${expirationHours}:${expirationMinute}`,
-                        expirationDate: `${expirationYear}-${expirationMonth}-${expirationDate}`,
-                        startTime: `${startHours}:${startMinute}`,
-                        startDate: `${startYear}-${startMonth}-${startDate}`,
+                        expirationTime: expirationTime.time,
+                        expirationDate: expirationTime.date,
+                        startTime: startTime.time,
+                        startDate: startTime.date,
                         questions: props.questions,
                         questionURL: '',
                     }}

@@ -6,6 +6,7 @@ import Popup from '../../components/popup/Popup';
 import * as actions from '../../store/actions';
 import Code from '../../components/code/Code';
 import Spinner from '../../components/spinner/spinner';
+import { showTime } from '../../utils/timeUtils';
 
 const Submission = (props) => {
     const { token, submission } = props;
@@ -127,11 +128,7 @@ const Submission = (props) => {
                                             {submission.get.data.language}
                                         </td>
                                         <td key="createdTime" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                                            {`${new Date(submission.get.data.createdTime).toLocaleDateString(
-                                                'pt-BR',
-                                            )} - ${new Date(submission.get.data.createdTime).toLocaleTimeString(
-                                                'pt-BR',
-                                            )}`}
+                                            {showTime(submission.get.data.createdTime)}
                                         </td>
                                     </tr>
                                 </tbody>

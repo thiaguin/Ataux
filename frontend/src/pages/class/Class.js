@@ -147,7 +147,7 @@ const Class = (props) => {
         <>
             {popup}
             {loggedUser.role !== 'MEMBER' && mode === 'create' && (
-                <CreateClass submitHandler={createHandler} loading={classData.create.loading} />
+                <CreateClass goBack={goBackHandler} submitHandler={createHandler} loading={classData.create.loading} />
             )}
             {mode === 'register' && (
                 <RegisterClass submitHandler={registerSubmitHandler} loading={classData.register.loading} />

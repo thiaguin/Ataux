@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 import Popup from '../../components/popup/Popup';
 import Spinner from '../../components/spinner/spinner';
 import * as actions from '../../store/actions';
+import { showTime } from '../../utils/timeUtils';
 
 const SubmissionList = (props) => {
     const { token, submission } = props;
@@ -141,9 +142,7 @@ const SubmissionList = (props) => {
                                             </Nav.Link>
                                         </td>
                                         <td key="createdTime" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                                            {`${new Date(el.createdTime).toLocaleDateString('pt-BR')} - ${new Date(
-                                                el.createdTime,
-                                            ).toLocaleTimeString('pt-BR')}`}
+                                            {showTime(el.createdTime)}
                                         </td>
                                     </tr>
                                 ))}

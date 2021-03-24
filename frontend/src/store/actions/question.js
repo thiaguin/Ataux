@@ -91,7 +91,7 @@ export const resetGetAllQuestions = () => ({ type: actionTypes.RESET_GET_ALL_QUE
 export const getAllQuestions = (query, token) => (dispatch) => {
     dispatch(getAllQuestionsStart());
     axios
-        .get(`/questions`, { params: query, headers: { Authorization: token } })
+        .get(`/questions`, { params: { ...query, abc: [1, 2, 3] }, headers: { Authorization: token } })
         .then((response) => dispatch(getAllQuestionsSucces(response.data)))
         .catch((error) => dispatch(getAllQuestionsFail(error)));
 };

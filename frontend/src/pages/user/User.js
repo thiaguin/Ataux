@@ -100,6 +100,7 @@ const User = (props) => {
                     onSubmit={editHandler}
                     currUser={login.user}
                     onRemove={removeUserHandle}
+                    goBack={goBackHandler}
                 />
             )}
             {mode === 'updatePassword' && user.get.data && (

@@ -184,6 +184,14 @@ const creatList = (props) => {
                                 style={{ textAlign: 'right', marginTop: '25px', marginBottom: '0' }}
                                 controlId="formGridSubmtiButton"
                             >
+                                <Button
+                                    style={{ width: '100px', marginRight: '7px' }}
+                                    variant="secondary"
+                                    type="button"
+                                    onClick={props.goBack}
+                                >
+                                    Voltar
+                                </Button>
                                 {props.loading ? (
                                     <SpinnerButton style={{ width: '100px' }} />
                                 ) : (

@@ -86,7 +86,7 @@ export class SubmissionsService {
             const statusIsOk = userQuestionList.status === statusOK || data.submission.verdict === statusOK;
             const newValue = {
                 ...userQuestionList,
-                penalty: userQuestionList.penalty > 0 ? userQuestionList.penalty : 0,
+                penalty: userQuestionList.penalty > 0 ? Math.min(userQuestionList.penalty, data.penalty) : 0,
                 status: statusIsOk ? statusOK : statusNOK,
                 count: userQuestionList.count + 1,
             };

@@ -90,7 +90,9 @@ const Tag = (props) => {
     return (
         <>
             {popup}
-            {mode === 'create' && <CreateTag submitHandler={createHandler} loading={tag.create.loading} />}
+            {mode === 'create' && (
+                <CreateTag goBack={goBackHandler} submitHandler={createHandler} loading={tag.create.loading} />
+            )}
             {mode === 'show' && tag.get.tag && (
                 <ShowTag tag={tag.get.tag} goBack={goToListPageHandler} gotToEditPage={goToEditPageHandler} />
             )}

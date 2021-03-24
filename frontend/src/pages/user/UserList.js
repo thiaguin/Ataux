@@ -5,6 +5,7 @@ import Popup from '../../components/popup/Popup';
 import * as actions from '../../store/actions';
 import userTypes from '../../enums/userTypes';
 import Spinner from '../../components/spinner/spinner';
+import { showTime } from '../../utils/timeUtils';
 
 const UserList = (props) => {
     const { user } = props;
@@ -110,7 +111,7 @@ const UserList = (props) => {
                                             {userTypes[el.role]}
                                         </td>
                                         <td key="createdAt" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                                            {el.createdAt}
+                                            {showTime(el.createdAt)}
                                         </td>
                                     </tr>
                                 ))}

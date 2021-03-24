@@ -71,6 +71,10 @@ const Login = (props) => {
         handleChange(event);
     };
 
+    const loginGoogleFailHandler = () => {
+        setPopup(<Popup type="error" message="Ocorreu um erro ao tentar logar com a conta google." />);
+    };
+
     useEffect(() => {
         if (loginError) {
             if (loginError !== entitiesTypes.NOT_CONFIRMED) {
@@ -184,6 +188,8 @@ const Login = (props) => {
                                                         />
                                                     )}
                                                     onSuccess={loginGoogleHandler}
+                                                    onFailure={loginGoogleFailHandler}
+                                                    cookiePolicy="single_host_origin"
                                                 />
                                             )}
                                         </Form.Group>

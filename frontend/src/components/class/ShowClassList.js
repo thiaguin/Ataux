@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, Form, Nav, Table } from 'react-bootstrap';
+import { showTime } from '../../utils/timeUtils';
 
 const showClassList = (props) => {
     const parentInStyle = {
@@ -94,9 +95,7 @@ const showClassList = (props) => {
                                                 verticalAlign: 'middle',
                                             }}
                                         >
-                                            {`${new Date(currList.startTime).toLocaleDateString('pt-BR')} - ${new Date(
-                                                currList.startTime,
-                                            ).toLocaleTimeString('pt-BR')}`}
+                                            {showTime(currList.startTime)}
                                         </td>
                                         <td
                                             key="expirationTime"
@@ -106,9 +105,7 @@ const showClassList = (props) => {
                                                 color: new Date() > new Date(currList.expirationTime) ? 'red' : '',
                                             }}
                                         >
-                                            {`${new Date(currList.expirationTime).toLocaleDateString(
-                                                'pt-BR',
-                                            )} - ${new Date(currList.expirationTime).toLocaleTimeString('pt-BR')}`}
+                                            {showTime(currList.expirationTime)}
                                         </td>
                                     </tr>
                                 ))}
