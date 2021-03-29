@@ -1,5 +1,6 @@
 import React from 'react';
 import { Form, Button, Col } from 'react-bootstrap';
+import { showTime } from '../../utils/timeUtils';
 import userTypes from '../../enums/userTypes';
 
 const showUser = (props) => {
@@ -69,7 +70,7 @@ const showUser = (props) => {
                                     <Form.Label>Criado Em</Form.Label>
                                     <Form.Control
                                         name="createdAt"
-                                        value={props.user.createdAt}
+                                        value={showTime(props.user.createdAt)}
                                         readOnly
                                         type="text"
                                         disabled

@@ -3,6 +3,7 @@ import { Formik } from 'formik';
 import { Form, Button, Col } from 'react-bootstrap';
 import userTypes from '../../enums/userTypes';
 import Modal from '../modal/Modal';
+import { showTime } from '../../utils/timeUtils';
 
 const editUser = (props) => {
     const [showModal, setShowModal] = useState(false);
@@ -131,7 +132,7 @@ const editUser = (props) => {
                                             <Form.Label>Criado Em</Form.Label>
                                             <Form.Control
                                                 name="createdAt"
-                                                value={values.createdAt}
+                                                value={showTime(values.createdAt)}
                                                 readOnly
                                                 type="text"
                                                 disabled
