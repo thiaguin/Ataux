@@ -121,9 +121,9 @@ const Submission = (props) => {
                                         <td key="memory" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                             {submission.get.data.memory}
                                         </td>
-                                        <th key="penalty" style={{ textAlign: 'center' }}>
+                                        <td key="penalty" style={{ textAlign: 'center' }}>
                                             {submission.get.data.penalty}
-                                        </th>
+                                        </td>
                                         <td key="language" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                             {submission.get.data.language}
                                         </td>
