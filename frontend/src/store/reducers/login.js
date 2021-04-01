@@ -1,6 +1,6 @@
 import jwt from 'jwt-decode';
 import * as actionTypes from '../actions/actionTypes';
-import { getErrorMessage } from '../../services/error';
+import { getErrorMessage } from '../../utils/errorUtils';
 
 const initialState = {
     loadingLocal: false,
