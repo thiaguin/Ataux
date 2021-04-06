@@ -267,7 +267,6 @@ export class QuestionsService {
 
     async update(id: number, body: UpdateQuestionDTO): Promise<void> {
         const { tags, ...questionBody } = body;
-        const questionTags = tags || [];
         const question = await this.repository.findOne({
             where: { id },
         });
@@ -278,11 +277,13 @@ export class QuestionsService {
 
         return await getManager().transaction(async (transaction) => {
             await transaction.update(Question, { id }, questionBody);
-            await transaction.delete(QuestionTag, { questionId: id });
-            const newQuestionTags = questionTags.map((tagId) => {
-                return transaction.create(QuestionTag, { questionId: id, tagId: tagId });
-            });
-            await transaction.save(newQuestionTags);
+            if (tags) {
+                await transaction.delete(QuestionTag, { questionId: id });
+                const newQuestionTags = tags.map((tagId) => {
+                    return transaction.create(QuestionTag, { questionId: id, tagId: tagId });
+                });
+                await transaction.save(newQuestionTags);
+            }
         });
     }
 
