@@ -91,7 +91,7 @@ const UserList = (props) => {
                                 {users.data.map((el, index) => (
                                     <tr key={el.id} id={el.id}>
                                         <td key="key" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                                            {index + 1}
+                                            {usersPerPage * page + index + 1}
                                         </td>
                                         <td key="email" style={{ verticalAlign: 'middle' }}>
                                             {el.email}
