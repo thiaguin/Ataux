@@ -14,6 +14,7 @@ import { EntityToQuery } from 'src/utils/dto/entityQuery.dto';
 import { User } from 'src/users/users.entity';
 import { Question } from 'src/questions/questions.entity';
 import { NOT_FOUND } from 'src/resource/errorType.resource';
+import { PaginateService } from 'src/utils/paginate.service';
 
 @Injectable()
 export class SubmissionsService {
@@ -22,11 +23,13 @@ export class SubmissionsService {
     private httpService: HttpService;
     private queryService: QueryService;
     private BASE_URL: string;
+    private paginateService: PaginateService;
 
     constructor() {
         this.repository = getCustomRepository(SubmissionRepository);
         this.httpService = new HttpService();
         this.queryService = new QueryService();
+        this.paginateService = new PaginateService();
         this.BASE_URL = 'http://codeforces.com';
     }
 
@@ -48,8 +51,10 @@ export class SubmissionsService {
     }
 
     async findAll(query): Promise<{ data: Submission[]; count: number }> {
+        const page = this.paginateService.getPage(query);
         const where = this.queryService.getQueryToFind(Submission, query);
         const [submissions, count] = await this.repository.findAndCount({
+            ...page,
             where,
             relations: ['user', 'question'],
             order: { id: 'ASC' },
