@@ -71,6 +71,8 @@ export {
     resetUpdateClass,
     removeClass,
     resetRemoveClass,
+    removeUserClass,
+    resetRemoveUserClass,
 } from './class';
 export {
     existQuestionToList,

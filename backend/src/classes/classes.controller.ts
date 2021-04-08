@@ -60,4 +60,9 @@ export class ClassesController {
     remove(@Param() params: { id: number }): Promise<void> {
         return this.classService.remove(params.id);
     }
+
+    @Delete('/:id/users/:userId')
+    removeUser(@Param() params: { id: number; userId: number }, @Req() req): Promise<void> {
+        return this.classService.removeUser(params.id, params.userId, req.user);
+    }
 }

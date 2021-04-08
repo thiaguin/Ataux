@@ -199,3 +199,27 @@ export const removeClass = (classId, token) => (dispatch) => {
         .then((response) => dispatch(removeClassSucces(response.data)))
         .catch((error) => dispatch(removeClassFail(error)));
 };
+
+const removeUserClassStart = () => ({
+    type: actionTypes.REMOVE_USER_CLASS_START,
+});
+
+const removeUserClassSucces = (data) => ({
+    type: actionTypes.REMOVE_USER_CLASS_SUCCESS,
+    data,
+});
+
+const removeUserClassFail = (error) => ({
+    type: actionTypes.REMOVE_USER_CLASS_FAIL,
+    error,
+});
+
+export const resetRemoveUserClass = () => ({ type: actionTypes.RESET_REMOVE_USER_CLASS });
+
+export const removeUserClass = (id, userId, token) => (dispatch) => {
+    dispatch(removeUserClassStart());
+    axios
+        .delete(`/classes/${id}/users/${userId}`, { headers: { Authorization: token } })
+        .then((response) => dispatch(removeUserClassSucces(response.data)))
+        .catch((error) => dispatch(removeUserClassFail(error)));
+};

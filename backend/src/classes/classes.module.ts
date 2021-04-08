@@ -32,6 +32,7 @@ export class ClassesModule {
                 { path: '/classes/:id/add/users', method: RequestMethod.POST },
                 { path: '/classes/:id', method: RequestMethod.PUT },
                 { path: '/classes/:id', method: RequestMethod.DELETE },
+                { path: '/classes/:id/users/:userId', method: RequestMethod.DELETE },
             );
         consumer
             .apply(PrivilegedRolesValidationMiddleware)

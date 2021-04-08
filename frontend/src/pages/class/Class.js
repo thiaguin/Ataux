@@ -79,6 +79,10 @@ const Class = (props) => {
         props.onRemoveClass(id, props.token);
     };
 
+    const removeUserClassHandler = (id, userId) => {
+        props.onRemoveUserClass(id, userId, props.token);
+    };
+
     useEffect(() => {
         if (['edit', 'show'].includes(mode) && classId) {
             initClass(classId, props.token);
@@ -120,6 +124,18 @@ const Class = (props) => {
     }, [classData.remove.success]);
 
     useEffect(() => {
+        if (classData.removeUser.success) {
+            props.onResetRemoveUserClass();
+
+            if (loggedUser.role === 'MEMBER') {
+                history.push('/class');
+            } else {
+                window.location.reload();
+            }
+        }
+    }, [classData.removeUser.success]);
+
+    useEffect(() => {
         if (classData.create.classId) {
             history.push(`/class/show/${classData.create.classId}/list`);
         }
@@ -142,6 +158,12 @@ const Class = (props) => {
             setPopup(<Popup type="error" message={classData.remove.error} onClose={props.onResetRemoveClass} />);
         }
     }, [classData.remove.error]);
+
+    useEffect(() => {
+        if (classData.removeUser.error) {
+            setPopup(<Popup type="error" message={classData.removeUser.error} onClose={props.onResetRemoveClass} />);
+        }
+    }, [classData.removeUser.error]);
 
     return (
         <>
@@ -174,6 +196,7 @@ const Class = (props) => {
                     gotToClassListsPage={gotToClassListsPageHandler}
                     onClickCSV={getCSVHandler}
                     loggedUser={loggedUser}
+                    removeUserClassHandler={removeUserClassHandler}
                 />
             )}
             {mode === 'edit' && classData.get.data && (
@@ -209,6 +232,8 @@ const mapDispatchToProps = (dispatch) => ({
     onResetUpdateClass: () => dispatch(actions.resetUpdateClass()),
     onRemoveClass: (...values) => dispatch(actions.removeClass(...values)),
     onResetRemoveClass: () => dispatch(actions.resetRemoveClass()),
+    onRemoveUserClass: (...values) => dispatch(actions.removeUserClass(...values)),
+    onResetRemoveUserClass: () => dispatch(actions.resetRemoveUserClass()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Class);

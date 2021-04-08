@@ -27,6 +27,11 @@ const initialState = {
         loading: false,
         success: null,
     },
+    removeUser: {
+        error: null,
+        loading: false,
+        success: null,
+    },
     addUser: {
         error: null,
         loading: false,
@@ -312,6 +317,38 @@ const resetRemoveClass = (state) => ({
     remove: { ...initialState.remove },
 });
 
+const removeUserClassStart = (state) => ({
+    ...state,
+    removeUser: {
+        ...state.removeUser,
+        loading: true,
+    },
+});
+
+const removeUserClassSuccess = (state) => ({
+    ...state,
+    removeUser: {
+        ...state.removeUser,
+        loading: false,
+        success: true,
+    },
+});
+
+const removeUserClassFail = (state, data) => ({
+    ...state,
+    removeUser: {
+        ...state.removeUser,
+        loading: false,
+        error: getErrorMessage(data),
+    },
+});
+
+const resetRemoveUserClass = (state) => ({
+    ...state,
+    ...initialState,
+    removeUser: { ...initialState.removeUser },
+});
+
 const reducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.GET_ALL_CLASSES_START:
@@ -370,6 +407,14 @@ const reducer = (state = initialState, action) => {
             return removeClassFail(state, action.error.response);
         case actionTypes.RESET_REMOVE_CLASS:
             return resetRemoveClass(state);
+        case actionTypes.REMOVE_USER_CLASS_START:
+            return removeUserClassStart(state);
+        case actionTypes.REMOVE_USER_CLASS_SUCCESS:
+            return removeUserClassSuccess(state, action.data);
+        case actionTypes.REMOVE_USER_CLASS_FAIL:
+            return removeUserClassFail(state, action.error.response);
+        case actionTypes.RESET_REMOVE_USER_CLASS:
+            return resetRemoveUserClass(state);
         case actionTypes.GET_CSV_CLASS_START:
             return getCsvClassStart(state);
         case actionTypes.GET_CSV_CLASS_SUCCESS:

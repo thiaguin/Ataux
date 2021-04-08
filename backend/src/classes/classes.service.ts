@@ -2,7 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PayloadUserDTO } from 'src/users/dto/payload-user.dto';
 import { UserClass } from 'src/usersClasses/usersClasses.entity';
-import { createQueryBuilder, getCustomRepository, getManager, Repository } from 'typeorm';
+import { createQueryBuilder, getCustomRepository, getManager, In, Repository } from 'typeorm';
 import { Class } from './classes.entity';
 import { ClassRepository } from './classes.repository';
 import { CreateClassDTO } from './dto/create-class.dto';
@@ -21,9 +21,14 @@ import { Query } from 'typeorm/driver/Query';
 import { PaginateService } from 'src/utils/paginate.service';
 import { QueryService } from 'src/utils/query.service';
 import { QueryClassDTO } from './dto/query-class.dto';
-import { BAD_REQUEST, NOT_FOUND, NOT_UNIQUE } from 'src/resource/errorType.resource';
+import { BAD_REQUEST, FORBIDDEN, NOT_FOUND, NOT_UNIQUE } from 'src/resource/errorType.resource';
 import { UserRepository } from 'src/users/users.repository';
 import { UpdateClassDTO } from './dto/update-class.dto';
+import { UserListRepository } from 'src/userList/userList.repository';
+import { UserQuestionListRepository } from 'src/userQuestionList/userQuestionList.repository';
+import { UserList } from 'src/userList/userList.entity';
+import { UserQuestionList } from 'src/userQuestionList/userQuestionList.entity';
+import { Submission } from 'src/submissions/submissions.entity';
 
 @Injectable()
 export class ClassesService {
@@ -33,6 +38,7 @@ export class ClassesService {
     private csvService: CsvService;
     private paginateService: PaginateService;
     private queryService: QueryService;
+
     constructor() {
         this.listService = new ListService();
         this.csvService = new CsvService();
@@ -346,5 +352,32 @@ export class ClassesService {
         }
 
         await this.repository.remove(entity);
+    }
+
+    async removeUser(id: number, userId: number, loggedUser: PayloadUserDTO): Promise<void> {
+        if (loggedUser.role === UserRole.MEMBER && `${userId}` !== `${loggedUser.id}`) {
+            throw new HttpException({ entity: 'Class', type: FORBIDDEN }, 403);
+        }
+
+        const entity = await this.repository.findOne({ where: { id }, relations: ['lists'] });
+
+        if (!entity) {
+            throw new HttpException({ entity: 'Class', type: NOT_FOUND }, 404);
+        }
+
+        const userClassRepository = getCustomRepository(UserClassRepository);
+        const userClass = await userClassRepository.findOne({ where: { classId: id, userId } });
+        const listsId = entity.lists.map((el) => el.id);
+
+        if (!userClass) {
+            throw new HttpException({ entity: 'UserClass', type: NOT_FOUND }, 404);
+        }
+
+        await getManager().transaction(async (transaction) => {
+            await transaction.delete(UserClass, { userId: userClass.userId, classId: userClass.classId });
+            await transaction.delete(UserList, { userId: userClass.userId, listId: In(listsId) });
+            await transaction.delete(UserQuestionList, { userId: userClass.userId, listId: In(listsId) });
+            await transaction.delete(Submission, { userId: userClass.userId, listId: In(listsId) });
+        });
     }
 }

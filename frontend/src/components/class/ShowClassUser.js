@@ -2,10 +2,18 @@ import React, { useState } from 'react';
 import { Button, Form, Table, Image } from 'react-bootstrap';
 import csvImgHover from '../../assets/file-earmark-spreadsheet-fill.svg';
 import csvImg from '../../assets/file-earmark-spreadsheet.svg';
+import trashSVG from '../../assets/trash.svg';
+import whiteTrashSVG from '../../assets/trash-white.svg';
+import Modal from '../modal/Modal';
 
 const showClassUser = (props) => {
+    const [removeUser, setRemoveUser] = useState(null);
+    const [trashHover, setTrashHover] = useState(-1);
     const [csvButtonHover, setCsvButtonHover] = useState(true);
     const csvImgStyle = { width: '24px', borderRadius: '0.2em', textAlign: 'center' };
+    const memberModalBody = 'Você tem certeza que quer sair da turma?';
+    const notMemberModalBody = `Você tem certeza que quer remover ${removeUser && removeUser.name} da turma?`;
+    const modalBody = props.loggedUser.role === 'MEMBER' ? memberModalBody : notMemberModalBody;
 
     const parentInStyle = {
         margin: '5%',
@@ -22,6 +30,16 @@ const showClassUser = (props) => {
 
     return (
         <>
+            {removeUser && (
+                <Modal
+                    title="Remover usuário da Turma"
+                    body={modalBody}
+                    primaryButtonOnClick={() => props.removeUserClassHandler(props.class.id, removeUser.id)}
+                    primaryButton="Remover"
+                    secondaryButton="Voltar"
+                    secondaryButtonOnClick={() => setRemoveUser(null)}
+                />
+            )}
             {props.class && (
                 <div style={parentInStyle}>
                     <div style={childInStyle}>
@@ -108,6 +126,29 @@ const showClassUser = (props) => {
                                                     )}`}
                                                 </td>
                                             ))}
+                                        {/* {props.loggedUser.role !== 'MEMBER' && ( */}
+                                        <td style={{ textAlign: 'center' }}>
+                                            <Button
+                                                onMouseEnter={() => setTrashHover(index)}
+                                                onMouseLeave={() => setTrashHover(-1)}
+                                                style={{ padding: '4px 7px' }}
+                                                variant="outline-danger"
+                                                type="button"
+                                                onClick={() =>
+                                                    setRemoveUser({ id: data.user.id, name: data.user.name })
+                                                }
+                                            >
+                                                <Image
+                                                    style={{
+                                                        fill: 'green',
+                                                        position: 'relative',
+                                                        padding: '0',
+                                                    }}
+                                                    src={trashHover === index ? whiteTrashSVG : trashSVG}
+                                                />
+                                            </Button>
+                                        </td>
+                                        {/* )} */}
                                     </tr>
                                 ))}
                             </tbody>
