@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, Form, Nav, Table } from 'react-bootstrap';
+import { Button, Nav, Pagination, Table } from 'react-bootstrap';
 import { connect, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import SpinnerButton from '../../components/spinnerButton/SpinnerButton';
@@ -15,6 +15,7 @@ const ListQuestion = (props) => {
     const dispatch = useDispatch();
     const onInitPage = useCallback((...values) => dispatch(actions.getQuestionById(...values)), [dispatch]);
 
+    const [page, setPage] = useState(0);
     const [popup, setPopup] = useState(null);
     const [questionNameHover, setQuestionNameHover] = useState(null);
 
@@ -32,6 +33,10 @@ const ListQuestion = (props) => {
     };
 
     const submissions = submission.getAll.data;
+    const submissionscount = submissions && submissions.count ? submissions.count : 0;
+    const submissionsPerPage = 30;
+    const initialPage = 0;
+    const lastPage = submissionscount > 0 ? Math.floor((submissionscount - 1) / submissionsPerPage) : 0;
 
     const history = useHistory();
 
@@ -70,6 +75,12 @@ const ListQuestion = (props) => {
             props.onGetAllSubmissions({ questionId, listId }, token);
         }
     }, [onInitPage, listId, questionId]);
+
+    useEffect(() => {
+        if (questionId) {
+            props.onGetAllSubmissions({ questionId, listId, page }, token);
+        }
+    }, [page, listId, questionId]);
 
     useEffect(() => {
         if (submission.check.success) {
@@ -124,7 +135,15 @@ const ListQuestion = (props) => {
                                 )}
                                 <div style={{ display: 'inline-block', position: 'relative', float: 'right' }}>
                                     <Button
+                                        style={{ minWidth: '150px', marginRight: '7px' }}
                                         variant="outline-secondary"
+                                        type="button"
+                                        onClick={goBackHandler}
+                                    >
+                                        Voltar
+                                    </Button>
+                                    <Button
+                                        variant="secondary"
                                         type="button"
                                         onClick={() => goToUrlPageHandler(question.data.url)}
                                     >
@@ -162,7 +181,7 @@ const ListQuestion = (props) => {
                                     submissions.data.map((el, index) => (
                                         <tr key={el.id} id={el.id}>
                                             <td key="key" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                                                {index + 1}
+                                                {submissionsPerPage * page + index + 1}
                                             </td>
                                             <td key="handle" style={{ verticalAlign: 'middle' }}>
                                                 {el.user.handle}
@@ -211,21 +230,24 @@ const ListQuestion = (props) => {
                                     ))}
                             </tbody>
                         </Table>
-                        <div style={{ textAlign: 'center' }}>
-                            <Form.Group
-                                style={{ width: '150px', display: 'inline-block' }}
-                                controlId="formGridGoogleButton"
-                            >
-                                <Button
-                                    style={{ minWidth: '150px' }}
-                                    variant="secondary"
-                                    type="button"
-                                    onClick={goBackHandler}
-                                >
-                                    Voltar
-                                </Button>
-                            </Form.Group>
-                        </div>
+                        {submissions && submissions.count === 0 && (
+                            <p style={{ textAlign: 'center' }}>Não foi encontrado nenhuma submissão</p>
+                        )}
+                        <Pagination
+                            style={{
+                                textAlign: 'center',
+                                justifyContent: 'center',
+                                paginationFirstStyle: {
+                                    marginLeft: '5px',
+                                    color: 'red',
+                                },
+                            }}
+                        >
+                            <Pagination.First onClick={() => setPage(0)} disabled={page === initialPage} />
+                            <Pagination.Prev onClick={() => setPage(page - 1)} disabled={page === initialPage} />
+                            <Pagination.Next onClick={() => setPage(page + 1)} disabled={page === lastPage} />
+                            <Pagination.Last onClick={() => setPage(lastPage)} disabled={page === lastPage} />
+                        </Pagination>
                     </div>
                 </div>
             )}

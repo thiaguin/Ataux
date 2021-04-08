@@ -102,7 +102,7 @@ const SubmissionList = (props) => {
                                 {submissions.data.map((el, index) => (
                                     <tr key={el.id} id={el.id}>
                                         <td key="key" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                                            {index + 1}
+                                            {submissionsPerPage * page + index + 1}
                                         </td>
                                         <td key="handle" style={{ verticalAlign: 'middle' }}>
                                             {el.user.handle}
