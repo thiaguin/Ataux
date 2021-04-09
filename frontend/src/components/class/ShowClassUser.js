@@ -99,22 +99,7 @@ const showClassUser = (props) => {
                                         <td key="key" style={{ textAlign: 'center' }}>
                                             {index + 1}
                                         </td>
-                                        <td key="name">
-                                            <>
-                                                {/* <p
-                                                    onClick={() => props.onClickList(props.class.id, currList.id)}
-                                                    onMouseEnter={() => classNameHoverHandler(currList.id)}
-                                                    onMouseLeave={() => classNameHoverHandler(null)}
-                                                    style={
-                                                        classNameHover === currList.id
-                                                            ? { textDecoration: 'underline', cursor: 'pointer' }
-                                                            : {}
-                                                    }
-                                                > */}
-                                                {data.user.name}
-                                                {/* </p> */}
-                                            </>
-                                        </td>
+                                        <td key="name">{data.user.name}</td>
                                         <td key="handle">{data.user.handle}</td>
                                         <td key="registration">{data.user.registration}</td>
                                         {data.lists &&
@@ -126,29 +111,29 @@ const showClassUser = (props) => {
                                                     )}`}
                                                 </td>
                                             ))}
-                                        {/* {props.loggedUser.role !== 'MEMBER' && ( */}
-                                        <td style={{ textAlign: 'center' }}>
-                                            <Button
-                                                onMouseEnter={() => setTrashHover(index)}
-                                                onMouseLeave={() => setTrashHover(-1)}
-                                                style={{ padding: '4px 7px' }}
-                                                variant="outline-danger"
-                                                type="button"
-                                                onClick={() =>
-                                                    setRemoveUser({ id: data.user.id, name: data.user.name })
-                                                }
-                                            >
-                                                <Image
-                                                    style={{
-                                                        fill: 'green',
-                                                        position: 'relative',
-                                                        padding: '0',
-                                                    }}
-                                                    src={trashHover === index ? whiteTrashSVG : trashSVG}
-                                                />
-                                            </Button>
-                                        </td>
-                                        {/* )} */}
+                                        {props.loggedUser.role !== 'MEMBER' && (
+                                            <td style={{ textAlign: 'center' }}>
+                                                <Button
+                                                    onMouseEnter={() => setTrashHover(index)}
+                                                    onMouseLeave={() => setTrashHover(-1)}
+                                                    style={{ padding: '4px 7px' }}
+                                                    variant="outline-danger"
+                                                    type="button"
+                                                    onClick={() =>
+                                                        setRemoveUser({ id: data.user.id, name: data.user.name })
+                                                    }
+                                                >
+                                                    <Image
+                                                        style={{
+                                                            fill: 'green',
+                                                            position: 'relative',
+                                                            padding: '0',
+                                                        }}
+                                                        src={trashHover === index ? whiteTrashSVG : trashSVG}
+                                                    />
+                                                </Button>
+                                            </td>
+                                        )}
                                     </tr>
                                 ))}
                             </tbody>

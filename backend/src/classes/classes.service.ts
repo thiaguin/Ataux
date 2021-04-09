@@ -24,8 +24,6 @@ import { QueryClassDTO } from './dto/query-class.dto';
 import { BAD_REQUEST, FORBIDDEN, NOT_FOUND, NOT_UNIQUE } from 'src/resource/errorType.resource';
 import { UserRepository } from 'src/users/users.repository';
 import { UpdateClassDTO } from './dto/update-class.dto';
-import { UserListRepository } from 'src/userList/userList.repository';
-import { UserQuestionListRepository } from 'src/userQuestionList/userQuestionList.repository';
 import { UserList } from 'src/userList/userList.entity';
 import { UserQuestionList } from 'src/userQuestionList/userQuestionList.entity';
 import { Submission } from 'src/submissions/submissions.entity';
