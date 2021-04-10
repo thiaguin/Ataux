@@ -1,6 +1,5 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query, Req } from '@nestjs/common';
 import { AddQuestionsByContestResult } from './dto/addByContest-result.dto';
-import { CheckSubmissionQuestionDTO } from './dto/checkSubmission-question.dto';
 import { CreateQuestionDTO } from './dto/create-question.dto';
 import { FindAllQuestionDTO } from './dto/findAll-questions.dto';
 import { QueryQuestionDTO } from './dto/query-question.dto';

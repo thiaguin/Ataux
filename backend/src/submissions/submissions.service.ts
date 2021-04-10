@@ -114,6 +114,7 @@ export class SubmissionsService {
     async create(submission: CodeforcesSubmissionDTO, data: SubmissionAssociationDTO): Promise<Submission> {
         const createdTime = new Date(+`${submission.creationTimeSeconds}000`);
         const limitTime = new Date(data.limitTime);
+        const startTime = new Date(data.startTime);
 
         const exist = await this.repository.findOne({
             where: {
@@ -135,8 +136,7 @@ export class SubmissionsService {
                     : 0,
         };
 
-        const existInTesting = exist && exist.status === 'TESTING';
-        if (!exist || existInTesting) {
+        if (!exist && submission.verdict !== 'TESTING' && createdTime >= startTime) {
             await this.setUserQuestionList(dataToSetUserQuestionList);
             const sourceCode = await this.getSourceCode(submission.contestId, submission.id);
             const newSubmission = this.repository.create({
@@ -173,10 +173,4 @@ export class SubmissionsService {
             return null;
         }
     }
-
-    // async getUserSubmission(query) {
-    //     const where = this.queryService.getQueryToFind(Submission, query);
-    //     const submissions = await this.repository.find({ where, relations: ['user', 'question'] });
-    //     return submissions;
-    // }
 }

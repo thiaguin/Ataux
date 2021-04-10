@@ -7,4 +7,5 @@ export class CheckSubmissionQuestionDTO {
     submissions?: CodeforcesSubmissionDTO[];
     userId: number;
     limitTime: string;
+    startTime: string;
 }

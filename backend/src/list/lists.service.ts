@@ -421,6 +421,7 @@ export class ListService {
                 listId: value.listId,
                 questionId: value.questionId,
                 limitTime: list.expirationTime,
+                startTime: list.startTime,
                 userListId: userList.id,
             };
 

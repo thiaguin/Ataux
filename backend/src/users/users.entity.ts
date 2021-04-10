@@ -11,7 +11,6 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { UserClass } from 'src/usersClasses/usersClasses.entity';
-import { SubmissionAssociationDTO } from 'src/submissions/submission-associations.dto';
 import { Submission } from 'src/submissions/submissions.entity';
 import { UserList } from 'src/userList/userList.entity';
 import { UserResetPassword } from 'src/userResetPassword/userResetPassword.entity';
