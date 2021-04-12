@@ -71,6 +71,7 @@ const QuestionList = (props) => {
         setQueryTag('');
         setQueryLevel('');
         setQueryName('');
+        setQuery({});
         onGetAllQuestions({}, props.token);
     };
 

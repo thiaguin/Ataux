@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Nav, Pagination, Table } from 'react-bootstrap';
+import { Button, FormControl, InputGroup, Nav, Pagination, Table } from 'react-bootstrap';
 import { connect, useDispatch } from 'react-redux';
 import Popup from '../../components/popup/Popup';
 import * as actions from '../../store/actions';
@@ -13,7 +13,14 @@ const UserList = (props) => {
     const dispatch = useDispatch();
     const onInitPage = useCallback((...values) => dispatch(actions.getAllUsers(...values)), [dispatch]);
 
+    const [queryEmail, setQueryEmail] = useState('');
+    const [queryName, setQueryName] = useState('');
+    const [queryHandle, setQueryHandle] = useState('');
+    const [queryRegistration, setQueryRegistration] = useState('');
+    const [queryRole, setQueryRole] = useState('');
+
     const [popup, setPopup] = useState(null);
+    const [query, setQuery] = useState({});
     const [page, setPage] = useState(0);
 
     const parentInStyle = {
@@ -36,9 +43,52 @@ const UserList = (props) => {
     const initialPage = 0;
     const lastPage = usersCount ? Math.floor((usersCount - 1) / usersPerPage) : 0;
 
+    const onChangeQueryEmailHandler = (event) => {
+        setQueryEmail(event.target.value);
+    };
+
+    const onChangeQueryNameHandler = (event) => {
+        setQueryName(event.target.value);
+    };
+
+    const onChangeQueryHandleHandler = (event) => {
+        setQueryHandle(event.target.value);
+    };
+
+    const onChangeQueryRegistrationHandler = (event) => {
+        setQueryRegistration(event.target.value);
+    };
+
+    const onChangeQueryRoleHandler = (event) => {
+        setQueryRole(event.target.value);
+    };
+
+    const resetFilterHandler = () => {
+        setQueryEmail('');
+        setQueryName('');
+        setQueryHandle('');
+        setQueryRegistration('');
+        setQueryRole('');
+        setQuery({});
+        onInitPage({ page: 0 }, props.token);
+    };
+
+    const filterHandler = () => {
+        const queryParams = {};
+
+        if (queryName !== '') queryParams.name = queryName;
+        if (queryEmail !== '') queryParams.email = queryEmail;
+        if (queryHandle !== '') queryParams.handle = queryHandle;
+        if (queryRegistration !== '') queryParams.registration = queryRegistration;
+        if (queryRole !== '') queryParams.role = queryRole;
+
+        setPage(initialPage);
+        setQuery(queryParams);
+    };
+
     useEffect(() => {
-        onInitPage({ page }, props.token);
-    }, [onInitPage, page]);
+        onInitPage({ page, ...query }, props.token);
+    }, [onInitPage, page, query]);
 
     useEffect(() => {
         if (user.getAll.error) {
@@ -65,6 +115,16 @@ const UserList = (props) => {
                                 >
                                     Usuários
                                 </h3>
+                                <Button style={{ display: 'inline-block' }} onClick={filterHandler} variant="secondary">
+                                    Filtrar
+                                </Button>
+                                <Button
+                                    style={{ display: 'inline-block', marginLeft: '10px' }}
+                                    onClick={resetFilterHandler}
+                                    variant="outline-secondary"
+                                >
+                                    Resetar Filtros
+                                </Button>
                             </div>
                         </div>
                         <Table striped bordered hover size="sm">
@@ -73,14 +133,65 @@ const UserList = (props) => {
                                     <th key="key" style={{ width: '5%', textAlign: 'center' }}>
                                         {}
                                     </th>
-                                    <th key="email">Email</th>
-                                    <th key="name">Nome</th>
-                                    <th key="handle">Handle</th>
+                                    <th key="email">
+                                        <InputGroup>
+                                            <FormControl
+                                                onChange={onChangeQueryEmailHandler}
+                                                placeholder="Email"
+                                                aria-describedby="basic-addon1"
+                                                value={queryEmail}
+                                            />
+                                        </InputGroup>
+                                    </th>
+                                    <th key="name">
+                                        <InputGroup>
+                                            <FormControl
+                                                onChange={onChangeQueryNameHandler}
+                                                placeholder="Nome"
+                                                aria-describedby="basic-addon1"
+                                                value={queryName}
+                                            />
+                                        </InputGroup>
+                                    </th>
+                                    <th key="handle">
+                                        <InputGroup>
+                                            <FormControl
+                                                onChange={onChangeQueryHandleHandler}
+                                                placeholder="Handle"
+                                                aria-describedby="basic-addon1"
+                                                value={queryHandle}
+                                            />
+                                        </InputGroup>
+                                    </th>
                                     <th key="registration" style={{ textAlign: 'center' }}>
-                                        Matrícula
+                                        <InputGroup>
+                                            <FormControl
+                                                onChange={onChangeQueryRegistrationHandler}
+                                                placeholder="Matrícula"
+                                                aria-describedby="basic-addon1"
+                                                value={queryRegistration}
+                                            />
+                                        </InputGroup>
                                     </th>
                                     <th key="role" style={{ textAlign: 'center' }}>
-                                        Tipo
+                                        <InputGroup>
+                                            <FormControl
+                                                name="level"
+                                                onChange={onChangeQueryRoleHandler}
+                                                readOnly
+                                                type="text"
+                                                as="select"
+                                                placeholder="Tipo"
+                                                value={queryRole}
+                                            >
+                                                <option style={{ display: 'none' }}> Tipo </option>
+                                                {Object.keys(userTypes).map((role) => (
+                                                    <option key={role} value={role}>
+                                                        {userTypes[role]}
+                                                    </option>
+                                                ))}
+                                            </FormControl>
+                                        </InputGroup>
                                     </th>
                                     <th key="createdAt" style={{ textAlign: 'center' }}>
                                         Data de criação
