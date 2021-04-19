@@ -58,7 +58,7 @@ const User = (props) => {
 
     useEffect(() => {
         if (user.update.error) {
-            setPopup(<Popup type="error" message={user.update.error} onClose={props.onResetCreateTag} />);
+            setPopup(<Popup type="error" message={user.update.error} onClose={props.onResetUpdateUser} />);
         }
     }, [user.update.error]);
 
