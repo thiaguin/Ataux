@@ -7,3 +7,4 @@ export const NOT_UNIQUE = 'NOT_UNIQUE';
 export const FORBIDDEN = 'FORBIDDEN';
 export const TO_MANY_REQUEST = 'TO_MANY_REQUEST';
 export const SERVICE_UNVALIABLE = 'SERVICE_UNVALIABLE';
+export const INTERNAL_ERROR = 'INTERNAL_ERROR';

@@ -14,7 +14,7 @@ import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcryptjs';
 import { MailService } from 'src/utils/mail.service';
 import { UpdateUserDTO } from './dto/update-user.dto';
-import { BAD_REQUEST, FORBIDDEN, NOT_FOUND, NOT_UNIQUE } from 'src/resource/errorType.resource';
+import { BAD_REQUEST, FORBIDDEN, INTERNAL_ERROR, NOT_FOUND, NOT_UNIQUE } from 'src/resource/errorType.resource';
 import { CodeforcesService } from 'src/codeforces/codeforces.service';
 import { PaginateService } from 'src/utils/paginate.service';
 import { QueryService } from 'src/utils/query.service';
@@ -114,9 +114,15 @@ export class UsersService {
     }
 
     async update(id: number, body: UpdateUserDTO): Promise<void> {
-        const user = await this.findById(id);
-        delete body.password;
-        await this.repository.update({ id: user.id }, body);
+        try {
+            const user = await this.findById(id);
+            delete body.password;
+            await this.repository.update({ id: user.id }, body);
+        } catch (error) {
+            const isNotUnique = error.message.includes('violates unique constraint');
+            if (isNotUnique) throw new HttpException({ entity: 'User', type: NOT_UNIQUE }, 409);
+            throw new HttpException({ entity: 'User', type: INTERNAL_ERROR }, 500);
+        }
     }
 
     async updateUser(id: number, body: UpdateUserDTO, loggedUser: PayloadUserDTO): Promise<void> {
