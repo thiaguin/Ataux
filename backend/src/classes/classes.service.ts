@@ -161,7 +161,7 @@ export class ClassesService {
 
             for (const list of classResume.lists) {
                 row.push(usersClass[key][list.id].grade);
-                sumList += usersClass[key][list.id].grade;
+                sumList += Number(usersClass[key][list.id].grade);
             }
 
             for (const index in columnsName) {
