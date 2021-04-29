@@ -1,6 +1,6 @@
 # Ataux
 
-This is the project made to my course completation od Computer Science at Federal University of Campina. The Ataux is a project to create and accompany online judgment of list of algorithms questions.
+This is the project made to my Computer Science course completation at Federal University of Campina. The Ataux is a project to create and accompany online judgment of list of algorithms questions.
 
 ## Backend
 
