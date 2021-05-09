@@ -43,6 +43,23 @@ $ cat backup.sql | docker exec -i e-postgres psql -U e-username -d test
 $ docker-compose start
 ```
 
+## Setting enviroment variables
+
+To run the project is required to set the following enviroment variables
+
+``` bash
+DB_HOST # The host where the database is running
+DB_PORT # The port where the database is running on host
+DB_USERNAME # The database username to login
+DB_PASSSWORD # The database login password
+DB_NAME # The database name
+SECRET # The secret used to make the user authentication
+SIZE # The size required to generate the password
+GOOGLE_CLIENT_ID # The google cliente id to make the login by google
+EMAIL # The user email who will send the emails
+PASSWORD # The password credential of user email
+FRONTEND_URL # Where the frontend url is running
+```
 ## Running the app
 
 ```bash

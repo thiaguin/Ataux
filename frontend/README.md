@@ -22,6 +22,14 @@ The main tools used in this project:
 $ npm install
 ```
 
+## Setting enviroment variables
+
+To run the project is required to set the following enviroment variables:
+
+```bash
+REACT_APP_BASE_URL # The url where the server is running
+GOOGLE_CLIENT_ID # The google cliente id to make the login by google
+```
 ## Starting the app
 
 ```bash
