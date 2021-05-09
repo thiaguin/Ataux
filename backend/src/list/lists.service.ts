@@ -89,7 +89,7 @@ export class ListService {
             for (const question of value.questions) {
                 if (question.status === QuestionStatus.OK && !questionsOK[question.questionId]) {
                     questionsOK[question.questionId] = true;
-                    usersGrade += Math.max(0, maxQuestionGrade - question.penalty);
+                    usersGrade += Math.max(0, maxQuestionGrade - (question.penalty - list.penalty));
                 }
             }
 

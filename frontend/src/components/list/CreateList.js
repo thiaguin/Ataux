@@ -16,6 +16,7 @@ const creatList = (props) => {
         title: Yup.string().required(),
         expirationDate: Yup.date().min(today).required(),
         expirationTime: Yup.string().required(),
+        penalty: Yup.number().positive().required(),
         startDate: Yup.date().min(today).required(),
         startTime: Yup.string().required(),
         questionURL: Yup.string(),
@@ -47,6 +48,7 @@ const creatList = (props) => {
                 questionURL: '',
                 startTime: '00:00',
                 startDate: '',
+                penalty: 1,
             }}
         >
             {({ handleSubmit, handleChange, handleBlur, values, touched, errors, isValid }) => (
@@ -117,6 +119,18 @@ const creatList = (props) => {
                                     />
                                 </Form.Group>
                             </Form.Row>
+                            <Form.Group controlId="formURL" onSubmit={props.submitHandler}>
+                                <Form.Label>Penalização</Form.Label>
+                                <Form.Control
+                                    name="penalty"
+                                    value={values.penalty}
+                                    type="number"
+                                    onChange={handleChange}
+                                    isInvalid={touched.penalty && errors.penalty}
+                                    onBlur={handleBlur}
+                                    defaultValue={1}
+                                />
+                            </Form.Group>
                             <Form.Group controlId="formQuestions" readOnly>
                                 <div style={{ marginBottom: '10px' }}>
                                     <Form.Label>Questões</Form.Label>

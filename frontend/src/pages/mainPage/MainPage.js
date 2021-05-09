@@ -28,6 +28,11 @@ const MainPage = () => {
                     <ul>
                         <li>timeataux@gmail.com</li>
                     </ul>
+                    Colaborador principal:
+                    <br />
+                    <ul>
+                        <li>José Thiago (jose.thiago.silva@ccc.ufcg.edu.br)</li>
+                    </ul>
                     <br />
                     Resolva problemas para aprender novas técnicas de programação!
                 </>

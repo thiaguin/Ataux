@@ -48,6 +48,7 @@ const List = (props) => {
                 startTime: getTime(values.startDate, values.startTime),
                 title: values.title,
                 questions: values.questions.map((question) => question.id),
+                penalty: values.penalty,
             },
             props.token,
         );

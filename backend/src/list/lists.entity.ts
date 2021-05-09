@@ -32,6 +32,9 @@ export class List {
     @Column({ nullable: true, type: 'timestamp with time zone' })
     startTime: string;
 
+    @Column({default: 1, type: 'int'})
+    penalty: number;
+
     @ManyToOne(() => Class, (entity) => entity.lists, { onDelete: 'CASCADE' })
     class: Class;
 
