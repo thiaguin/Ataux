@@ -82,7 +82,9 @@ const showListUsers = (props) => {
                                     <th key="name">Nome</th>
                                     <th key="handle">Handle</th>
                                     {props.list.questions.map((el) => (
-                                        <th key={el.questionId}>{el.question.title}</th>
+                                        <th key={el.questionId} style={{ minWidth: '250px', textAlign: 'center' }}>
+                                            {el.question.title}
+                                        </th>
                                     ))}
                                 </tr>
                             </thead>
