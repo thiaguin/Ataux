@@ -3,6 +3,7 @@ import { Button, Form, Image, Table } from 'react-bootstrap';
 import csvImgHover from '../../assets/file-earmark-spreadsheet-fill.svg';
 import csvImg from '../../assets/file-earmark-spreadsheet.svg';
 import resultTypes from '../../enums/resultTypes';
+import { showAcceptedTime } from '../../utils/timeUtils';
 
 const showListUsers = (props) => {
     const [csvButtonHover, setCsvButtonHover] = useState(true);
@@ -19,6 +20,20 @@ const showListUsers = (props) => {
     const childInStyle = {
         width: '100%',
         margin: '0',
+    };
+
+    const getQuestionStatus = (question) => {
+        switch (question.status) {
+            case 'BLANK':
+                return '';
+            case 'OK':
+                if (question.acceptedAt) {
+                    return `${resultTypes[question.status]} (${showAcceptedTime(question.acceptedAt)})`;
+                }
+                return `${resultTypes[question.status]}`;
+            default:
+                return resultTypes[question.status];
+        }
     };
 
     return (
@@ -100,9 +115,9 @@ const showListUsers = (props) => {
                                                 {el.user.handle}
                                             </td>
                                             {el.questions.map((question) => (
-                                                <td key={question.questionId} style={{ textAlign: 'center' }}>{`${
-                                                    question.status === 'BLANK' ? '' : resultTypes[question.status]
-                                                } (${question.count})`}</td>
+                                                <td key={question.questionId} style={{ textAlign: 'center' }}>
+                                                    {getQuestionStatus(question)}
+                                                </td>
                                             ))}
                                         </tr>
                                     ))}

@@ -89,10 +89,12 @@ export class SubmissionsService {
 
         if (userQuestionList) {
             const statusIsOk = userQuestionList.status === statusOK || data.submission.verdict === statusOK;
+            const currentAcceptedAt = userQuestionList.acceptedAt ? userQuestionList.acceptedAt : null;
             const newValue = {
                 ...userQuestionList,
                 penalty: userQuestionList.penalty > 0 ? Math.min(userQuestionList.penalty, data.penalty) : 0,
                 status: statusIsOk ? statusOK : statusNOK,
+                acceptedAt: !currentAcceptedAt && statusOK ? data.createdTime.toISOString() : currentAcceptedAt,
                 count: userQuestionList.count + 1,
             };
             await this.getUserQuestionListRepository().save(newValue);
@@ -102,6 +104,7 @@ export class SubmissionsService {
                 userListId: data.userListId,
                 status: data.submission.verdict === statusOK ? statusOK : statusNOK,
                 count: 1,
+                acceptedAt: statusOK ? data.createdTime.toISOString() : null,
                 listId: data.listId,
                 userId: data.userId,
                 penalty: data.penalty,
@@ -130,6 +133,7 @@ export class SubmissionsService {
             submission: submission,
             userId: data.userId,
             listId: data.listId,
+            createdTime: createdTime,
             penalty:
                 submission.verdict === 'OK' && createdTime > limitTime
                     ? this.getDifferenceDays(createdTime, limitTime)

@@ -7,4 +7,5 @@ export class SetUserQuestionListSubmission {
     userId: number;
     listId: number;
     penalty: number;
+    createdTime: Date;
 }

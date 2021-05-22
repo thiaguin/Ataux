@@ -34,6 +34,7 @@ import { BAD_REQUEST, NOT_FOUND } from 'src/resource/errorType.resource';
 import { Submission } from 'src/submissions/submissions.entity';
 import { UserRole } from 'src/enums/userRole.enum';
 import { Query } from 'typeorm/driver/Query';
+import { QuestionsController } from 'src/questions/questions.controller';
 
 @Injectable()
 export class ListService {
@@ -120,6 +121,28 @@ export class ListService {
         return false;
     }
 
+    getQuestionStatus(question: UserQuestionList, timezone = 180): string {
+        switch (question.status) {
+            case QuestionStatus.BLANK:
+                return 'Não informado';
+            case QuestionStatus.OK:
+                if (question.acceptedAt) {
+                    const date = new Date(question.acceptedAt);
+                    date.setMinutes(date.getMinutes() - timezone);
+                    const day = date.getUTCDate();
+                    const month = date.getUTCMonth() + 1 >= 10 ? date.getUTCMonth() + 1 : `0${date.getUTCMonth() + 1}`;
+                    const year = date.getUTCFullYear();
+                    const hour = date.getUTCHours();
+
+                    const dateString = `${day}/${month}/${year} - ${hour}h`;
+                    return `${this.statusToCSV[QuestionStatus.OK]} (${dateString})`;
+                }
+                return this.statusToCSV[QuestionStatus.OK];
+            default:
+                return this.statusToCSV[question.status];
+        }
+    }
+
     async getUsersList(listId: number, query: Query): Promise<UserList[]> {
         const { questions } = await this.findById(listId);
 
@@ -179,17 +202,11 @@ export class ListService {
             const [currentUser] = <any>user.user;
 
             for (const question of user.questions) {
-                if (question.status === QuestionStatus.BLANK) {
-                    questionsSubmmited[question.questionId] = `(${question.count})`;
-                } else {
-                    questionsSubmmited[question.questionId] = `${this.statusToCSV[question.status]} - (${
-                        question.count
-                    })`;
-                }
+                questionsSubmmited[question.questionId] = this.getQuestionStatus(question);
             }
 
             const userQuestions = listResume.questions.map((question) => {
-                return questionsSubmmited[question.questionId] || `(0)`;
+                return questionsSubmmited[question.questionId] || `Não enviado`;
             });
 
             const rowValues = [

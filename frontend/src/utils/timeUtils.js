@@ -13,8 +13,17 @@ export const getDefaultTime = (date) => {
 };
 
 export const showTime = (value) => {
-    const date = new Date(value).toLocaleDateString('pt-BR');
-    const time = new Date(value).toLocaleTimeString('pt-BR');
+    const date = new Date(value);
+    const day = date.toLocaleDateString('pt-BR');
+    const time = date.toLocaleTimeString('pt-BR');
 
-    return `${date} - ${time}`;
+    return `${day} - ${time}`;
+};
+
+export const showAcceptedTime = (value) => {
+    const date = new Date(value);
+    const day = date.toLocaleDateString('pt-BR');
+    const hour = date.getHours();
+
+    return `${day} - ${hour}h`;
 };

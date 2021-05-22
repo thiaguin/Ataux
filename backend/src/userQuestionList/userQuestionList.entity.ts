@@ -29,6 +29,9 @@ export class UserQuestionList {
     @Column({ type: 'int', default: 0 })
     penalty: number;
 
+    @Column({ nullable: true, type: 'timestamp with time zone' })
+    acceptedAt: string;
+
     @ManyToOne(() => List, (list) => list.usersQuestions, { onDelete: 'CASCADE' })
     list: List;
 
