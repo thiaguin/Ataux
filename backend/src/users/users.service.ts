@@ -129,7 +129,10 @@ export class UsersService {
         if (loggedUser.role !== UserRole.ADMIN && `${id}` !== `${loggedUser.id}`) {
             throw new HttpException({ entity: 'User', type: FORBIDDEN }, 403);
         }
-
+            
+        if (loggedUser.role !== UserRole.ADMIN) {
+            delete body.role;
+        }
         if (body.handle) {
             const user = await this.repository.findOne({
                 where: {
