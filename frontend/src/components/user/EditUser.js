@@ -124,7 +124,8 @@ const editUser = (props) => {
                                                     value={userTypes[values.role]}
                                                     onChange={handleChange}
                                                     type="text"
-                                                    as="input"
+                                                    as="select"
+                                                    disabled={currUser.role !== 'COLABORATOR'}
                                                 />
                                             </Form.Group>
                                         )}
