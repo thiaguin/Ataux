@@ -3,7 +3,6 @@
 ## Description
 
 It's the frontend web site of Ataux.
-<br/>
 The main tools used in this project:
 
 -   [JavaScript](https://www.javascript.com/): The language adopted
