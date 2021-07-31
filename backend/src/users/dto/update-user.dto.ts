@@ -5,4 +5,5 @@ export class UpdateUserDTO {
     password?: string;
     googleId?: string;
     handle?: string;
+    role?: string;
 }
