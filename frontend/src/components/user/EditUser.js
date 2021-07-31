@@ -22,7 +22,7 @@ const editUser = (props) => {
     };
 
     const { user, currUser } = props;
-
+ 
     return (
         <>
             {showModal && (
