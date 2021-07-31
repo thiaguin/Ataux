@@ -118,14 +118,14 @@ const editUser = (props) => {
                                         )}
                                         {currUser.role !== 'ADMIN' && (
                                             <Form.Group as={Col} controlId="formDateURL" disabled>
-                                                <Form.Label>Tipo</Form.Label>
-                                                <Form.Control
-                                                    name="role"
-                                                    value={userTypes[values.role]}
-                                                    onChange={handleChange}
-                                                    type="text"
-                                                    disabled
-                                                />
+                                            <Form.Label>Handle</Form.Label>
+                                            <Form.Control
+                                                name="role"
+                                                value={userTypes[values.role]}
+                                                type="text"
+                                                onChange={handleChange}
+                                                disabled={currUser.role !== 'ADMIN'}
+                                            />
                                             </Form.Group>
                                         )}
                                         <Form.Group as={Col} controlId="formDateURL" disabled>
